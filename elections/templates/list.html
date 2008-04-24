@@ -7,8 +7,8 @@
     <title>Welcome to TurboGears</title>
   </head>
   <body>
-    <ul py:for="election in elections">
-      <li><a href="info/${election.id}">${election.name}</a></li>
+    <ul>
+      <li py:for="election in elections"><a href="info/${election.id}">${election.name}</a></li>
     </ul>
   </body>
 </html>

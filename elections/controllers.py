@@ -2,16 +2,20 @@ import turbogears
 from turbogears import controllers, expose, flash, redirect
 from elections import model
 from elections.model import *
+from elections.admin import Admin
 
 import sqlalchemy
 
 from turbogears.database import session
 
+from datetime import datetime
+
 class Root(controllers.RootController):
+    admin = Admin()
     @expose(template="elections.templates.list")
     def index(self):
         electlist = Elections.query.order_by(ElectionsTable.c.start_date).all()
-        return dict(elections=electlist)
+        return dict(elections=electlist, currenttime=datetime.utcnow())
     @expose(template="elections.templates.info")
     def info(self,eid=None):
         if eid:
