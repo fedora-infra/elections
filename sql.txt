@@ -54,5 +54,5 @@ create view votecount as select candidate_id, sum(weight) as novotes from
 votes group by candidate_id;
 
 
-create view uservotes as select election_id, count(voter) as novotes from
-votes group by election_id;
+create view uservotes as select election_id, voter, count(voter) as novotes from
+votes group by election_id, voter;

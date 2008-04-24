@@ -12,6 +12,10 @@
     <p><a href="${candidates[0].election.url}">[More Information]</a></p>
     <form action="/vote" method="post">
       <table border="1" cellpadding="1">
+        <tr>
+          <td><input type="text" name="name" value="Enter a name" /></td>
+          <td><input type="text" name="weight" value="1" /></td>
+        </tr>
         <tr py:for="candidate in candidates">
           <td>${candidate.name} <small><a href="${candidate.url}">[info]</a></small></td>
           <td><input type="radio" name="cid" value="${candidate.id}" /></td>

@@ -35,7 +35,11 @@ VoteTallyTable = Table('votecount', metadata,
             ForeignKey('candidates.id'), primary_key=True),
     Column('novotes', Integer, nullable=False)
 )
-
+UserVoteCountTable = Table('uservotes', metadata,
+    Column('election_id', Integer, primary_key=True),
+    Column('voter', String, nullable=False),
+    Column('novotes', Integer, nullable=False)
+)
 #
 # Classes to map to
 #
@@ -55,6 +59,8 @@ class LegalVoters(SABase):
 class VoteTally(SABase):
     pass
 
+class UserVoteCount(SABase):
+    pass
 #
 # set up mappers between tables and classes
 #
@@ -72,4 +78,4 @@ mapper(LegalVoters, LegalVotersTable, properties = {
 mapper(VoteTally, VoteTallyTable, properties = {
     'candidate': relation(Candidates, backref='tally')
     })
-
+mapper(UserVoteCount, UserVoteCountTable)
