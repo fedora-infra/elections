@@ -17,15 +17,16 @@ class Admin(controllers.Controller):
     @expose()
     def index(self, **kw):
         return "Hi"
-    #@expose(template='elections.templates.adminedit')
-    @expose()
-    def edit(self, **kw):
-        if eid in kw:
-            # Editing an Election
-            return "Hi"
-        else:
-            # New Election
-            return "Hi"
+
+    @expose(template="elections.templates.admedit")
+    def edit(self,eid=None):
+        try:
+            eid = int(eid)
+        except ValueError:
+            eid = Elections.query.filter_by(shortname=eid).all()[0].id
+        candidates = Candidates.query.filter_by(election_id=eid).all()
+        return dict(eid=eid, candidates=candidates)
+
     @expose()
     def save(self, **kw):
         return "Hi"
