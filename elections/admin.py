@@ -21,11 +21,12 @@ class Admin(controllers.Controller):
     @expose(template="elections.templates.admedit")
     def edit(self,eid=None):
         try:
-            eid = int(eid)
+            election = Elections.query.filter_by(id=int(eid)).all()[0]
         except ValueError:
-            eid = Elections.query.filter_by(shortname=eid).all()[0].id
+            election = Elections.query.filter_by(shortname=eid).all()[0]
+	election = Elections.query.filter_by(id=int(eid)).all()[0]
         candidates = Candidates.query.filter_by(election_id=eid).all()
-        return dict(eid=eid, candidates=candidates)
+        return dict(e=election, candidates=candidates)
 
     @expose()
     def save(self, **kw):

@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="master.html" />
+  <head>
+    <title>Welcome to TurboGears</title>
+  </head>
+  <body>
+    <table>
+      <tr><td>Election Name:</td><td><input type="text" name="name" value="${e.name}" /></td></tr>
+      <tr><td>Short Name:</td><td><input type="text" name="shortname" value="${e.shortname}" /></td></tr>
+      <tr><td>Election Info:</td><td><textarea name="info" rows="5" cols="40">${e.info}</textarea></td></tr>
+    </table>
+    <pre>
+Election ID: ${e.id}
+Election Name: ${e.name}
+Election ShortName: ${e.shortname}
+Election Info: ${e.info}
+URL: ${e.url}
+Start Date: ${e.start_date}
+End Date: ${e.end_date}
+max_seats ${e.max_seats}
+    </pre>
+  </body>
+</html>
