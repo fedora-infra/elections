@@ -52,7 +52,12 @@ class Root(controllers.RootController):
                 uvotes = {}
                 for c in candidates:
                     if str(c.id) in kw:
-                        uvotes[c.id] = int(kw[str(c.id)])
+                        try:
+                            range = int(kw[str(c.id)])
+                            uvotes[c.id] = range
+                        except ValueError:
+                            turbogears.flash("Invalid Ballot!")
+                            raise turbogears.redirect("/")
                 for uvote in uvotes:
                     Votes(voter=kw['name'],candidate_id=uvote,weight=uvotes[uvote],election_id=eid)
                 turbogears.flash("Saved!")
@@ -65,7 +70,12 @@ class Root(controllers.RootController):
             uvotes = {}
             for c in candidates:
                 if str(c.id) in kw:
-                    uvotes[c.id] = int(kw[str(c.id)])
+                    try:
+                        range = int(kw[str(c.id)])
+                        uvotes[c.id] = range
+                    except ValueError:
+                        turbogears.flash("Invalid Ballot!")
+                        raise turbogears.redirect("/")
                 else:
                     turbogears.flash("Invalid Ballot!")
                     raise turbogears.redirect("/")
