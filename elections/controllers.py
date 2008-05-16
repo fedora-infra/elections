@@ -15,7 +15,7 @@ class Root(controllers.RootController):
     @expose(template="elections.templates.list")
     def index(self):
         electlist = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
-        return dict(elections=electlist, currenttime=datetime.utcnow())
+        return dict(elections=electlist, curtime=datetime.utcnow())
 
 
     @expose(template="elections.templates.info")
@@ -74,8 +74,11 @@ class Root(controllers.RootController):
                     if str(c.id) in kw:
                         try:
                             range = int(kw[str(c.id)])
-                            
-                            uvotes[c.id] = range
+                            if range >= 0 and range <= len(candidates):
+                                uvotes[c.id] = range
+                            else:
+                                turbogears.flash("Invalid Ballot!")
+                                raise turbogears.redirect("/")
                         except ValueError:
                             turbogears.flash("Invalid Ballot!")
                             raise turbogears.redirect("/")
@@ -93,10 +96,17 @@ class Root(controllers.RootController):
                 if str(c.id) in kw:
                     try:
                         range = int(kw[str(c.id)])
-                        uvotes[c.id] = range
+                        if range > len(candidates):
+                            turbogears.flash("One or more votes had incorrect data, please verify your ballot carefully!")
+                            uvotes[c.id] = len(candidates)
+                        elif range >= 0:
+                            uvotes[c.id] = range
+                        else:
+                            turbogears.flash("One or more votes had incorrect data, please verify your ballot carefully!")
+                            uvotes[c.id] = 0
                     except ValueError:
-                        turbogears.flash("Invalid Ballot!")
-                        raise turbogears.redirect("/")
+                        turbogears.flash("Invalid data was detected and changed to zeros!")
+                        uvotes[c.id] = 0
                 else:
                     turbogears.flash("Invalid Ballot!")
                     raise turbogears.redirect("/")
