@@ -22,10 +22,30 @@ class Root(controllers.RootController):
     def info(self,eid=None):
         try:
             eid = int(eid)
+            election = Elections.query.filter_by(id=eid).all()[0]
         except ValueError:
-            eid = Elections.query.filter_by(shortname=eid).all()[0].id
+            election = Elections.query.filter_by(shortname=eid).all()[0]
+            eid = election.id
         candidates = Candidates.query.filter_by(election_id=eid).all()
         return dict(eid=eid, candidates=candidates)
+
+    @expose(template="elections.templates.results")
+    def results(self,eid=None):
+        try:
+            eid = int(eid)
+            election = Elections.query.filter_by(id=eid).all()[0]
+        except ValueError:
+            election = Elections.query.filter_by(shortname=eid).all()[0]
+            eid = election.id
+        curtime = datetime.utcnow()
+        if election.public_results == 0 and election.end_date > curtime:
+            turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election is still in progress.")
+            raise turbogears.redirect("/")
+        elif election.start_date > curtime:
+            turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election has not started.")
+            raise turbogears.redirect("/")
+        votecount = VoteTally.query.filter_by(election_id=eid).all()
+        return dict(votecount=votecount, election=election)
 
 
     @expose(template="elections.templates.confirm")
@@ -54,6 +74,7 @@ class Root(controllers.RootController):
                     if str(c.id) in kw:
                         try:
                             range = int(kw[str(c.id)])
+                            
                             uvotes[c.id] = range
                         except ValueError:
                             turbogears.flash("Invalid Ballot!")

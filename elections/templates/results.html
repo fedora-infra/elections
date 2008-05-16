@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="master.html" />
+  <head>
+    <title>Welcome to TurboGears</title>
+  </head>
+  <body>
+    <h1>${election.name} Results</h1>
+    <p>${election.info}</p>
+    <p><a href="${election.url}">[More Information]</a></p>
+    <table border="1" cellpadding="1">
+      <tr>
+        <td><input type="text" name="name" value="Enter a name" /></td>
+        <td></td>
+      </tr>
+      <tr py:for="candcount in votecount">
+        <td>${candcount.candidate.name} <small><a href="${candcount.candidate.url}">[info]</a></small></td>
+        <td>${candcount.novotes}</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+  </body>
+</html>
