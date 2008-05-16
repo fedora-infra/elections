@@ -30,13 +30,21 @@ class Root(controllers.RootController):
 
     @expose(template="elections.templates.confirm")
     def vote(self, eid, **kw):   
-        import rpdb2
-        rpdb2.start_embedded_debugger('some_passwd', fAllowUnencrypted = True)
+        #import rpdb2
+        #rpdb2.start_embedded_debugger('some_passwd', fAllowUnencrypted = True)
+        election = Elections.query.filter_by(id=eid).all()[0]
+        candidates = Candidates.query.filter_by(election_id=eid).all()
+
+        #Before we do *ANYTHING* check if voting hasn't begun/has ended
+        curtime = datetime.utcnow()
+        if election.start_date > curtime or election.end_date < curtime:
+            turbogears.flash("We are sorry, voting has now ended.")
+            raise turbogears.redirect("/")
+
         if "confirm" in kw:
             #eid = Candidates.query.filter_by(id=cid).all()[0].election_id
             uservote = UserVoteCount.query.filter_by(election_id=eid, voter=kw['name']).all()
             voteperuser = Elections.query.filter_by(id=eid).all()[0].votes_per_user
-            candidates = Candidates.query.filter_by(election_id=eid).all()
             if len(uservote) == 0: 
                 uvotes = {}
                 for c in candidates:
@@ -51,8 +59,6 @@ class Root(controllers.RootController):
                 raise turbogears.redirect("/")
         else:
             turbogears.flash("Please confirm your vote!")
-            election = Elections.query.filter_by(id=eid).all()[0]
-            candidates = Candidates.query.filter_by(election_id=eid).all()
             uvotes = {}
             for c in candidates:
                 if str(c.id) in kw:
