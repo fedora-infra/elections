@@ -29,23 +29,36 @@ class Root(controllers.RootController):
 
 
     @expose(template="elections.templates.confirm")
-    def vote(self, cid, **kw):        
-        if "weight" in kw and "name" in kw:
-            if "confirm" in kw:
-                eid = Candidates.query.filter_by(id=cid).all()[0].election_id
-                uservote = UserVoteCount.query.filter_by(election_id=eid, voter=kw['name']).all()
-                voteperuser = Elections.query.filter_by(id=eid).all()[0].votes_per_user
-                if len(uservote) == 0 or uservote < voteperuser: 
-                    Votes(voter=kw['name'],candidate_id=cid,weight=kw['weight'],election_id=eid)
-                    turbogears.flash("Saved!")
-                    raise turbogears.redirect("/")
-                else:
-                    turbogears.flash("You've voted too many times!")
-                    raise turbogears.redirect("/")
+    def vote(self, eid, **kw):   
+        import rpdb2
+        rpdb2.start_embedded_debugger('some_passwd', fAllowUnencrypted = True)
+        if "confirm" in kw:
+            #eid = Candidates.query.filter_by(id=cid).all()[0].election_id
+            uservote = UserVoteCount.query.filter_by(election_id=eid, voter=kw['name']).all()
+            voteperuser = Elections.query.filter_by(id=eid).all()[0].votes_per_user
+            candidates = Candidates.query.filter_by(election_id=eid).all()
+            if len(uservote) == 0: 
+                uvotes = {}
+                for c in candidates:
+                    if str(c.id) in kw:
+                        uvotes[c.id] = int(kw[str(c.id)])
+                for uvote in uvotes:
+                    Votes(voter=kw['name'],candidate_id=uvote,weight=uvotes[uvote],election_id=eid)
+                turbogears.flash("Saved!")
+                raise turbogears.redirect("/")
             else:
-                turbogears.flash("Please confirm your vote!")
-                candidate = Candidates.query.filter_by(id=cid).all()[0]
-                return dict(voteinfo=kw, candidate=candidate)
+                turbogears.flash("You've voted too many times!")
+                raise turbogears.redirect("/")
         else:
-            turbogears.flash("Wacko!")
-            raise turbogears.redirect("/")
+            turbogears.flash("Please confirm your vote!")
+            election = Elections.query.filter_by(id=eid).all()[0]
+            candidates = Candidates.query.filter_by(election_id=eid).all()
+            uvotes = {}
+            for c in candidates:
+                if str(c.id) in kw:
+                    uvotes[c.id] = int(kw[str(c.id)])
+                else:
+                    turbogears.flash("Invalid Ballot!")
+                    raise turbogears.redirect("/")
+                      
+            return dict(voteinfo=uvotes, candidates=candidates, election=election, voter=kw['name'])

@@ -10,15 +10,15 @@
     <h1>${candidates[0].election.name}</h1>
     <p>${candidates[0].election.info}</p>
     <p><a href="${candidates[0].election.url}">[More Information]</a></p>
-    <form action="/vote" method="post">
+    <form action="/vote/${candidates[0].election.id}" method="post">
       <table border="1" cellpadding="1">
         <tr>
           <td><input type="text" name="name" value="Enter a name" /></td>
-          <td><input type="text" name="weight" value="1" /></td>
+          <td></td>
         </tr>
         <tr py:for="candidate in candidates">
           <td>${candidate.name} <small><a href="${candidate.url}">[info]</a></small></td>
-          <td><input type="radio" name="cid" value="${candidate.id}" /></td>
+          <td><input type="text" name="${candidate.id}" value="" /></td>
           <td>${candidate.tally[0].novotes}</td>
         </tr>
         <tr>
