@@ -33,6 +33,7 @@ LegalVotersTable = Table('legalvoters', metadata, autoload=True)
 VoteTallyTable = Table('votecount', metadata,
     Column('candidate_id', Integer,
             ForeignKey('candidates.id'), primary_key=True),
+    Column('election_id', Integer, primary_key=True),
     Column('novotes', Integer, nullable=False)
 )
 UserVoteCountTable = Table('uservotes', metadata,

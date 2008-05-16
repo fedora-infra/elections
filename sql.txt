@@ -50,9 +50,7 @@ foreign key (election_id) references elections(id),
 primary key (id)
 );
 
-create view votecount as select candidate_id, sum(weight) as novotes from
-votes group by candidate_id;
-
+create view votecount as select candidate_id, election_id, sum(weight) as novotes from votes group by candidate_id, election_id order by novotes desc;
 
 create view uservotes as select election_id, voter, count(voter) as novotes from
 votes group by election_id, voter;

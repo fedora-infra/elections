@@ -37,7 +37,10 @@ class Root(controllers.RootController):
 
         #Before we do *ANYTHING* check if voting hasn't begun/has ended
         curtime = datetime.utcnow()
-        if election.start_date > curtime or election.end_date < curtime:
+        if election.start_date > curtime:
+            turbogears.flash("Voting has not yet begun.")
+            raise turbogears.redirect("/")
+        elif election.end_date < curtime:
             turbogears.flash("We are sorry, voting has now ended.")
             raise turbogears.redirect("/")
 
