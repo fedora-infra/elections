@@ -26,8 +26,16 @@ class Root(controllers.RootController):
         except ValueError:
             election = Elections.query.filter_by(shortname=eid).all()[0]
             eid = election.id
+        curtime = datetime.utcnow()
+        if election.end_date < curtime:
+            turbogears.flash("You cannot vote in this election has the end date has passed.  You have been redirected to the election results")
+            raise turbogears.redirect("/results/" + str(eid))
+        elif election.start_date > curtime:
+            election_started=False
+        else:
+            election_started=True
         candidates = Candidates.query.filter_by(election_id=eid).all()
-        return dict(eid=eid, candidates=candidates)
+        return dict(eid=eid, candidates=candidates, election=election, election_started=election_started)
 
     @expose(template="elections.templates.results")
     def results(self,eid=None):
