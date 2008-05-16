@@ -18,6 +18,13 @@ class Admin(controllers.Controller):
     def index(self, **kw):
         return "Hi"
 
+    @expose(template="elections.templates.admnew")
+    def new(self, **kw):
+        if "confirm" in kw:
+            turbogears.redirect("/")
+        else:
+            return dict()
+
     @expose(template="elections.templates.admedit")
     def edit(self,eid=None):
         try:

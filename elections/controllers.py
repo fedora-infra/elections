@@ -28,7 +28,7 @@ class Root(controllers.RootController):
             eid = election.id
         curtime = datetime.utcnow()
         if election.end_date < curtime:
-            turbogears.flash("You cannot vote in this election has the end date has passed.  You have been redirected to the election results")
+            turbogears.flash("You cannot vote in this election because the end date has passed.  You have been redirected to the election results")
             raise turbogears.redirect("/results/" + str(eid))
         elif election.start_date > curtime:
             election_started=False
