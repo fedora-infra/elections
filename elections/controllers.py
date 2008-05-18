@@ -34,7 +34,7 @@ class Root(controllers.RootController):
             election_started=False
         else:
             election_started=True
-        candidates = Candidates.query.filter_by(election_id=eid).all()
+        candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
         return dict(eid=eid, candidates=candidates, election=election, election_started=election_started)
 
     @expose(template="elections.templates.results")
@@ -52,7 +52,7 @@ class Root(controllers.RootController):
         elif election.start_date > curtime:
             turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election has not started.")
             raise turbogears.redirect("/")
-        votecount = VoteTally.query.filter_by(election_id=eid).all()
+        votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()
         return dict(votecount=votecount, election=election)
 
 
@@ -61,7 +61,7 @@ class Root(controllers.RootController):
         #import rpdb2
         #rpdb2.start_embedded_debugger('some_passwd', fAllowUnencrypted = True)
         election = Elections.query.filter_by(id=eid).all()[0]
-        candidates = Candidates.query.filter_by(election_id=eid).all()
+        candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
 
         #Before we do *ANYTHING* check if voting hasn't begun/has ended
         curtime = datetime.utcnow()
