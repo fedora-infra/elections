@@ -13,7 +13,7 @@
         <a href="${tg.url('/login')}">Login</a>
       </span>
       <span py:if="not tg.identity.anonymous">
-        Welcome ${tg.identity.user.display_name or tg.identity.user.user_name}.
+        Welcome ${tg.identity.user.human_name or tg.identity.user.user_name}.
         <a href="${tg.url('/logout')}">Logout</a>
       </span>
     </div>

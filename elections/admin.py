@@ -1,7 +1,7 @@
 # Admin functions go here (i.e. add/delete elections)
 
 import turbogears
-from turbogears import controllers, expose, flash, redirect
+from turbogears import controllers, expose, flash, redirect, identity
 from elections import model
 from elections.model import *
 
@@ -22,6 +22,7 @@ class Admin(controllers.Controller):
     def index(self, **kw):
         return "Hi"
     
+    @identity.require(identity.in_group("elections"))
     @expose(template="elections.templates.admnew")
     def new(self, **kw):
         #import rpdb2

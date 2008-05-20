@@ -66,7 +66,7 @@ class Root(controllers.RootController):
         votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()
         return dict(votecount=votecount, election=election)
 
-
+    @identity.require(identity.not_anonymous())
     @expose(template="elections.templates.confirm")
     def vote(self, eid, **kw):   
         election = Elections.query.filter_by(id=eid).all()[0]
