@@ -13,11 +13,15 @@ from turbogears.database import session
 CHANGEME=1
 
 class Admin(controllers.Controller):
+    def __init__(self, fas, appTitle):
+        self.fas = fas
+        self.appTitle = appTitle
+
     #@expose(template='elections.templates.adminlist')
     @expose()
     def index(self, **kw):
         return "Hi"
-
+    
     @expose(template="elections.templates.admnew")
     def new(self, **kw):
         #import rpdb2
