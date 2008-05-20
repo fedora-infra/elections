@@ -7,12 +7,18 @@
     <title>Welcome to TurboGears</title>
   </head>
   <body>
+  <form action="/admin/new" method="post">
     <table>
       <tr><td>Election Name:</td><td><input type="text" name="name" /></td></tr>
       <tr><td>Short Name:</td><td><input type="text" name="shortname" /></td></tr>
       <tr><td>Election Info:</td><td><textarea name="info" rows="5" cols="40"></textarea></td></tr>
       <tr><td>URL:</td><td><input type="text" name="url" /></td></tr>
-
+      <tr><td>Start Date:</td><td><input type="text" name="startdate" value="yyyy-mm-dd hh:mm:ss"/></td></tr>
+      <tr><td>End Date:</td><td><input type="text" name="enddate" value="yyyy-mm-dd hh:mm:ss"/></td></tr>
+      <tr><td>Seats Available:</td><td><input type="text" name="max_seats"/></td></tr>
+      <tr><td>Public Results:</td><td><input type="checkbox" name="public_results" /> </td></tr>
+      <tr><td></td><td><input type="submit" name="submit" value="Submit" /></td></tr>
     </table>
+  </form>
   </body>
 </html>

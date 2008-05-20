@@ -58,8 +58,6 @@ class Root(controllers.RootController):
 
     @expose(template="elections.templates.confirm")
     def vote(self, eid, **kw):   
-        #import rpdb2
-        #rpdb2.start_embedded_debugger('some_passwd', fAllowUnencrypted = True)
         election = Elections.query.filter_by(id=eid).all()[0]
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
 
