@@ -1,3 +1,27 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright © 2008 Nigel Jones, Toshio Kuratomi, Ricky Zhou, Luca Foppiano All rights reserved.
+#
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+#
+# Author(s): Nigel Jones <nigelj@fedoraproject.org>
+#            Toshio Kuratomi <toshio@fedoraproject.org>
+#            Ricky Zhou <ricky@fedoraproject.org>
+#            Luca Foppiano <lfoppiano@fedoraproject.org>
+#
+# Report Bugs to https://www.fedorahosted.org/elections
+
 import turbogears
 from turbogears import controllers, expose, flash, redirect, config
 from turbogears import identity
@@ -12,15 +36,6 @@ from elections.admin import Admin
 import sqlalchemy
 
 from datetime import datetime
-
-#class VoteGroupException(identity.IdentityException):
-#    message = "You can not vote in this election because you are not a member of an eligable group."
-#    def __init__(self, groups=None):
-#        if groups is None:
-#            groups = ""
-#        self.groups = groups
-#    def __str__(self):
-#        return self.message
 
 class Root(controllers.RootController):
     appTitle = 'Fedora Elections'
@@ -37,9 +52,25 @@ class Root(controllers.RootController):
         electlist = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
         return dict(elections=electlist, curtime=datetime.utcnow())
 
+    @expose(template="elections.templates.about")
+    def about(self,eid=None):
+        try:
+            eid = int(eid)
+            election = Elections.query.filter_by(id=eid).all()[0]
+        except ValueError:
+            election = Elections.query.filter_by(shortname=eid).all()[0]
+            eid = election.id
 
-    @expose(template="elections.templates.info")
-    def info(self,eid=None):
+        votergroups = LegalVoters.query.filter_by(election_id=eid).all()
+        candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
+
+        curtime = datetime.utcnow()
+
+        return dict(eid=eid, candidates=candidates, election=election, curtime=curtime, baseurl=config.get('base_url_filter.base_url'))
+
+    @identity.require(identity.not_anonymous())
+    @expose(template="elections.templates.ballot")
+    def ballot(self,eid=None):
         try:
             eid = int(eid)
             election = Elections.query.filter_by(id=eid).all()[0]
@@ -54,6 +85,7 @@ class Root(controllers.RootController):
             if identity.in_group(group):
                 match = 1
         if match == 0:
+            turbogears.flash("You are not in a FAS group that can vote in this election, more information can be found here.")
             raise turbogears.redirect("/about/" + str(eid))
 
         curtime = datetime.utcnow()
@@ -65,31 +97,11 @@ class Root(controllers.RootController):
         else:
             election_started=True
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
-        return dict(eid=eid, candidates=candidates, election=election, election_started=election_started)
-
-    @expose(template="elections.templates.results")
-    def results(self,eid=None):
-        try:
-            eid = int(eid)
-            election = Elections.query.filter_by(id=eid).all()[0]
-        except ValueError:
-            election = Elections.query.filter_by(shortname=eid).all()[0]
-            eid = election.id
-        curtime = datetime.utcnow()
-        if election.public_results == 0 and election.end_date > curtime:
-            turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election is still in progress.")
-            raise turbogears.redirect("/")
-        elif election.start_date > curtime:
-            turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election has not started.")
-            raise turbogears.redirect("/")
-        votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()
-        return dict(votecount=votecount, election=election)
+        return dict(eid=eid, candidates=candidates, election=election, election_started=election_started, baseurl=config.get('base_url_filter.base_url'))
 
     @identity.require(identity.not_anonymous())
     @expose(template="elections.templates.confirm")
-    def vote(self, eid, **kw):   
-        #import rpdb2
-        #rpdb2.start_embedded_debugger('some_passwd', fAllowUnencrypted = True)
+    def vote(self, eid, **kw):
         try:
             election = Elections.query.filter_by(id=eid).all()[0]
         except IndexError:
@@ -103,8 +115,8 @@ class Root(controllers.RootController):
             if identity.in_group(group):
                 match = 1
         if match == 0:
-            turbogears.flash("Your not allowed to vote in this election, sorry.")
-            raise turbogears.redirect("/")
+            turbogears.flash("You are not in a FAS group that can vote in this election, more information can be found here.")
+            raise turbogears.redirect("/about/" + str(election.name))
 
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
 
@@ -118,10 +130,7 @@ class Root(controllers.RootController):
             raise turbogears.redirect("/")
 
         if "confirm" in kw:
-            #eid = Candidates.query.filter_by(id=cid).all()[0].election_id
             uservote = UserVoteCount.query.filter_by(election_id=eid, voter=kw['name']).all()
-            # Not currently implemented...
-            #voteperuser = election.votes_per_user
             if len(uservote) == 0: 
                 uvotes = {}
                 for c in candidates:
@@ -165,7 +174,25 @@ class Root(controllers.RootController):
                     turbogears.flash("Invalid Ballot!")
                     raise turbogears.redirect("/")
                       
-            return dict(voteinfo=uvotes, candidates=candidates, election=election, voter=kw['name'])
+            return dict(voteinfo=uvotes, candidates=candidates, election=election, voter=kw['name'], baseurl=config.get('base_url_filter.base_url'))
+
+    @expose(template="elections.templates.results")
+    def results(self,eid=None):
+        try:
+            eid = int(eid)
+            election = Elections.query.filter_by(id=eid).all()[0]
+        except ValueError:
+            election = Elections.query.filter_by(shortname=eid).all()[0]
+            eid = election.id
+        curtime = datetime.utcnow()
+        if election.public_results == 0 and election.end_date > curtime:
+            turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election is still in progress.")
+            raise turbogears.redirect("/")
+        elif election.start_date > curtime:
+            turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election has not started.")
+            raise turbogears.redirect("/")
+        votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()
+        return dict(votecount=votecount, election=election, baseurl=config.get('base_url_filter.base_url'))
 
     @expose(template="elections.templates.login", allow_json=True)
     def login(self, forward_url=None, previous_url=None, *args, **kw):

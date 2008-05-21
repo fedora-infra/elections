@@ -22,8 +22,8 @@ turbogears.config.update({'global': {'server.environment': 'development'}})
 turbogears.config.update({'global': {'autoreload.on': False}})
 turbogears.config.update({'global': {'server.log_to_screen': False}})
 turbogears.config.update({'global': {'server.webpath': '/elections'}})
-#turbogears.config.update({'global': {'base_url_filter.on': True}})
-#turbogears.config.update({'global': {'base_url_filter.base_url': 'http://localhost/elections'}})
+turbogears.config.update({'global': {'base_url_filter.on': True}})
+turbogears.config.update({'global': {'base_url_filter.base_url': 'http://localhost/elections'}})
 
 import elections.controllers
 
