@@ -13,6 +13,15 @@ import sqlalchemy
 
 from datetime import datetime
 
+#class VoteGroupException(identity.IdentityException):
+#    message = "You can not vote in this election because you are not a member of an eligable group."
+#    def __init__(self, groups=None):
+#        if groups is None:
+#            groups = ""
+#        self.groups = groups
+#    def __str__(self):
+#        return self.message
+
 class Root(controllers.RootController):
     appTitle = 'Fedora Elections'
 
@@ -37,6 +46,16 @@ class Root(controllers.RootController):
         except ValueError:
             election = Elections.query.filter_by(shortname=eid).all()[0]
             eid = election.id
+
+        votergroups = LegalVoters.query.filter_by(election_id=eid).all()
+
+        match = 0
+        for group in votergroups:
+            if identity.in_group(group):
+                match = 1
+        if match == 0:
+            raise turbogears.redirect("/about/" + str(eid))
+
         curtime = datetime.utcnow()
         if election.end_date < curtime:
             turbogears.flash("You cannot vote in this election because the end date has passed.  You have been redirected to the election results")
@@ -69,7 +88,24 @@ class Root(controllers.RootController):
     @identity.require(identity.not_anonymous())
     @expose(template="elections.templates.confirm")
     def vote(self, eid, **kw):   
-        election = Elections.query.filter_by(id=eid).all()[0]
+        #import rpdb2
+        #rpdb2.start_embedded_debugger('some_passwd', fAllowUnencrypted = True)
+        try:
+            election = Elections.query.filter_by(id=eid).all()[0]
+        except IndexError:
+            turbogears.flash("Sorry, that election does not exist")
+            raise turbogears.redirect("/")
+
+        votergroups = LegalVoters.query.filter_by(election_id=eid).all()
+        
+        match = 0
+        for group in votergroups:
+            if identity.in_group(group):
+                match = 1
+        if match == 0:
+            turbogears.flash("Your not allowed to vote in this election, sorry.")
+            raise turbogears.redirect("/")
+
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
 
         #Before we do *ANYTHING* check if voting hasn't begun/has ended
@@ -84,7 +120,8 @@ class Root(controllers.RootController):
         if "confirm" in kw:
             #eid = Candidates.query.filter_by(id=cid).all()[0].election_id
             uservote = UserVoteCount.query.filter_by(election_id=eid, voter=kw['name']).all()
-            voteperuser = Elections.query.filter_by(id=eid).all()[0].votes_per_user
+            # Not currently implemented...
+            #voteperuser = election.votes_per_user
             if len(uservote) == 0: 
                 uvotes = {}
                 for c in candidates:
