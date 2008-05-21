@@ -50,7 +50,7 @@ class Root(controllers.RootController):
     @expose(template="elections.templates.list")
     def index(self):
         electlist = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
-        return dict(elections=electlist, curtime=datetime.utcnow())
+        return dict(elections=electlist, curtime=datetime.utcnow(), baseurl=config.get('base_url_filter.base_url'))
 
     @expose(template="elections.templates.about")
     def about(self,eid=None):
