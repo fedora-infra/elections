@@ -26,7 +26,8 @@
 # Admin functions go here (i.e. add/delete elections)
 
 import turbogears
-from turbogears import controllers, expose, flash, redirect, identity
+from turbogears import controllers, expose, flash, redirect, config
+from turbogears import identity
 from elections import model
 from elections.model import *
 
@@ -46,17 +47,28 @@ class Admin(controllers.Controller):
         return "Hi"
     
     @identity.require(identity.in_group("elections"))
-    @expose(template="elections.templates.admnew")
-    def new(self, **kw):        
+    @expose(template="elections.templates.admnewe")
+    def newe(self, **kw):        
         if "submit" in kw:
             if "public_results" not in kw:
                 pubresults=0
             else:
                 pubresults=1
             Elections(shortname=kw['shortname'],name=kw['name'],info=kw['info'],url=kw['url'],start_date=kw['startdate'],end_date=kw['enddate'],max_seats=int(kw['max_seats']),votes_per_user=1,public_results=pubresults)
-            turbogears.redirect("/")
+            raise turbogears.redirect("/")
         else:
-            return dict()
+            return dict(baseurl=config.get('base_url_filter.base_url'))
+
+    @identity.require(identity.in_group("elections"))
+    @expose(template="elections.templates.admnewc")
+    def newc(self, **kw):        
+        if "submit" in kw:
+            c = Candidates(election_id=kw['id'],name=kw['name'],url=kw['url'])
+            session.flush()
+            Votes(voter='-1', candidate_id=c.id, weight=0, election_id=kw['id'])
+            raise turbogears.redirect("/admin/newc")
+        else:
+            return dict(baseurl=config.get('base_url_filter.base_url'))
 
     #@expose(template="elections.templates.admedit")
     #def edit(self,eid=None):
