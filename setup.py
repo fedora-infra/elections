@@ -170,7 +170,7 @@ setup(
               'install_lib': InstallApp},
     install_requires=[
         "TurboGears >= 1.0.4.3",
-        "SQLObject>=0.8,<=0.10.0"
+        "SQLAlchemy>=0.4"
     ],
     zip_safe=False,
     packages=find_packages(),
@@ -192,7 +192,7 @@ setup(
         # 'python.templating.engines',
 
         # If this is a full application, uncomment the next line
-        # 'turbogears.app',
+        'turbogears.app',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -202,7 +202,7 @@ setup(
         'Framework :: TurboGears',
         # if this is an application that you'll distribute through
         # the Cheeseshop, uncomment the next line
-        # 'Framework :: TurboGears :: Applications',
+        'Framework :: TurboGears :: Applications',
 
         # if this is a package that includes widgets that you'll distribute
         # through the Cheeseshop, uncomment the next line

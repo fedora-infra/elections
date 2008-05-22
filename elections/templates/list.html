@@ -9,7 +9,7 @@
   <body>
     <ul>
 <!-- Maybe change this link depending if they are logged in or not -->
-      <li py:for="election in elections"><a href="${baseurl}/about/${election.shortname}">${election.name}</a></li>
+      <li py:for="election in elections"><a href="${tg.url('/about/' + election.shortname)}">${election.name}</a></li>
 <!-- Would be nice features also include voting dates -->
     </ul>
   </body>

@@ -57,7 +57,7 @@ class Admin(controllers.Controller):
             Elections(shortname=kw['shortname'],name=kw['name'],info=kw['info'],url=kw['url'],start_date=kw['startdate'],end_date=kw['enddate'],max_seats=int(kw['max_seats']),votes_per_user=1,public_results=pubresults)
             raise turbogears.redirect("/")
         else:
-            return dict(baseurl=config.get('base_url_filter.base_url'))
+            return dict()
 
     @identity.require(identity.in_group("elections"))
     @expose(template="elections.templates.admnewc")
@@ -68,7 +68,7 @@ class Admin(controllers.Controller):
             Votes(voter='-1', candidate_id=c.id, weight=0, election_id=kw['id'])
             raise turbogears.redirect("/admin/newc")
         else:
-            return dict(baseurl=config.get('base_url_filter.base_url'))
+            return dict()
 
     #@expose(template="elections.templates.admedit")
     #def edit(self,eid=None):

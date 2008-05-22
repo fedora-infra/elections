@@ -7,7 +7,7 @@
     <title>Welcome to TurboGears</title>
   </head>
   <body>
-  <form action="${baseurl}/admin/newc" method="post">
+  <form action="${tg.url('/admin/newc')}" method="post">
     <table>
       <tr><td>Election Id (Numerical):</td><td><input type="text" name="id" /></td></tr>
       <tr><td>Candidate Name:</td><td><input type="text" name="name" /></td></tr>

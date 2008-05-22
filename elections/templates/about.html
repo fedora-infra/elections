@@ -16,7 +16,7 @@
           <td>${candidate.name} <small><a href="${candidate.url}">[info]</a></small></td>        </tr>
 <!-- This link is okay, but one should appear if the election has public results -->
         <tr>
-          <td><a href="${baseurl}/ballot/${election.shortname}">Vote Now!</a></td>
+          <td><a href="${tg.url('/ballot/' + election.shortname)}">Vote Now!</a></td>
         </tr>
     </table>
   </body>

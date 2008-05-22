@@ -50,7 +50,7 @@ class Root(controllers.RootController):
     @expose(template="elections.templates.list")
     def index(self):
         electlist = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
-        return dict(elections=electlist, curtime=datetime.utcnow(), baseurl=config.get('base_url_filter.base_url'))
+        return dict(elections=electlist, curtime=datetime.utcnow())
 
     @expose(template="elections.templates.about")
     def about(self,eid=None):
@@ -66,7 +66,7 @@ class Root(controllers.RootController):
 
         curtime = datetime.utcnow()
 
-        return dict(eid=eid, candidates=candidates, election=election, curtime=curtime, baseurl=config.get('base_url_filter.base_url'))
+        return dict(eid=eid, candidates=candidates, election=election, curtime=curtime)
 
     @identity.require(identity.not_anonymous())
     @expose(template="elections.templates.ballot")
@@ -97,7 +97,7 @@ class Root(controllers.RootController):
         else:
             election_started=True
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
-        return dict(eid=eid, candidates=candidates, election=election, election_started=election_started, baseurl=config.get('base_url_filter.base_url'))
+        return dict(eid=eid, candidates=candidates, election=election, election_started=election_started)
 
     @identity.require(identity.not_anonymous())
     @expose(template="elections.templates.confirm")
@@ -174,7 +174,7 @@ class Root(controllers.RootController):
                     turbogears.flash("Invalid Ballot!")
                     raise turbogears.redirect("/")
                       
-            return dict(voteinfo=uvotes, candidates=candidates, election=election, voter=kw['name'], baseurl=config.get('base_url_filter.base_url'))
+            return dict(voteinfo=uvotes, candidates=candidates, election=election, voter=kw['name'])
 
     @expose(template="elections.templates.results")
     def results(self,eid=None):
@@ -192,7 +192,7 @@ class Root(controllers.RootController):
             turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election has not started.")
             raise turbogears.redirect("/")
         votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()
-        return dict(votecount=votecount, election=election, baseurl=config.get('base_url_filter.base_url'))
+        return dict(votecount=votecount, election=election)
 
     @expose(template="elections.templates.login", allow_json=True)
     def login(self, forward_url=None, previous_url=None, *args, **kw):
