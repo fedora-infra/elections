@@ -3,7 +3,7 @@
 
 Name:           fedora-elections
 Version:        0.0.5
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Elections Application for Fedora Project
 
 Group:          Development/Languages
@@ -15,7 +15,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 
 BuildRequires:  python-devel python-setuptools-devel TurboGears
-Requires:       Turbogears >= 1.0.4
+Requires:       TurboGears >= 1.0.4
 Requires:       python-sqlalchemy >= 0.4
 Requires:       python-fedora >= 0.2.99.10
 Requires:       python-genshi
@@ -52,5 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri May 23 2008 Nigel Jones <dev@nigelj.com> - 0.0.5-2
+- Bug Fixes
 * Thu May 22 2008 Nigel Jones <dev@nigelj.com> - 0.0.5-1
 - Initial RPM - Ready to go!

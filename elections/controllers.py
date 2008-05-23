@@ -82,7 +82,7 @@ class Root(controllers.RootController):
 
         match = 0
         for group in votergroups:
-            if identity.in_group(group):
+            if identity.in_group(group.group_name):
                 match = 1
         if match == 0:
             turbogears.flash("You are not in a FAS group that can vote in this election, more information can be found here.")
@@ -112,13 +112,14 @@ class Root(controllers.RootController):
         
         match = 0
         for group in votergroups:
-            if identity.in_group(group):
+            if identity.in_group(group.group_name):
                 match = 1
         if match == 0:
             turbogears.flash("You are not in a FAS group that can vote in this election, more information can be found here.")
             raise turbogears.redirect("/about/" + str(election.name))
 
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
+        uservote = UserVoteCount.query.filter_by(election_id=eid, voter=tg.identity.current.user_name).all()
 
         #Before we do *ANYTHING* check if voting hasn't begun/has ended
         curtime = datetime.utcnow()
@@ -128,30 +129,28 @@ class Root(controllers.RootController):
         elif election.end_date < curtime:
             turbogears.flash("We are sorry, voting has now ended.")
             raise turbogears.redirect("/")
+        elif len(uservote) != 0:
+            turbogears.flash("You've voted too many times!")
+            raise turbogears.redirect("/")
 
         if "confirm" in kw:
-            uservote = UserVoteCount.query.filter_by(election_id=eid, voter=kw['name']).all()
-            if len(uservote) == 0: 
-                uvotes = {}
-                for c in candidates:
-                    if str(c.id) in kw:
-                        try:
-                            range = int(kw[str(c.id)])
-                            if range >= 0 and range <= len(candidates):
-                                uvotes[c.id] = range
-                            else:
-                                turbogears.flash("Invalid Ballot!")
-                                raise turbogears.redirect("/")
-                        except ValueError:
+            uvotes = {}
+            for c in candidates:
+                if str(c.id) in kw:
+                    try:
+                        range = int(kw[str(c.id)])
+                        if range >= 0 and range <= len(candidates):
+                            uvotes[c.id] = range
+                        else:
                             turbogears.flash("Invalid Ballot!")
                             raise turbogears.redirect("/")
-                for uvote in uvotes:
-                    Votes(voter=kw['name'],candidate_id=uvote,weight=uvotes[uvote],election_id=eid)
-                turbogears.flash("Saved!")
-                raise turbogears.redirect("/")
-            else:
-                turbogears.flash("You've voted too many times!")
-                raise turbogears.redirect("/")
+                    except ValueError:
+                        turbogears.flash("Invalid Ballot!")
+                        raise turbogears.redirect("/")
+            for uvote in uvotes:
+                Votes(voter=tg.identity.current.user_name, candidate_id=uvote, weight=uvotes[uvote], election_id=eid)
+            turbogears.flash("Saved!")
+            raise turbogears.redirect("/")                
         else:
             turbogears.flash("Please confirm your vote!")
             uvotes = {}
