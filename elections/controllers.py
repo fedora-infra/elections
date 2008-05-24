@@ -40,13 +40,7 @@ from datetime import datetime
 class Root(controllers.RootController):
     appTitle = 'Fedora Elections'
 
-    baseURL = config.get('fas.url', 'https://publictest10.fedoraproject.org/accounts/')
-    username = config.get('fas.username', 'admin')
-    password = config.get('fas.password', 'admin')
-
-    fas = AccountSystem(baseURL, username, password)
-
-    admin = Admin(fas, appTitle)
+    admin = Admin(appTitle)
     @expose(template="elections.templates.list")
     def index(self):
         electlist = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
