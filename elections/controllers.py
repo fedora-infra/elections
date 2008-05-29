@@ -167,7 +167,7 @@ class Root(controllers.RootController):
                     turbogears.flash("Invalid Ballot!")
                     raise turbogears.redirect("/")
                       
-            return dict(voteinfo=uvotes, candidates=candidates, election=election, voter=kw['name'])
+            return dict(voteinfo=uvotes, candidates=candidates, election=election)
 
     @expose(template="elections.templates.results")
     def results(self,eid=None):
