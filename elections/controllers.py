@@ -142,7 +142,7 @@ class Root(controllers.RootController):
                         turbogears.flash("Invalid Ballot!")
                         raise turbogears.redirect("/")
             for uvote in uvotes:
-                Votes(voter=tg.identity.current.user_name, candidate_id=uvote, weight=uvotes[uvote], election_id=eid)
+                Votes(voter=turbogears.identity.current.user_name, candidate_id=uvote, weight=uvotes[uvote], election_id=eid)
             turbogears.flash("Saved!")
             raise turbogears.redirect("/")                
         else:
