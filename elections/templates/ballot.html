@@ -9,11 +9,11 @@
   <body>
     <h1>${election.name}</h1>
     <p>${election.info}</p>
-    <p><a href="${election.url}">[More Information]</a></p>
+    <p py:if="election.url"><a href="${election.url}">[More Information]</a></p>
     <form action="${tg.url('/vote/' + str(election.id))}" method="post">
       <table border="1" cellpadding="1">
         <tr py:for="candidate in candidates">
-          <td>${candidate.name} <small><a href="${candidate.url}">[info]</a></small></td>
+          <td>${candidate.name} <small py:if="candidate.url"><a href="${candidate.url}">[info]</a></small></td>
           <td><input type="text" name="${candidate.id}" value="" /></td>
         </tr>
         <tr>

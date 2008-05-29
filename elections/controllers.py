@@ -113,7 +113,7 @@ class Root(controllers.RootController):
             raise turbogears.redirect("/about/" + str(election.name))
 
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
-        uservote = UserVoteCount.query.filter_by(election_id=eid, voter=tg.identity.current.user_name).all()
+        uservote = UserVoteCount.query.filter_by(election_id=eid, voter=turbogears.identity.current.user_name).all()
 
         #Before we do *ANYTHING* check if voting hasn't begun/has ended
         curtime = datetime.utcnow()
@@ -142,7 +142,7 @@ class Root(controllers.RootController):
                         turbogears.flash("Invalid Ballot!")
                         raise turbogears.redirect("/")
             for uvote in uvotes:
-                Votes(voter=tg.identity.current.user_name, candidate_id=uvote, weight=uvotes[uvote], election_id=eid)
+                Votes(voter=turbogears.identity.current.user_name, candidate_id=uvote, weight=uvotes[uvote], election_id=eid)
             turbogears.flash("Saved!")
             raise turbogears.redirect("/")                
         else:
@@ -167,7 +167,7 @@ class Root(controllers.RootController):
                     turbogears.flash("Invalid Ballot!")
                     raise turbogears.redirect("/")
                       
-            return dict(voteinfo=uvotes, candidates=candidates, election=election, voter=kw['name'])
+            return dict(voteinfo=uvotes, candidates=candidates, election=election)
 
     @expose(template="elections.templates.results")
     def results(self,eid=None):
