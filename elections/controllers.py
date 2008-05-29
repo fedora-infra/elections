@@ -113,7 +113,7 @@ class Root(controllers.RootController):
             raise turbogears.redirect("/about/" + str(election.name))
 
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
-        uservote = UserVoteCount.query.filter_by(election_id=eid, voter=tg.identity.current.user_name).all()
+        uservote = UserVoteCount.query.filter_by(election_id=eid, voter=turbogears.identity.current.user_name).all()
 
         #Before we do *ANYTHING* check if voting hasn't begun/has ended
         curtime = datetime.utcnow()
