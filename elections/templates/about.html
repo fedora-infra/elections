@@ -10,10 +10,10 @@
 <!-- Also need to list eligable voting groups... -->
     <h1>${election.name}</h1>
     <p>${election.info}</p>
-    <p><a href="${candidates[0].election.url}">[More Information]</a></p>
+    <p py:if="election.url"><a href="${election.url}">[More Information]</a></p>
       <table border="1" cellpadding="1">
         <tr py:for="candidate in candidates">
-          <td>${candidate.name} <small><a href="${candidate.url}">[info]</a></small></td>        </tr>
+          <td>${candidate.name} <small py:if="candidate.url"><a href="${candidate.url}">[info]</a></small></td>        </tr>
 <!-- This link is okay, but one should appear if the election has public results -->
         <tr>
           <td><a href="${tg.url('/ballot/' + election.shortname)}">Vote Now!</a></td>
