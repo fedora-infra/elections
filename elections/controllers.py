@@ -41,7 +41,7 @@ class Root(controllers.RootController):
     appTitle = 'Fedora Elections'
 
     admin = Admin(appTitle)
-    @expose(template="elections.templates.list")
+    @expose(template="elections.templates.index")
     def index(self):
         electlist = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
         return dict(elections=electlist, curtime=datetime.utcnow(), appTitle=self.appTitle)
@@ -70,7 +70,7 @@ class Root(controllers.RootController):
         return dict(eid=eid, candidates=candidates, election=election, curtime=curtime, votergroups=votergroups, appTitle=self.appTitle)
 
     @identity.require(identity.not_anonymous())
-    @expose(template="elections.templates.ballot")
+    @expose(template="elections.templates.vote")
     def vote(self,eid=None, **kw):
         try:
             eid = int(eid)
