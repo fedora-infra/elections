@@ -4,20 +4,23 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="master.html" />
   <head>
-    <title>Welcome to TurboGears</title>
+    <title>${appTitle} -- Election Information</title>
   </head>
   <body>
-<!-- Also need to list eligable voting groups... -->
     <h1>${election.name}</h1>
     <p>${election.info}</p>
     <p py:if="election.url"><a href="${election.url}">[More Information]</a></p>
       <table border="1" cellpadding="1">
         <tr py:for="candidate in candidates">
           <td>${candidate.name} <small py:if="candidate.url"><a href="${candidate.url}">[info]</a></small></td>        </tr>
-<!-- This link is okay, but one should appear if the election has public results -->
+<!-- !This link is okay, but one should appear if the election has public results -->
         <tr>
-          <td><a href="${tg.url('/ballot/' + election.shortname)}">Vote Now!</a></td>
+          <td><a href="${tg.url('/vote/' + election.shortname)}">Vote Now!</a></td>
         </tr>
-    </table>
+      </table>
+    <p>To vote in this election you must be a member of any one of the following groups:</p>
+    <ul>
+      <li py:for="g in votergroups">${g.group_name}</li>
+    </ul>
   </body>
 </html>

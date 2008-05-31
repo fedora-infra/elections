@@ -4,13 +4,13 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="master.html" />
   <head>
-    <title>Welcome to TurboGears</title>
+    <title>${appTitle}</title>
   </head>
   <body>
     <ul>
-<!-- Maybe change this link depending if they are logged in or not -->
+<!-- !Maybe change this link depending if they are logged in or not -->
       <li py:for="election in elections"><a href="${tg.url('/about/' + election.shortname)}">${election.name}</a></li>
-<!-- Would be nice features also include voting dates -->
+<!-- !Would be nice features also include voting dates -->
     </ul>
   </body>
 </html>

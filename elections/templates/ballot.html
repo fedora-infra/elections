@@ -4,7 +4,7 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="master.html" />
   <head>
-    <title>Welcome to TurboGears</title>
+    <title>${appTitle} -- Cast Your Vote</title>
   </head>
   <body>
     <h1>${election.name}</h1>
@@ -14,11 +14,18 @@
       <table border="1" cellpadding="1">
         <tr py:for="candidate in candidates">
           <td>${candidate.name} <small py:if="candidate.url"><a href="${candidate.url}">[info]</a></small></td>
-          <td><input type="text" name="${candidate.id}" value="" /></td>
+          <py:if test="nextaction=='vote'">
+            <td><select name="${candidate.id}">
+              <option py:for="option in range(0,len(candidates)+1)" value="$option">$option</option> 
+            </select></td>
+          </py:if>
+          <py:if test="nextaction=='confirm'">
+            <td><input type="hidden" name="${candidate.id}" value="${voteinfo[candidate.id]}" />${voteinfo[candidate.id]}</td>
+          </py:if>
         </tr>
         <tr>
-          <td></td>
-          <td><input type="submit" value="Submit" /></td>
+          <td><input py:if="nextaction=='confirm'" type="button" value="Go Back" onClick="javascript.history.back(1)" /></td>
+          <td><input type="submit" name="${nextaction}" value="Submit" /></td>
         </tr>
     </table>
     </form>

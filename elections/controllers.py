@@ -44,7 +44,7 @@ class Root(controllers.RootController):
     @expose(template="elections.templates.list")
     def index(self):
         electlist = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
-        return dict(elections=electlist, curtime=datetime.utcnow())
+        return dict(elections=electlist, curtime=datetime.utcnow(), appTitle=self.appTitle)
 
     @expose(template="elections.templates.about")
     def about(self,eid=None):
@@ -54,23 +54,36 @@ class Root(controllers.RootController):
         except ValueError:
             election = Elections.query.filter_by(shortname=eid).all()[0]
             eid = election.id
+        except TypeError:
+            turbogears.flash("This election does not exist, check if you have used the correct URL.")
+            raise turbogears.redirect("/")
+        except IndexError:
+            turbogears.flash("This election does not exist, check if you have used the correct URL.")
+            raise turbogears.redirect("/")
 
         votergroups = LegalVoters.query.filter_by(election_id=eid).all()
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
+        votergroups = LegalVoters.query.filter_by(election_id=eid).all()
 
         curtime = datetime.utcnow()
 
-        return dict(eid=eid, candidates=candidates, election=election, curtime=curtime)
+        return dict(eid=eid, candidates=candidates, election=election, curtime=curtime, votergroups=votergroups, appTitle=self.appTitle)
 
     @identity.require(identity.not_anonymous())
     @expose(template="elections.templates.ballot")
-    def ballot(self,eid=None):
+    def vote(self,eid=None, **kw):
         try:
             eid = int(eid)
             election = Elections.query.filter_by(id=eid).all()[0]
         except ValueError:
             election = Elections.query.filter_by(shortname=eid).all()[0]
             eid = election.id
+        except TypeError:
+            turbogears.flash("This election does not exist, check if you have used the correct URL.")
+            raise turbogears.redirect("/")
+        except IndexError:
+            turbogears.flash("This election does not exist, check if you have used the correct URL.")
+            raise turbogears.redirect("/")
 
         votergroups = LegalVoters.query.filter_by(election_id=eid).all()
 
@@ -81,54 +94,25 @@ class Root(controllers.RootController):
         if match == 0:
             turbogears.flash("You are not in a FAS group that can vote in this election, more information can be found here.")
             raise turbogears.redirect("/about/" + str(eid))
-
-        curtime = datetime.utcnow()
-        if election.end_date < curtime:
-            turbogears.flash("You cannot vote in this election because the end date has passed.  You have been redirected to the election results")
-            raise turbogears.redirect("/results/" + str(eid))
-        elif election.start_date > curtime:
-            election_started=False
-        else:
-            election_started=True
-        candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
-        return dict(eid=eid, candidates=candidates, election=election, election_started=election_started)
-
-    @identity.require(identity.not_anonymous())
-    @expose(template="elections.templates.confirm")
-    def vote(self, eid, **kw):
-        try:
-            election = Elections.query.filter_by(id=eid).all()[0]
-        except IndexError:
-            turbogears.flash("Sorry, that election does not exist")
-            raise turbogears.redirect("/")
-
-        votergroups = LegalVoters.query.filter_by(election_id=eid).all()
         
-        match = 0
-        for group in votergroups:
-            if identity.in_group(group.group_name):
-                match = 1
-        if match == 0:
-            turbogears.flash("You are not in a FAS group that can vote in this election, more information can be found here.")
-            raise turbogears.redirect("/about/" + str(election.name))
-
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
         uservote = UserVoteCount.query.filter_by(election_id=eid, voter=turbogears.identity.current.user_name).all()
+        uvotes = {}
+        next_action = ""
 
-        #Before we do *ANYTHING* check if voting hasn't begun/has ended
         curtime = datetime.utcnow()
         if election.start_date > curtime:
-            turbogears.flash("Voting has not yet begun.")
+            turbogears.flash("Voting as not yet started, sorry.")
             raise turbogears.redirect("/")
         elif election.end_date < curtime:
-            turbogears.flash("We are sorry, voting has now ended.")
-            raise turbogears.redirect("/")
+            turbogears.flash("You cannot vote in this election because the end date has passed.  You have been redirected to the election results")
+            raise turbogears.redirect("/results/" + election.shortname)
         elif len(uservote) != 0:
-            turbogears.flash("You've voted too many times!")
+            turbogears.flash("You have already voted in this election!")
             raise turbogears.redirect("/")
-
+        
+        # Lets do this in reverse order
         if "confirm" in kw:
-            uvotes = {}
             for c in candidates:
                 if str(c.id) in kw:
                     try:
@@ -143,31 +127,39 @@ class Root(controllers.RootController):
                         raise turbogears.redirect("/")
             for uvote in uvotes:
                 Votes(voter=turbogears.identity.current.user_name, candidate_id=uvote, weight=uvotes[uvote], election_id=eid)
-            turbogears.flash("Saved!")
-            raise turbogears.redirect("/")                
-        else:
+            turbogears.flash("You vote has been recorded, thank you!")
+            raise turbogears.redirect("/")
+        elif "vote" in kw:
             turbogears.flash("Please confirm your vote!")
-            uvotes = {}
             for c in candidates:
                 if str(c.id) in kw:
                     try:
                         range = int(kw[str(c.id)])
                         if range > len(candidates):
-                            turbogears.flash("One or more votes had incorrect data, please verify your ballot carefully!")
-                            uvotes[c.id] = len(candidates)
+                            turbogears.flash("Invalid data was detected for one or more candidates and was changed to zeros!  Please correct and resubmit your ballot.")
+                            uvotes[c.id] = 0
+                            next_action = "vote"
                         elif range >= 0:
                             uvotes[c.id] = range
                         else:
-                            turbogears.flash("One or more votes had incorrect data, please verify your ballot carefully!")
+                            turbogears.flash("Invalid data was detected for one or more candidates and was changed to zeros!  Please correct and resubmit your ballot.")
                             uvotes[c.id] = 0
+                            next_action = "vote"
                     except ValueError:
-                        turbogears.flash("Invalid data was detected and changed to zeros!")
+                        turbogears.flash("Invalid data was detected for one or more candidates and was changed to zeros!  Please correct and resubmit your ballot.")
                         uvotes[c.id] = 0
+                        next_action = "vote"
                 else:
                     turbogears.flash("Invalid Ballot!")
                     raise turbogears.redirect("/")
-                      
-            return dict(voteinfo=uvotes, candidates=candidates, election=election)
+            if next_action != "vote":
+                next_action = "confirm"
+        else:
+            for c in candidates:
+                uvotes[c.id] = ""
+            next_action = "vote"
+
+        return dict(eid=eid, candidates=candidates, election=election, nextaction=next_action, voteinfo=uvotes, appTitle=self.appTitle)
 
     @expose(template="elections.templates.results")
     def results(self,eid=None):
@@ -177,6 +169,13 @@ class Root(controllers.RootController):
         except ValueError:
             election = Elections.query.filter_by(shortname=eid).all()[0]
             eid = election.id
+        except TypeError:
+            turbogears.flash("This election does not exist, check if you have used the correct URL.")
+            raise turbogears.redirect("/")
+        except IndexError:
+            turbogears.flash("This election does not exist, check if you have used the correct URL.")
+            raise turbogears.redirect("/")
+
         curtime = datetime.utcnow()
         if election.public_results == 0 and election.end_date > curtime:
             turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election is still in progress.")
@@ -185,7 +184,7 @@ class Root(controllers.RootController):
             turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election has not started.")
             raise turbogears.redirect("/")
         votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()
-        return dict(votecount=votecount, election=election)
+        return dict(votecount=votecount, election=election, appTitle=self.appTitle)
 
     @expose(template="elections.templates.login", allow_json=True)
     def login(self, forward_url=None, previous_url=None, *args, **kw):
@@ -216,7 +215,7 @@ class Root(controllers.RootController):
         response.status=403
         return dict(message=msg, previous_url=previous_url, logging_in=True,
                     original_parameters=request.params,
-                    forward_url=forward_url, title='Fedora Account System Login')
+                    forward_url=forward_url, title=self.appTitle + ' -- Fedora Account System Login')
 
     @expose()
     def logout(self):
