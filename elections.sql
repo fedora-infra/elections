@@ -23,8 +23,8 @@ primary key (id)
 create table legalVoters (
 election_id integer not null,
 group_name text not null,
-foreign key (election_id) references elections (id),
-primary key (election_id)
+foreign key (election_id) references elections (id)
+-- primary key (election_id)
 );
 
 create table candidates (
