@@ -215,7 +215,7 @@ class Root(controllers.RootController):
         response.status=403
         return dict(message=msg, previous_url=previous_url, logging_in=True,
                     original_parameters=request.params,
-                    forward_url=forward_url, title=self.appTitle + ' -- Fedora Account System Login')
+                    forward_url=forward_url, appTitle=self.appTitle + ' -- Fedora Account System Login')
 
     @expose()
     def logout(self):
