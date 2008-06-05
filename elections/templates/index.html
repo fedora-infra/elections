@@ -7,10 +7,21 @@
     <title>${appTitle}</title>
   </head>
   <body>
-    <ul>
-<!-- !Maybe change this link depending if they are logged in or not -->
-      <li py:for="election in elections"><a href="${tg.url('/about/' + election.shortname)}">${election.name}</a></li>
-<!-- !Would be nice features also include voting dates -->
-    </ul>
+    <table>
+      <tr>
+        <th></th>
+        <th>Start Date (UTC)</th>
+        <th>End Date (UTC)</th>
+        <th></th>
+        <th></th>
+      </tr>
+      <tr py:for="election in elections">
+        <td>${election.name}</td>
+        <td>${election.start_date}</td>
+        <td>${election.end_date}</td>
+        <td><a href="${tg.url('/about/' + str(election.shortname))}">More Information</a></td>
+        <td><a py:if="election.public_results or curtime > election.end_date" href="${tg.url('/results/' + str(election.shortname))}">Results</a></td>
+      </tr>
+    </table>
   </body>
 </html>
