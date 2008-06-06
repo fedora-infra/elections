@@ -52,11 +52,12 @@ class Root(controllers.RootController):
             eid = int(eid)
             election = Elections.query.filter_by(id=eid).all()[0]
         except ValueError:
-            election = Elections.query.filter_by(shortname=eid).all()[0]
-            eid = election.id
-        except TypeError:
-            turbogears.flash("This election does not exist, check if you have used the correct URL.")
-            raise turbogears.redirect("/")
+            try:
+                election = Elections.query.filter_by(shortname=eid).all()[0]
+                eid = election.id
+            except IndexError:
+                turbogears.flash("This election does not exist, check if you have used the correct URL.")
+                raise turbogears.redirect("/")
         except IndexError:
             turbogears.flash("This election does not exist, check if you have used the correct URL.")
             raise turbogears.redirect("/")
@@ -76,11 +77,12 @@ class Root(controllers.RootController):
             eid = int(eid)
             election = Elections.query.filter_by(id=eid).all()[0]
         except ValueError:
-            election = Elections.query.filter_by(shortname=eid).all()[0]
-            eid = election.id
-        except TypeError:
-            turbogears.flash("This election does not exist, check if you have used the correct URL.")
-            raise turbogears.redirect("/")
+            try:
+                election = Elections.query.filter_by(shortname=eid).all()[0]
+                eid = election.id
+            except IndexError:
+                turbogears.flash("This election does not exist, check if you have used the correct URL.")
+                raise turbogears.redirect("/")
         except IndexError:
             turbogears.flash("This election does not exist, check if you have used the correct URL.")
             raise turbogears.redirect("/")
@@ -89,7 +91,7 @@ class Root(controllers.RootController):
 
         match = 0
         for group in votergroups:
-            if identity.in_group(group.group_name):
+            if identity.in_group(group.group_name) or group.group_name == "anyany":
                 match = 1
         if match == 0:
             turbogears.flash("You are not in a FAS group that can vote in this election, more information can be found here.")
@@ -126,7 +128,7 @@ class Root(controllers.RootController):
                         turbogears.flash("Invalid Ballot!")
                         raise turbogears.redirect("/")
             for uvote in uvotes:
-                Votes(voter=turbogears.identity.current.user_name, candidate_id=uvote, weight=uvotes[uvote], election_id=eid)
+                Votes(voter=turbogears.identity.current.user_name, candidate_id=uvote, weight=uvotes[uvote], election_id=eid, timestamp=curtime)
             turbogears.flash("You vote has been recorded, thank you!")
             raise turbogears.redirect("/")
         elif "vote" in kw:
@@ -167,11 +169,12 @@ class Root(controllers.RootController):
             eid = int(eid)
             election = Elections.query.filter_by(id=eid).all()[0]
         except ValueError:
-            election = Elections.query.filter_by(shortname=eid).all()[0]
-            eid = election.id
-        except TypeError:
-            turbogears.flash("This election does not exist, check if you have used the correct URL.")
-            raise turbogears.redirect("/")
+            try:
+                election = Elections.query.filter_by(shortname=eid).all()[0]
+                eid = election.id
+            except IndexError:
+                turbogears.flash("This election does not exist, check if you have used the correct URL.")
+                raise turbogears.redirect("/")
         except IndexError:
             turbogears.flash("This election does not exist, check if you have used the correct URL.")
             raise turbogears.redirect("/")
