@@ -10,6 +10,7 @@
     <h1>${election.name}</h1>
     <p>${election.info}</p>
     <p py:if="election.url"><a href="${election.url}">[More Information]</a></p>
+    <div>
     <form action="${tg.url('/vote/' + str(election.id))}" method="post">
       <table border="1" cellpadding="1">
         <tr py:for="candidate in candidates">
@@ -24,10 +25,18 @@
           </py:if>
         </tr>
         <tr>
-          <td><input py:if="nextaction=='confirm'" type="button" value="Go Back" onClick="javascript.history.back(1)" /></td>
+          <td><input py:if="nextaction=='confirm'" type="button" value="Go Back" onClick="history.go(-1)" /></td>
           <td><input type="submit" name="${nextaction}" value="Submit" /></td>
         </tr>
     </table>
     </form>
+    </div>
+    <div>
+      <h2>Information on Range Voting</h2>
+      <p>Fedora Project has implemented <a href="http://rangevoting.org/">Range Voting</a> for this election, in particular the "Range (score-summing, blanks treated as zero score, no quorum rule)" range voting system.</p>
+      <p>To cast your vote in this election simply select a value between 0 and ${len(candidates)} with 0 as 'least or no preference' and ${len(candidates)} as 'highest preference'.</p>
+      <p>At the end of the election, the highest ranking candidate(s) will be marked as the winners.</p>
+      <p>For more information about Range Voting, visit the <a href="http://rangevoting.org/">Center for Range Voting</a>.</p>
+    </div>
   </body>
 </html>

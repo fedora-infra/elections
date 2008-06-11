@@ -27,11 +27,7 @@ get_engine()
 ElectionsTable = Table('elections', metadata, autoload=True)
 VotesTable = Table('votes', metadata, autoload=True)
 CandidatesTable = Table('candidates', metadata, autoload=True)
-LegalVotersTable = Table('legalvoters', metadata, 
-    Column('election_id', Integer,
-            ForeignKey('elections.id'), primary_key=True),
-    Column('group_name', String, nullable=False)
-)
+LegalVotersTable = Table('legalvoters', metadata, autoload=True)
 
 # View in the DB.  Needs to have the column keys defined
 VoteTallyTable = Table('votecount', metadata,

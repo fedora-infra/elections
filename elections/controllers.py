@@ -64,7 +64,6 @@ class Root(controllers.RootController):
 
         votergroups = LegalVoters.query.filter_by(election_id=eid).all()
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
-        votergroups = LegalVoters.query.filter_by(election_id=eid).all()
 
         curtime = datetime.utcnow()
 
