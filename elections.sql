@@ -24,7 +24,7 @@ create table legalVoters (
 id serial,
 election_id integer not null,
 group_name text not null,
-foreign key (election_id) references elections (id)
+foreign key (election_id) references elections (id),
 primary key (id)
 );
 
@@ -42,6 +42,7 @@ create table votes (
 id serial,
 -- voter_id will refer to someones fas ID
 voter text not null,
+"timestamp" timestamp without time zone DEFAULT '2008-01-01 00:00:00'::timestamp without time zone NOT NULL
 candidate_id integer not null,
 weight integer not null,
 election_id integer not null,
