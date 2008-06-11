@@ -2,14 +2,14 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           fedora-elections
-Version:        0.0.5
-Release:        2%{?dist}
+Version:        0.1.0
+Release:        1%{?dist}
 Summary:        Elections Application for Fedora Project
 
 Group:          Development/Languages
 License:        GPLv2
 URL:            http://www.fedorahosted.org/elections
-Source0:        elections-0.0.5.tar.gz
+Source0:        elections-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -52,7 +52,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Fri May 23 2008 Nigel Jones <dev@nigelj.com> - 0.0.5-2
-- Bug Fixes
+* Wed Jun 11 2008 Nigel Jones <dev@nigelj.com> - 0.1.0-1
+- Ready for initial deployment
+
+* Fri Jun 6 2008 Nigel Jones <dev@nigelj.com> - 0.0.9-1
+- Bump
+
 * Thu May 22 2008 Nigel Jones <dev@nigelj.com> - 0.0.5-1
 - Initial RPM - Ready to go!

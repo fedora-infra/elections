@@ -21,10 +21,11 @@ primary key (id)
 );
 
 create table legalVoters (
+id serial,
 election_id integer not null,
 group_name text not null,
 foreign key (election_id) references elections (id)
--- primary key (election_id)
+primary key (id)
 );
 
 create table candidates (

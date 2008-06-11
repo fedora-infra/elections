@@ -20,7 +20,7 @@
       </table>
     <p>To vote in this election you must be a member of any one of the following groups:</p>
     <ul>
-      <li py:for="g in votergroups">${g.group_name}</li>
+      <li py:for="g in votergroups"><py:choose test="g.group_name == 'anyany'"><py:when test="0">${g.group_name}</py:when><py:when test="1">Any Group</py:when></py:choose></li>
     </ul>
   </body>
 </html>
