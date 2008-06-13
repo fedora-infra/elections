@@ -128,7 +128,7 @@ class Root(controllers.RootController):
                         raise turbogears.redirect("/")
             for uvote in uvotes:
                 Votes(voter=turbogears.identity.current.user_name, candidate_id=uvote, weight=uvotes[uvote], election_id=eid, timestamp=curtime)
-            turbogears.flash("You vote has been recorded, thank you!")
+            turbogears.flash("Your vote has been recorded, thank you!")
             raise turbogears.redirect("/")
         elif "vote" in kw:
             turbogears.flash("Please confirm your vote!")
