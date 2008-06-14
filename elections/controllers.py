@@ -93,7 +93,7 @@ class Root(controllers.RootController):
             if identity.in_group(group.group_name) or group.group_name == "anyany":
                 match = 1
         if match == 0:
-            turbogears.flash("You are not in a FAS group that can vote in this election, more information can be found here.")
+            turbogears.flash("You are not in a FAS group that can vote in this election, more information can be found at the bottom of this page.")
             raise turbogears.redirect("/about/" + str(eid))
         
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
@@ -186,7 +186,7 @@ class Root(controllers.RootController):
             turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election has not started.")
             raise turbogears.redirect("/")
         elif election.public_results == 0:
-            turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the results are currently embargoed pending formal announcement.")
+            turbogears.flash("We are sorry, the results for this election cannot be viewed because they are currently embargoed pending formal announcement.")
             raise turbogears.redirect("/")
         votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()
         return dict(votecount=votecount, election=election, appTitle=self.appTitle)
