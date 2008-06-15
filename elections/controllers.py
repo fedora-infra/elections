@@ -212,7 +212,7 @@ class Root(controllers.RootController):
         if identity.was_login_attempted():
             msg="The credentials you supplied were not correct or did not grant access to this resource."
         elif identity.get_identity_errors():
-            msg="You must provide your credentials before accessing his resource."
+            msg="You must provide your credentials before accessing this resource."
         else:
             msg="Please log in."
             forward_url= request.headers.get("Referer", "/")
