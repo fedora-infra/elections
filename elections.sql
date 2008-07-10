@@ -33,7 +33,7 @@ id serial,
 election_id integer not null,
 name text not null,
 formalname text,
-url text not null,
+url text,
 foreign key (election_id) references elections (id),
 unique(id),
 primary key (id, election_id)

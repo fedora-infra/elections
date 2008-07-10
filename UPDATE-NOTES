@@ -3,4 +3,4 @@ Schema Changes for 0.1.5:
 * Default value for votes.timestamp should be removed
 * Column 'candidates.formalname' type text w/ null values to be added
 * View fvotecount to be added
-* 
+* Column 'candidates.url' to allow 'null' entries
