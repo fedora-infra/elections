@@ -10,8 +10,8 @@
   <form action="${tg.url('/admin/newc')}" method="post">
     <table>
       <tr><td>Election Id (Numerical):</td><td><input type="text" name="id" /></td></tr>
-      <tr><td>Candidate Name:</td><td><input type="text" name="name" /></td></tr>
-      <tr><td>URL:</td><td><input type="text" name="url" /></td></tr>
+      <tr><td>The string below needs to be formatted as: "Name1!URL1 (opt)|Name2!URL2 (opt)|Name3!URL3 (opt)"</td></tr>
+      <tr><td>Candidate Name/URL String:</td><td><input type="text" name="nameurl" /></td></tr>
       <tr><td></td><td><input type="submit" name="submit" value="Submit" /></td></tr>
     </table>
   </form>

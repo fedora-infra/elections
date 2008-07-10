@@ -62,9 +62,20 @@ class Admin(controllers.Controller):
     @expose(template="elections.templates.admnewc")
     def newc(self, **kw):        
         if "submit" in kw:
-            c = Candidates(election_id=kw['id'],name=kw['name'],url=kw['url'])
-            session.flush()
-            Votes(voter='-1', candidate_id=c.id, weight=0, election_id=kw['id'])
+            for entry in kw['nameurl'].split("|"):
+                candidate = entry.split("!")
+                #Python doesn't have a good way of doing case/switch statements
+                if len(candidate) == 1:
+                    Candidates(election_id=kw['id'],name=candidate[0])
+                elif len(candidate) == 2:
+                    Candidates(election_id=kw['id'],name=candidate[0],formalname=candidate[1])
+                elif len(candidate) == 3:
+                    if candidate[1] == '':
+                        Candidates(election_id=kw['id'],name=candidate[0],url=candidate[2])
+                    else:
+                        Candidates(election_id=kw['id'],name=candidate[0],formalname=candidate[1],url=candidate[2])
+                else:
+                    turbogears.flash("There was an issue!")
             raise turbogears.redirect("/admin/newc")
         else:
             return dict()

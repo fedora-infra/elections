@@ -35,7 +35,7 @@ VoteTallyTable = Table('fvotecount', metadata,
             ForeignKey('candidates.id'), primary_key=True),
     Column('election_id', Integer),
     Column('name', String, nullable=False),
-    Column('novotes', Interger, nullable=False)
+    Column('novotes', Integer, nullable=False)
 )
 UserVoteCountTable = Table('uservotes', metadata,
     Column('election_id', Integer, primary_key=True),
