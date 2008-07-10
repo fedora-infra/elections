@@ -32,6 +32,7 @@ create table candidates (
 id serial,
 election_id integer not null,
 name text not null,
+formalname text,
 url text not null,
 foreign key (election_id) references elections (id),
 unique(id),
@@ -42,7 +43,7 @@ create table votes (
 id serial,
 -- voter_id will refer to someones fas ID
 voter text not null,
-"timestamp" timestamp without time zone DEFAULT '2008-01-01 00:00:00'::timestamp without time zone NOT NULL,
+"timestamp" timestamp without time zone NOT NULL,
 candidate_id integer not null,
 weight integer not null,
 election_id integer not null,
@@ -53,6 +54,8 @@ primary key (id)
 );
 
 create view votecount as select candidate_id, election_id, sum(weight) as novotes from votes group by candidate_id, election_id order by novotes desc;
+
+create view fvotecount as select c.id, c.name, v.election_id, v.novotes from votecount v, candidates c where c.id = v.candidate_id order by novotesdesc;
 
 create view uservotes as select election_id, voter, count(voter) as novotes from
 votes group by election_id, voter;

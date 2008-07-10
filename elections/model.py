@@ -30,11 +30,12 @@ CandidatesTable = Table('candidates', metadata, autoload=True)
 LegalVotersTable = Table('legalvoters', metadata, autoload=True)
 
 # View in the DB.  Needs to have the column keys defined
-VoteTallyTable = Table('votecount', metadata,
-    Column('candidate_id', Integer,
+VoteTallyTable = Table('fvotecount', metadata,
+    Column('id', Integer,
             ForeignKey('candidates.id'), primary_key=True),
-    Column('election_id', Integer, primary_key=True),
-    Column('novotes', Integer, nullable=False)
+    Column('election_id', Integer),
+    Column('name', String, nullable=False),
+    Column('novotes', Interger, nullable=False)
 )
 UserVoteCountTable = Table('uservotes', metadata,
     Column('election_id', Integer, primary_key=True),
