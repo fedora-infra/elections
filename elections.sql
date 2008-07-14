@@ -56,7 +56,7 @@ primary key (id)
 
 create view votecount as select candidate_id, election_id, sum(weight) as novotes from votes group by candidate_id, election_id order by novotes desc;
 
-create view fvotecount as select c.id, c.name, v.election_id, v.novotes from votecount v, candidates c where c.id = v.candidate_id order by novotesdesc;
+create view fvotecount as select c.id, c.name, v.election_id, v.novotes from votecount v, candidates c where c.id = v.candidate_id order by novotes desc;
 
 create view uservotes as select election_id, voter, count(voter) as novotes from
 votes group by election_id, voter;
