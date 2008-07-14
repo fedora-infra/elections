@@ -24,7 +24,7 @@
 
 # Release information about elections
 
-version = "0.1.0"
+version = "0.1.5"
 
 description = "Elections Application for Fedora Project"
 # long_description = "More description about your plan"

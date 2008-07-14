@@ -2,8 +2,8 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           fedora-elections
-Version:        0.1.0
-Release:        5%{?dist}
+Version:        0.1.5
+Release:        1%{?dist}
 Summary:        Elections Application for Fedora Project
 
 Group:          Development/Languages
@@ -52,6 +52,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jul 14 2008 Nigel Jones <dev@nigelj.com> - 0.1.5-1
+- Bump, some minor improvements etc etc, mainly geared towards FESCo election
+
 * Sat Jun 13 2008 Nigel Jones <dev@nigelj.com> - 0.1.0-5
 - Strings bump
 
