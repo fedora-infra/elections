@@ -36,6 +36,7 @@ from elections.admin import Admin
 import sqlalchemy
 
 from datetime import datetime
+import re
 
 class Root(controllers.RootController):
     appTitle = 'Fedora Elections'
@@ -87,10 +88,14 @@ class Root(controllers.RootController):
             raise turbogears.redirect("/")
 
         votergroups = LegalVoters.query.filter_by(election_id=eid).all()
+	foo = identity.current.groups
 
         match = 0
         for group in votergroups:
-            if identity.in_group(group.group_name) or group.group_name == "anyany":
+            if group.group_name == "anycla":
+                if len(identity.current.groups) > len([g for g in identity.current.groups if re.match("cla_.*",g)]):
+                    match = 1
+            elif identity.in_group(group.group_name) or group.group_name == "anyany":
                 match = 1
         if match == 0:
             turbogears.flash("You are not in a FAS group that can vote in this election, more information can be found at the bottom of this page.")
