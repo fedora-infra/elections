@@ -1,3 +1,4 @@
 dev.cfg
 *.pyc
 *~
+elections.egg-info
