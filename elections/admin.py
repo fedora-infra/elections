@@ -51,9 +51,11 @@ class Admin(controllers.Controller):
         if "submit" in kw:
             if "public_results" not in kw:
                 pubresults=0
+		embargoed=1
             else:
                 pubresults=1
-            Elections(shortname=kw['shortname'],name=kw['name'],info=kw['info'],url=kw['url'],start_date=kw['startdate'],end_date=kw['enddate'],max_seats=int(kw['max_seats']),votes_per_user=1,public_results=pubresults)
+		embargoedres=0
+            Elections(shortname=kw['shortname'],name=kw['name'],info=kw['info'],url=kw['url'],start_date=kw['startdate'],end_date=kw['enddate'],max_seats=int(kw['max_seats']),votes_per_user=1,public_results=pubresults,embargoed=embargoedres)
             raise turbogears.redirect("/")
         else:
             return dict()

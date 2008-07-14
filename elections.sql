@@ -16,6 +16,7 @@ max_seats integer not null,
 votes_per_user integer not null,
 -- NEW COL - Show results during a running election
 public_results integer not null,
+embargoed integer not null,
 unique(shortname),
 primary key (id)
 );
