@@ -3,7 +3,7 @@
 
 Name:           fedora-elections
 Version:        0.1.0
-Release:        1%{?dist}
+Release:        5%{?dist}
 Summary:        Elections Application for Fedora Project
 
 Group:          Development/Languages
@@ -52,6 +52,18 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Jun 13 2008 Nigel Jones <dev@nigelj.com> - 0.1.0-5
+- Strings bump
+
+* Fri Jun 13 2008 Nigel Jones <dev@nigelj.com> - 0.1.0-4
+- Template bump
+
+* Thu Jun 12 2008 Nigel Jones <dev@nigelj.com> - 0.1.0-3
+- Another bump
+
+* Thu Jun 12 2008 Nigel Jones <dev@nigelj.com> - 0.1.0-2
+- Bump
+
 * Wed Jun 11 2008 Nigel Jones <dev@nigelj.com> - 0.1.0-1
 - Ready for initial deployment
 
