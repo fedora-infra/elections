@@ -51,7 +51,7 @@ class Admin(controllers.Controller):
         if "submit" in kw:
             if "public_results" not in kw:
                 pubresults=0
-		embargoed=1
+		embargoedres=1
             else:
                 pubresults=1
 		embargoedres=0
