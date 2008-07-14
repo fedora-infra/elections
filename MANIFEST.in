@@ -1,2 +1,6 @@
-include COPYING UPDATE-NOTES
+include COPYING UPDATE-NOTES elections.cfg start-elections.py fedora-elections.spec sample-prod.cfg elections.sql
+include elections/config/*
+include elections/templates/*.html
+include elections/static/css/*.css
+include elections/static/images/*.png
 include examples/*
