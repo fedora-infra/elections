@@ -190,7 +190,7 @@ class Root(controllers.RootController):
         elif election.start_date > curtime:
             turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election has not started.")
             raise turbogears.redirect("/")
-        elif election.public_results == 0:
+        elif election.public_results == 0 and election.embargoed == 1:
             turbogears.flash("We are sorry, the results for this election cannot be viewed because they are currently embargoed pending formal announcement.")
             raise turbogears.redirect("/")
         votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()
