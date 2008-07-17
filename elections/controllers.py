@@ -93,7 +93,7 @@ class Root(controllers.RootController):
         match = 0
         for group in votergroups:
             if group.group_name == "anycla":
-                if len(identity.current.groups) > len([g for g in identity.current.groups if re.match("cla_.*",g)]):
+                if (len(identity.current.groups) > len([g for g in identity.current.groups if re.match("cla_.*",g)])) and identity.in_group("cla_done"):
                     match = 1
             elif identity.in_group(group.group_name) or group.group_name == "anyany":
                 match = 1
