@@ -1,3 +1,19 @@
+<?python
+    def gradient(nocands, voteweight):
+        weightpercent = ((voteweight*100)/nocands)
+        if weightpercent >=90:
+            return "vthot"
+        elif weightpercent >= 70:
+            return "vtwarm"
+        elif weightpercent >= 50:
+            return "vtmedwarm"
+        elif weightpercent >= 30:
+            return "vtmedcool"
+        elif weightpercent >= 10:
+            return "vtcool"
+        else:
+            return "vtcold"
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:py="http://genshi.edgewall.org/"
@@ -21,7 +37,7 @@
             </select></td>
           </py:if>
           <py:if test="nextaction=='confirm'">
-            <td><input type="hidden" name="${candidate.id}" value="${voteinfo[candidate.id]}" />${voteinfo[candidate.id]}</td>
+            <td><input type="hidden" name="${candidate.id}" value="${voteinfo[candidate.id]}" /><div class="${gradient(len(candidates),voteinfo[candidate.id])}">${voteinfo[candidate.id]}</div></td>
           </py:if>
         </tr>
         <tr>
