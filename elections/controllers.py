@@ -28,7 +28,7 @@ from turbogears import identity
 from turbogears.database import session
 from cherrypy import request, response
 
-from fedora.accounts.fas2 import AccountSystem
+from fedora.client.fas2 import AccountSystem
 from elections import model
 from elections.model import *
 from elections.admin import Admin
