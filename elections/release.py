@@ -24,15 +24,15 @@
 
 # Release information about elections
 
-version = "0.1.5"
+version = "0.1.9"
 
 description = "Elections Application for Fedora Project"
 # long_description = "More description about your plan"
 author = "Nigel Jones, Toshio Kuratomi, Ricky Zhou, Luca Foppiano"
-email = "svnelections-members@fedoraproject.org"
+email = "gitelections-members@fedoraproject.org"
 copyright = "Nigel Jones, Toshio Kuratomi, Ricky Zhou, Luca Foppiano - 2008"
 
 # if it's open source, you might want to specify these
-url = "http://www.fedorahosted.org/elections"
+url = "http://fedorahosted.org/elections"
 # download_url = "http://yourcool.site/download"
 license = "GPLv2"
