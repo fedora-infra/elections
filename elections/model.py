@@ -67,17 +67,15 @@ class UserVoteCount(SABase):
 # set up mappers between tables and classes
 #
 
-mapper(Elections, ElectionsTable)
-mapper(Votes, VotesTable, properties = {
-    'candidate': relation(Candidates, backref='votes')
+mapper(Elections, ElectionsTable, properties = {
+    'legalVoters': relation(LegalVoters, backref='election'),
+    'candidates': relation(Candidates, backref='election')
     })
+mapper(Votes, VotesTable)
 mapper(Candidates, CandidatesTable, properties = {
-    'election': relation(Elections, backref='candidates')
+    'votes': relation(Votes, backref='candidate'),
+    'tally': relation(VoteTally, backref='candidate')
     })
-mapper(LegalVoters, LegalVotersTable, properties = {
-    'election': relation(Elections, backref='legalVoters')
-    })
-mapper(VoteTally, VoteTallyTable, properties = {
-    'candidate': relation(Candidates, backref='tally')
-    })
+mapper(LegalVoters, LegalVotersTable)
+mapper(VoteTally, VoteTallyTable)
 mapper(UserVoteCount, UserVoteCountTable)
