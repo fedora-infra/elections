@@ -7,8 +7,8 @@
     <title>${appTitle} -- Election Information</title>
   </head>
   <body>
-    <h1>${election.name}</h1>
-    <p>${election.info}</p>
+    <h1>${election.shortdesc}</h1>
+    <p>${election.description}</p>
     <p py:if="election.url"><a href="${election.url}">[More Information]</a></p>
       <table border="1" cellpadding="1">
         <tr py:for="candidate in candidates">
@@ -16,7 +16,7 @@
         </tr>
 <!-- !This link is okay, but one should appear if the election has public results -->
         <tr>
-          <td><a href="${tg.url('/vote/' + election.shortname)}">Vote Now!</a></td>
+          <td><a href="${tg.url('/vote/' + election.alias)}">Vote Now!</a></td>
         </tr>
       </table>
     <p>To vote in this election you must be a member of any one of the following groups:</p>

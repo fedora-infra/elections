@@ -58,7 +58,7 @@ class Root(controllers.RootController):
             election = Elections.query.filter_by(id=eid).all()[0]
         except ValueError:
             try:
-                election = Elections.query.filter_by(shortname=eid).all()[0]
+                election = Elections.query.filter_by(alias=eid).all()[0]
                 eid = election.id
             except IndexError:
                 turbogears.flash("This election does not exist, check if you have used the correct URL.")
