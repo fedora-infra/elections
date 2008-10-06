@@ -71,14 +71,9 @@ class Admin(controllers.Controller):
                 candidate = entry.split("!")
                 #Python doesn't have a good way of doing case/switch statements
                 if len(candidate) == 1:
-                    Candidates(election_id=kw['id'],name=candidate[0])
+                    Candidates(election_id=kw['id'],name=candidate[0], status=0, human=1)
                 elif len(candidate) == 2:
-                    Candidates(election_id=kw['id'],name=candidate[0],formalname=candidate[1])
-                elif len(candidate) == 3:
-                    if candidate[1] == '':
-                        Candidates(election_id=kw['id'],name=candidate[0],url=candidate[2])
-                    else:
-                        Candidates(election_id=kw['id'],name=candidate[0],formalname=candidate[1],url=candidate[2])
+                    Candidates(election_id=kw['id'],name=candidate[0],url=candidate[1], status=0, human=1)
                 else:
                     turbogears.flash("There was an issue!")
             raise turbogears.redirect("/admin/newc")
