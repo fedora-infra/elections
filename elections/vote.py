@@ -41,7 +41,7 @@ class Vote(controllers.Controller):
 
     @identity.require(identity.not_anonymous())
     @expose(template="elections.templates.vote")
-    def index(self, eid=None, **kw):
+    def default(self, eid=None, **kw):
         try:
             eid = int(eid)
             election = Elections.query.filter_by(id=eid).all()[0]
