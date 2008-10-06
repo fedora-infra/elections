@@ -23,22 +23,25 @@
 # Report Bugs to https://www.fedorahosted.org/elections
 
 
-# Admin functions go here (i.e. add/delete elections)
+# Voting functions
 
 import turbogears
 from turbogears import controllers, expose, flash, redirect, config
 from turbogears import identity
 from elections import model
-from elections.model import *
+from elections.model import Elections, LegalVoters, Candidates, Votes, UserVoteCount
 
 import sqlalchemy
 
 from turbogears.database import session
 
+from datetime import datetime
+
 class Vote(controllers.Controller):
     def __init__(self, appTitle):
         self.appTitle = appTitle
 
+    #TODO: This function will be split off into: default => submit => confirm functions, hopefully it was simplify everything
     @identity.require(identity.not_anonymous())
     @expose(template="elections.templates.vote")
     def default(self, eid=None, **kw):
@@ -47,7 +50,7 @@ class Vote(controllers.Controller):
             election = Elections.query.filter_by(id=eid).all()[0]
         except ValueError:
             try:
-                election = Elections.query.filter_by(shortname=eid).all()[0]
+                election = Elections.query.filter_by(alias=eid).all()[0]
                 eid = election.id
             except IndexError:
                 turbogears.flash("This election does not exist, check if you have used the correct URL.")

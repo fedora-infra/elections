@@ -23,8 +23,8 @@
     <title>${appTitle} -- Cast Your Vote</title>
   </head>
   <body>
-    <h1>${election.name}</h1>
-    <p>${election.info}</p>
+    <h1>${election.shortdesc}</h1>
+    <p>${election.description}</p>
     <p py:if="election.url"><a href="${election.url}">[More Information]</a></p>
     <div>
     <form action="${tg.url('/vote/' + str(election.id))}" method="post">
