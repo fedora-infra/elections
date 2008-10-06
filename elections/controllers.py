@@ -81,7 +81,7 @@ class Root(controllers.RootController):
             election = Elections.query.filter_by(id=eid).all()[0]
         except ValueError:
             try:
-                election = Elections.query.filter_by(shortname=eid).all()[0]
+                election = Elections.query.filter_by(alias=eid).all()[0]
                 eid = election.id
             except IndexError:
                 turbogears.flash("This election does not exist, check if you have used the correct URL.")
@@ -91,13 +91,13 @@ class Root(controllers.RootController):
             raise turbogears.redirect("/")
 
         curtime = datetime.utcnow()
-        if election.public_results == 0 and election.end_date > curtime:
+        if election.end_date > curtime:
             turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election is still in progress.")
             raise turbogears.redirect("/")
         elif election.start_date > curtime:
             turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election has not started.")
             raise turbogears.redirect("/")
-        elif election.public_results == 0 and election.embargoed == 1:
+        elif election.embargoed == 1:
             turbogears.flash("We are sorry, the results for this election cannot be viewed because they are currently embargoed pending formal announcement.")
             raise turbogears.redirect("/")
         votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()

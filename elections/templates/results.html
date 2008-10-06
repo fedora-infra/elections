@@ -7,8 +7,8 @@
     <title>${appTitle}</title>
   </head>
   <body>
-    <h1>${election.name} Results</h1>
-    <p>${election.info}</p>
+    <h1>${election.shortdesc} Results</h1>
+    <p>${election.description}</p>
     <p py:if="election.url"><a href="${election.url}">[More Information]</a></p>
     <table border="1" cellpadding="1">
       <tr py:for="candcount in votecount">
