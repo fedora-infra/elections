@@ -14,17 +14,21 @@ alias varchar(50) NOT NULL,
 status tinyint NOT NULL,
 -- Numerical value, specifying what voting method is used
 method tinyint NOT NULL,
+
 shortdesc text NOT NULL,
 description text NOT NULL,
-url text NOT NULL,
+
+url text,
 start_date timestamp NOT NULL,
 end_date timestamp NOT NULL,
--- Show results during a running election
-public_results boolean NOT NULL,
+-- Are results currently embargoed?
+embargoed boolean NOT NULL,
+-- Number of seats elected
+seats_elected integer NOT NULL,
 -- Does this election support nominations?
 allow_nominations boolean NOT NULL,
 -- If so, when do they have to be in by?
-nomination_end timestamp NOT NULL,
+nomination_end timestamp,
 
 UNIQUE (alias),
 PRIMARY KEY (id)

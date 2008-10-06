@@ -49,13 +49,16 @@ class Admin(controllers.Controller):
     @expose(template="elections.templates.admnewe")
     def newe(self, **kw):        
         if "submit" in kw:
-            if "public_results" not in kw:
-                pubresults=0
-		embargoedres=1
+            if "embargoed" not in kw:
+                setembargo=0
             else:
-                pubresults=1
-		embargoedres=0
-            Elections(shortname=kw['shortname'],name=kw['name'],info=kw['info'],url=kw['url'],start_date=kw['startdate'],end_date=kw['enddate'],max_seats=int(kw['max_seats']),votes_per_user=1,public_results=pubresults,embargoed=embargoedres)
+		setembargo=1
+
+            if "allownominations" not in kw:
+                setnominations=0
+            else:
+                setnominations=1
+            Elections(alias=kw['alias'], status=0, method=0, shortdesc=kw['shortdesc'], description=kw['info'], url=kw['url'], start_date=kw['startdate'], end_date=kw['enddate'], embargoed=setembargo, seats_elected=kw['seats'], allow_nominations=setnominations, nomination_end=kw['nominationend'])
             raise turbogears.redirect("/")
         else:
             return dict()

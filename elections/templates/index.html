@@ -16,11 +16,11 @@
         <th></th>
       </tr>
       <tr py:for="election in elections">
-        <td>${election.name}</td>
+        <td>${election.shortdesc}</td>
         <td>${election.start_date}</td>
         <td>${election.end_date}</td>
-        <td><a href="${tg.url('/about/' + str(election.shortname))}">More Information</a></td>
-        <td><a py:if="election.public_results or curtime > election.end_date" href="${tg.url('/results/' + str(election.shortname))}">Results</a></td>
+        <td><a href="${tg.url('/about/' + str(election.alias))}">More Information</a></td>
+        <td><a py:if="curtime > election.end_date" href="${tg.url('/results/' + str(election.alias))}">Results</a></td>
       </tr>
     </table>
   </body>
