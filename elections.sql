@@ -19,8 +19,8 @@ shortdesc text NOT NULL,
 description text NOT NULL,
 
 url text,
-start_date timestamp NOT NULL,
-end_date timestamp NOT NULL,
+start_date timestamp DEFAULT 0 NOT NULL,
+end_date timestamp DEFAULT 0 NOT NULL,
 -- Are results currently embargoed?
 embargoed boolean NOT NULL,
 -- Number of seats elected
@@ -28,7 +28,7 @@ seats_elected integer NOT NULL,
 -- Does this election support nominations?
 allow_nominations boolean NOT NULL,
 -- If so, when do they have to be in by?
-nomination_end timestamp,
+nomination_end timestamp DEFAULT 0,
 
 UNIQUE (alias),
 PRIMARY KEY (id)
