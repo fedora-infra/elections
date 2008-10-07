@@ -38,7 +38,8 @@ from turbogears.database import session
 from datetime import datetime
 
 class Vote(controllers.Controller):
-    def __init__(self, appTitle):
+    def __init__(self, fas, appTitle):
+        self.fas = fas
         self.appTitle = appTitle
 
     #TODO: This function will be split off into: default => submit => confirm functions, hopefully it was simplify everything

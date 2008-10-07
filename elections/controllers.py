@@ -42,8 +42,13 @@ import re
 class Root(controllers.RootController):
     appTitle = 'Fedora Elections'
 
-    admin = Admin(appTitle)
-    vote = Vote(appTitle)
+    baseURL = config.get('fas.url', 'https://admin.fedoraproject.org/accounts/')
+    username = config.get('fas.username', 'admin')
+    password = config.get('fas.password', 'admin')
+    fas = AccountSystem(baseURL, username=username, password=password)
+
+    admin = Admin(fas, appTitle)
+    vote = Vote(fas, appTitle)
 
 
     @expose(template="elections.templates.index")

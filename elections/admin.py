@@ -36,7 +36,8 @@ import sqlalchemy
 from turbogears.database import session
 
 class Admin(controllers.Controller):
-    def __init__(self, appTitle):
+    def __init__(self, fas, appTitle):
+        self.fas = fas
         self.appTitle = appTitle
 
     #@expose(template='elections.templates.adminlist')
