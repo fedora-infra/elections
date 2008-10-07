@@ -29,7 +29,8 @@ seats_elected integer NOT NULL,
 allow_nominations boolean NOT NULL,
 -- If so, when do they have to be in by?
 nomination_end timestamp DEFAULT 0,
-
+-- Do we use FAS for candidate names?
+usefas boolean NOT NULL,
 UNIQUE (alias),
 PRIMARY KEY (id)
 ) ENGINE=InnoDB;
@@ -49,7 +50,6 @@ id integer NOT NULL auto_increment,
 election_id integer NOT NULL,
 -- Numerical value, specifying candidates' "status"
 status tinyint NOT NULL,
-human boolean NOT NULL,
 name text NOT NULL,
 url text,
 blurb text,
