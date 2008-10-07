@@ -100,6 +100,12 @@ class Root(controllers.RootController):
             turbogears.flash("This election does not exist, check if you have used the correct URL.")
             raise turbogears.redirect("/")
 
+        usernamemap = {}
+
+        if election.usefas:
+            for c in election.candidates:
+                usernamemap[c.id] = self.fas.person_by_username(c.name)['human_name']
+
         curtime = datetime.utcnow()
         if election.end_date > curtime:
             turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election is still in progress.")
@@ -111,7 +117,7 @@ class Root(controllers.RootController):
             turbogears.flash("We are sorry, the results for this election cannot be viewed because they are currently embargoed pending formal announcement.")
             raise turbogears.redirect("/")
         votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()
-        return dict(votecount=votecount, election=election, appTitle=self.appTitle)
+        return dict(votecount=votecount, usernamemap=usernamemap, election=election, appTitle=self.appTitle)
 
     @expose(template="elections.templates.login", allow_json=True)
     def login(self, forward_url=None, previous_url=None, *args, **kw):

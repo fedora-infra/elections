@@ -30,7 +30,7 @@
     <form action="${tg.url('/vote/' + str(election.id))}" method="post">
       <table border="1" cellpadding="1">
         <tr py:for="candidate in candidates">
-          <td>${candidate.name} <small py:if="candidate.url"><a href="${candidate.url}">[info]</a></small></td>
+          <td><py:choose test="election.usefas"><py:when test="0">${candidate.name}</py:when><py:when test="1">${usernamemap[candidate.id]}</py:when></py:choose> <small py:if="candidate.url"><a href="${candidate.url}">[info]</a></small></td>
           <py:if test="nextaction=='vote'">
             <td><select name="${candidate.id}">
               <option py:for="option in range(0,len(candidates)+1)" value="$option">$option</option> 

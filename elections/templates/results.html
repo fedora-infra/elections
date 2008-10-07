@@ -12,7 +12,7 @@
     <p py:if="election.url"><a href="${election.url}">[More Information]</a></p>
     <table border="1" cellpadding="1">
       <tr py:for="candcount in votecount">
-        <td>${candcount.candidate.name} <small py:if="candcount.candidate.url"><a href="${candcount.candidate.url}">[info]</a></small></td>
+        <td><py:choose test="election.usefas"><py:when test="0">${candcount.candidate.name}</py:when><py:when test="1">${usernamemap[candcount.candidate.id]}</py:when></py:choose> <small py:if="candcount.candidate.url"><a href="${candcount.candidate.url}">[info]</a></small></td>
         <td>${candcount.novotes}</td>
       </tr>
     </table>
