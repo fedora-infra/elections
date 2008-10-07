@@ -76,6 +76,13 @@ class Vote(controllers.Controller):
         
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
         uservote = UserVoteCount.query.filter_by(election_id=eid, voter=turbogears.identity.current.user_name).all()
+
+        usernamemap = {}
+
+        if election.usefas:
+            for c in candidates:
+                usernamemap[c.id] = self.fas.person_by_username(c.name)['human_name']
+
         uvotes = {}
         next_action = ""
 
@@ -138,5 +145,5 @@ class Vote(controllers.Controller):
                 uvotes[c.id] = ""
             next_action = "vote"
 
-        return dict(eid=eid, candidates=candidates, election=election, nextaction=next_action, voteinfo=uvotes, appTitle=self.appTitle)
+        return dict(eid=eid, candidates=candidates, usernamemap=usernamemap, election=election, nextaction=next_action, voteinfo=uvotes, appTitle=self.appTitle)
 

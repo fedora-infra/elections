@@ -12,7 +12,7 @@
     <p py:if="election.url"><a href="${election.url}">[More Information]</a></p>
       <table border="1" cellpadding="1">
         <tr py:for="candidate in candidates">
-          <td>${candidate.name} <small py:if="candidate.url"><a href="${candidate.url}">[info]</a></small></td>
+          <td><py:choose test="election.usefas"><py:when test="0">${candidate.name}</py:when><py:when test="1">${usernamemap[candidate.id]}</py:when></py:choose> <small py:if="candidate.url"><a href="${candidate.url}">[info]</a></small></td>
         </tr>
 <!-- !This link is okay, but one should appear if the election has public results -->
         <tr>

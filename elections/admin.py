@@ -63,7 +63,7 @@ class Admin(controllers.Controller):
             if "usefas" not in kw:
                 usefas=0
 
-            Elections(alias=kw['alias'], status=0, method=0, shortdesc=kw['shortdesc'], description=kw['info'], url=kw['url'], start_date=kw['startdate'], end_date=kw['enddate'], embargoed=setembargo, seats_elected=kw['seats'], allow_nominations=setnominations, nomination_end=nominationend)
+            Elections(alias=kw['alias'], status=0, method=0, shortdesc=kw['shortdesc'], description=kw['info'], url=kw['url'], start_date=kw['startdate'], end_date=kw['enddate'], embargoed=setembargo, seats_elected=kw['seats'], allow_nominations=setnominations, nomination_end=nominationend,usefas=usefas)
             raise turbogears.redirect("/")
         else:
             return dict()

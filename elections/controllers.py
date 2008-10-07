@@ -74,10 +74,15 @@ class Root(controllers.RootController):
 
         votergroups = LegalVoters.query.filter_by(election_id=eid).all()
         candidates = Candidates.query.filter_by(election_id=eid).order_by(Candidates.name).all()
+        usernamemap = {}
+
+        if election.usefas:
+            for c in candidates:
+                usernamemap[c.id] = self.fas.person_by_username(c.name)['human_name']
 
         curtime = datetime.utcnow()
 
-        return dict(eid=eid, candidates=candidates, election=election, curtime=curtime, votergroups=votergroups, appTitle=self.appTitle)
+        return dict(eid=eid, candidates=candidates, usernamemap=usernamemap, election=election, curtime=curtime, votergroups=votergroups, appTitle=self.appTitle)
 
     @expose(template="elections.templates.results")
     def results(self,eid=None):
