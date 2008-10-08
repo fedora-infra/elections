@@ -29,16 +29,32 @@ import turbogears
 from turbogears import controllers, expose, flash, redirect, config
 from turbogears import identity
 from elections import model
-from elections.model import *
+from elections.model import Elections, ElectionsTable, Candidates, LegalVoters
+
+from fedora.tg.json import SABase
+from datetime import datetime
 
 import sqlalchemy
 
 from turbogears.database import session
 
-class Admin(controllers.Controller):
+class Api(controllers.Controller):
     def __init__(self, fas, appTitle):
         self.fas = fas
         self.appTitle = appTitle
+
+    @expose(allow_json=True)
+    def list_elections(self, **kw):
+        elections = {}
+        electlist = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
+        for e in electlist:
+            elections['id'] = e.id
+            elections['alias'] = e.alias
+            elections['shortdesc'] = e.shortdesc
+            elections['start_date'] = e.start_date
+            elections['end_date'] = e.end_date
+            elections['legal_voters'] = LegalVoters.query.filter_by(election_id=e.id).all()
+        return dict(elections=elections, servertime=datetime.utcnow(), appTitle=self.appTitle)
 
     #@expose(template='elections.templates.adminlist')
     @identity.require(identity.in_group("elections"))

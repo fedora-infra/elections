@@ -31,7 +31,7 @@ from cherrypy import request, response
 from fedora.client.fas2 import AccountSystem
 from elections import model
 from elections.model import *
-from elections.admin import Admin
+from elections.api import Api
 from elections.vote import Vote
 
 import sqlalchemy
@@ -47,7 +47,7 @@ class Root(controllers.RootController):
     password = config.get('fas.password', 'admin')
     fas = AccountSystem(baseURL, username=username, password=password)
 
-    admin = Admin(fas, appTitle)
+    api = Api(fas, appTitle)
     vote = Vote(fas, appTitle)
 
 
