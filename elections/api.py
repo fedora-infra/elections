@@ -45,15 +45,8 @@ class Api(controllers.Controller):
 
     @expose(allow_json=True)
     def list_elections(self, **kw):
-        elections = {}
         electlist = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
-        for e in electlist:
-            elections['id'] = e.id
-            elections['alias'] = e.alias
-            elections['shortdesc'] = e.shortdesc
-            elections['start_date'] = e.start_date
-            elections['end_date'] = e.end_date
-            elections['legal_voters'] = LegalVoters.query.filter_by(election_id=e.id).all()
+        elections = [{'id': e.id, 'alias': e.alias, 'shortdesc': e.shortdesc, 'start_date': e.start_date, 'end_date': e.end_date, 'legal_voters': [{'groupname': lv.group_name} for lv in LegalVoters.query.filter_by(election_id=e.id)]} for e in electlist]
         return dict(elections=elections, servertime=datetime.utcnow(), appTitle=self.appTitle)
 
     #@expose(template='elections.templates.adminlist')
