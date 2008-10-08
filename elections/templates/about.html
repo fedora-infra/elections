@@ -14,10 +14,23 @@
         <tr py:for="candidate in candidates">
           <td><py:choose test="election.usefas"><py:when test="0">${candidate.name}</py:when><py:when test="1">${usernamemap[candidate.id]}</py:when></py:choose> <small py:if="candidate.url"><a href="${candidate.url}">[info]</a></small></td>
         </tr>
-<!-- !This link is okay, but one should appear if the election has public results -->
-        <tr>
-          <td><a href="${tg.url('/vote/' + election.alias)}">Vote Now!</a></td>
-        </tr>
+        <py:choose test="curtime > election.end_date"><py:when test="0">
+          <py:choose test="election.start_date > curtime"><py:when test="0">
+             <py:choose test="election.allow_nominations"><py:when test="1">
+                <tr>
+                  <td><a href="${tg.url('/nominate/' + election.alias)}">Nominate Someone!</a></td>
+                </tr>
+             </py:when><py:when test="1">
+               <tr>
+                 <td><a href="${tg.url('/vote/' + election.alias)}">Vote Now!</a></td>
+               </tr>
+             </py:when></py:choose>
+          </py:when></py:choose>
+        </py:when><py:when test="1">
+              <tr>
+                <td><a href="${tg.url('/results/' + election.alias)}">Show Results!</a></td>
+              </tr>
+        </py:when></py:choose>
       </table>
     <p>To vote in this election you must be a member of any one of the following groups:</p>
     <ul>
