@@ -21,16 +21,17 @@ description text NOT NULL,
 url text,
 start_date timestamp DEFAULT 0 NOT NULL,
 end_date timestamp DEFAULT 0 NOT NULL,
--- Are results currently embargoed?
-embargoed boolean NOT NULL,
 -- Number of seats elected
 seats_elected integer NOT NULL,
+-- Number of voters (filled post election)
+
+
 -- Does this election support nominations?
-allow_nominations boolean NOT NULL,
+-- allow_nominations boolean NOT NULL,
 -- If so, when do they have to be in by?
-nomination_end timestamp DEFAULT 0,
+-- nomination_end timestamp DEFAULT 0,
 -- Do we use FAS for candidate names?
-usefas boolean NOT NULL,
+-- usefas boolean NOT NULL,
 UNIQUE (alias),
 PRIMARY KEY (id)
 ) ENGINE=InnoDB;
