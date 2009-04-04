@@ -38,7 +38,7 @@ import sqlalchemy
 
 from turbogears.database import session
 
-class Api(controllers.Controller):
+class Admin(controllers.Controller):
     def __init__(self, fas, appTitle):
         self.fas = fas
         self.appTitle = appTitle

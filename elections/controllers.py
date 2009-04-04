@@ -31,7 +31,7 @@ from cherrypy import request, response
 from fedora.client.fas2 import AccountSystem
 from elections import model
 from elections.model import *
-from elections.api import Api
+from elections.admin import Admin
 from elections.vote import Vote
 
 import sqlalchemy
