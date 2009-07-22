@@ -122,7 +122,7 @@ class Root(controllers.RootController):
         return dict(votecount=votecount, usernamemap=usernamemap, election=election, appTitle=self.appTitle)
 
     @expose(template="elections.templates.login", allow_json=True)
-    def login(self, forward_url=None, *args, **kw):
+    def login(self, forward_url=None, *args, **kwargs):
         login_dict = fc_login(forward_url, args, kwargs)
         return login_dict
 
