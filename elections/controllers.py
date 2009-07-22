@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2008 Nigel Jones, Toshio Kuratomi, Ricky Zhou, Luca Foppiano All rights reserved.
+# Copyright © 2008-2009 Nigel Jones, Toshio Kuratomi, Ricky Zhou, Luca Foppiano All rights reserved.
 #
 # This copyrighted material is made available to anyone wishing to use, modify,
 # copy, or redistribute it subject to the terms and conditions of the GNU
@@ -29,6 +29,8 @@ from turbogears.database import session
 from cherrypy import request, response
 
 from fedora.client.fas2 import AccountSystem
+import fedora.controllers.login as fc_login
+import fedora.controllers.logout as fc_logout
 from elections import model
 from elections.model import *
 from elections.admin import Admin
@@ -120,37 +122,10 @@ class Root(controllers.RootController):
         return dict(votecount=votecount, usernamemap=usernamemap, election=election, appTitle=self.appTitle)
 
     @expose(template="elections.templates.login", allow_json=True)
-    def login(self, forward_url=None, previous_url=None, *args, **kw):
-        if not identity.current.anonymous \
-            and identity.was_login_attempted() \
-            and not identity.get_identity_errors():
-                # User is logged in
-                if 'tg_format' in request.params and request.params['tg_format'] == 'json':
-                    # When called as a json method, doesn't make any sense to
-                    # redirect to a page.  Returning the logged in identity
-                    # is better.
-                    return dict(user = identity.current.user)
-                if not forward_url:
-                    forward_url=config.get('base_url_filter.base_url') + '/'
-                raise redirect(forward_url)
-        
-        forward_url=None
-        previous_url=request.path
+    def login(self, forward_url=None, *args, **kw):
+        login_dict = fc_login(forward_url, args, kwargs)
+        return login_dict
 
-        if identity.was_login_attempted():
-            msg="The credentials you supplied were not correct or did not grant access to this resource."
-        elif identity.get_identity_errors():
-            msg="You must provide your credentials before accessing this resource."
-        else:
-            msg="Please log in."
-            forward_url= request.headers.get("Referer", "/")
-
-        response.status=403
-        return dict(message=msg, previous_url=previous_url, logging_in=True,
-                    original_parameters=request.params,
-                    forward_url=forward_url, appTitle=self.appTitle + ' -- Fedora Account System Login')
-
-    @expose()
+    @expose(allow_json=True)
     def logout(self):
-        identity.current.logout()
-        raise redirect(request.headers.get("Referer","/"))
+        return fc_logout()

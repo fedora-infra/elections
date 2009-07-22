@@ -7,6 +7,7 @@
     <meta py:replace="select('*|text()')" />
     <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/static/css/style.css')}" />
     <link rel="stylesheet" type="text/css" media="screen" href="https://fedoraproject.org/static/css/fedora.css" />
+    <jsglobals />
   </head>
   <body py:match="body" py:attrs="select('@*')">
     <div id="wrapper">
@@ -29,18 +30,9 @@
 
       <div id="content">
 
-        <div py:if="tg.config('identity.on') and not defined('logging_in')" id="pageLogin">
-          <span py:if="tg.identity.anonymous">
-            <a href="${tg.url('/login')}">Login</a>
-          </span>
-          <span py:if="not tg.identity.anonymous">
-            Welcome ${tg.identity.user.human_name or tg.identity.user.user_name}.
-            <a href="${tg.url('/logout')}">Logout</a>
-          </span>
-        </div>
-        <div py:if="tg_flash" class="flash">
-          ${tg_flash}
-        </div>
+        <ul class="toolbar" id="#main-toolbar">
+          <logintoolitem href="${tg.url('/')}" />
+        </ul>
         <div py:replace="select('*|text()')" />
       </div>
       <p>
@@ -67,4 +59,8 @@
       </div>
     </div>
   </body>
+
+  <xi:include href="${tg.fedora_template('login.html')}" />
+  <xi:include href="${tg.fedora_template('jsglobals.html')}" />
+
 </html>

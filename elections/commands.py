@@ -10,6 +10,9 @@ import pkg_resources
 pkg_resources.require("TurboGears")
 
 import turbogears
+from turbogears import startup
+from fedora.tg.util import enable_csrf
+
 import cherrypy
 
 cherrypy.lowercase_api = True
@@ -47,6 +50,7 @@ def start():
     turbogears.update_config(configfile=configfile,
         modulename="elections.config")
 
+    startup.call_on_startup.append(enable_csrf)
     from elections.controllers import Root
 
     turbogears.start_server(Root())
