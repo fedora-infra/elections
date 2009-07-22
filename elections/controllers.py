@@ -124,6 +124,8 @@ class Root(controllers.RootController):
     @expose(template="elections.templates.login", allow_json=True)
     def login(self, forward_url=None, *args, **kwargs):
         login_dict = fc_login(forward_url, args, kwargs)
+        login_dict['appTitle'] = '%s -- Fedora Account System Login' % \
+                self.appTitle
         return login_dict
 
     @expose(allow_json=True)
