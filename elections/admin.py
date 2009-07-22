@@ -31,7 +31,6 @@ from turbogears import identity
 from elections import model
 from elections.model import Elections, ElectionsTable, Candidates, LegalVoters
 
-from fedora.tg.json import SABase
 from datetime import datetime
 
 import sqlalchemy
