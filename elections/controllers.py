@@ -29,8 +29,8 @@ from turbogears.database import session
 from cherrypy import request, response
 
 from fedora.client.fas2 import AccountSystem
-import fedora.controllers.login as fc_login
-import fedora.controllers.logout as fc_logout
+import fedora.tg.controllers.login as fc_login
+import fedora.tg.controllers.logout as fc_logout
 from elections import model
 from elections.model import *
 from elections.admin import Admin
