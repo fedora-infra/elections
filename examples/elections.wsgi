@@ -20,12 +20,6 @@ from turbogears import startup
 from fedora.tg.util import enable_csrf
 
 turbogears.update_config(configfile="/etc/elections.cfg", modulename="elections.config")
-turbogears.config.update({'global': {'server.environment': 'production'}})
-turbogears.config.update({'global': {'autoreload.on': False}})
-turbogears.config.update({'global': {'server.log_to_screen': False}})
-turbogears.config.update({'global': {'server.webpath': '/elections'}})
-#turbogears.config.update({'global': {'base_url_filter.on': True}})
-#turbogears.config.update({'global': {'base_url_filter.base_url': 'http://localhost/elections'}})
 
 startup.call_on_startup.append(enable_csrf)
 
