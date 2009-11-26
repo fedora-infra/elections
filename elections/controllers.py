@@ -29,8 +29,8 @@ from turbogears.database import session
 from cherrypy import request, response
 
 from fedora.client.fas2 import AccountSystem
-import fedora.tg.controllers.login as fc_login
-import fedora.tg.controllers.logout as fc_logout
+from fedora.tg.controllers import login as fc_login
+from fedora.tg.controllers import logout as fc_logout
 from elections import model
 from elections.model import *
 from elections.admin import Admin
@@ -49,7 +49,7 @@ class Root(controllers.RootController):
     password = config.get('fas.password', 'admin')
     fas = AccountSystem(baseURL, username=username, password=password)
 
-    api = Api(fas, appTitle)
+    admin = Admin(fas, appTitle)
     vote = Vote(fas, appTitle)
 
 

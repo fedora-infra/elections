@@ -16,15 +16,9 @@
         </tr>
         <py:choose test="curtime > election.end_date"><py:when test="0">
           <py:choose test="election.start_date > curtime"><py:when test="0">
-             <py:choose test="election.allow_nominations"><py:when test="1">
-                <tr>
-                  <td><a href="${tg.url('/nominate/' + election.alias)}">Nominate Someone!</a></td>
-                </tr>
-             </py:when><py:when test="1">
                <tr>
                  <td><a href="${tg.url('/vote/' + election.alias)}">Vote Now!</a></td>
                </tr>
-             </py:when></py:choose>
           </py:when></py:choose>
         </py:when><py:when test="1">
               <tr>
