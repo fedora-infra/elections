@@ -33,6 +33,10 @@
         <ul class="toolbar" id="#main-toolbar">
           <logintoolitem href="${tg.url('/')}" />
         </ul>
+        <div py:if="tg_flash" class="flash">
+          ${tg_flash}
+        </div>
+
         <div py:replace="select('*|text()')" />
       </div>
       <p>
