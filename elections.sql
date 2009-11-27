@@ -1,82 +1,78 @@
-drop table if exists votes;
-drop table if exists candidates;
-drop table if exists legalvoters;
-drop table if exists elections;
-drop view if exists votecount;
-drop view if exists fvotecount;
-drop view if exists uservotes;
+drop view electionvotes;
+drop view fvotecount;
+drop view votecount;
+drop view uservotes;
+
+drop table votes;
+drop table legalvoters;
+drop table candidates;
+drop table elections;
 
 CREATE TABLE elections (
-id integer NOT NULL auto_increment,
--- Old 'shortname'
-alias varchar(50) NOT NULL,
--- Numerical value, specifying what stage the election is in
-status tinyint NOT NULL,
--- Numerical value, specifying what voting method is used
-method tinyint NOT NULL,
-
-shortdesc text NOT NULL,
-description text NOT NULL,
-
-url text,
-start_date timestamp DEFAULT 0 NOT NULL,
-end_date timestamp DEFAULT 0 NOT NULL,
--- Number of seats elected
-seats_elected integer NOT NULL,
--- Number of voters (filled post election)
-
-
--- Does this election support nominations?
--- allow_nominations boolean NOT NULL,
--- If so, when do they have to be in by?
--- nomination_end timestamp DEFAULT 0,
--- Do we use FAS for candidate names?
--- usefas boolean NOT NULL,
-UNIQUE (alias),
-PRIMARY KEY (id)
-) ENGINE=InnoDB;
-
-CREATE TABLE legalvoters (
-id integer NOT NULL auto_increment,
-election_id integer NOT NULL,
-type integer NOT NULL,
-group_name text NOT NULL,
-FOREIGN KEY (election_id) references elections (id),
-INDEX (election_id, type),
-PRIMARY KEY (id)
-) ENGINE=InnoDB;
+    id serial NOT NULL,
+-- was shortname
+    shortdesc text NOT NULL,
+-- was name
+    alias text NOT NULL,
+-- was info
+    description text NOT NULL,
+    url text NOT NULL,
+    start_date timestamp NOT NULL,
+    end_date timestamp NOT NULL,
+-- was max_seats
+    seats_elected integer NOT NULL,
+    votes_per_user integer NOT NULL,
+    embargoed integer default 0 not null,
+    unique (shortdesc),
+    primary key (id)
+);
 
 CREATE TABLE candidates (
-id integer NOT NULL auto_increment,
-election_id integer NOT NULL,
--- Numerical value, specifying candidates' "status"
-status tinyint NOT NULL,
-name text NOT NULL,
-url text,
-blurb text,
-nominated_by text,
-FOREIGN KEY (election_id) references elections (id),
-PRIMARY KEY (id, election_id)
-) ENGINE=InnoDB;
+    id serial,
+    election_id integer NOT NULL,
+    name text NOT NULL,
+    url text,
+    human integer,
+    status integer,
+    foreign key (election_id) references elections (id),
+    unique (id),
+    primary key (id, election_id)
+);
+
+CREATE TABLE legalvoters (
+    id serial,
+    election_id integer not null,
+    group_name text not null,
+    foreign key (election_id) references elections (id),
+    primary key (id)
+);
 
 CREATE TABLE votes (
-id integer NOT NULL auto_increment,
-voter text NOT NULL,
-candidate_id integer NOT NULL,
-weight integer NOT NULL,
-election_id integer NOT NULL,
--- unique(voter_id, candidate_id, election_id),
-FOREIGN KEY (candidate_id) references candidates (id),
-FOREIGN KEY (election_id) references elections (id),
-PRIMARY KEY (id)
-) ENGINE=InnoDB;
+    id serial,
+    voter text NOT NULL,
+    "timestamp" timestamp without time zone  NOT NULL,
+    candidate_id integer NOT NULL,
+    weight integer NOT NULL,
+    election_id integer NOT NULL,
+    foreign key (candidate_id) references candidates(id),
+    foreign key (election_id) references elections(id),
+    primary key (id)
+);
 
-#CREATE TABLE questions (
-#
-#) ENGINE=InnoDB;
 
-create view votecount as select candidate_id, election_id, sum(weight) as novotes from votes group by candidate_id, election_id order by novotes desc;
+CREATE VIEW electionvotes AS
+    SELECT votes.election_id, count(votes.election_id) AS novotes FROM votes GROUP BY votes.election_id;
 
-create view fvotecount as select c.id, c.name, v.election_id, v.novotes from votecount v, candidates c where c.id = v.candidate_id order by novotes desc;
 
-create view uservotes as select election_id, voter, count(voter) as novotes from votes group by election_id, voter;
+
+
+CREATE VIEW votecount AS
+    SELECT votes.candidate_id, votes.election_id, sum(votes.weight) AS novotes FROM votes GROUP BY votes.candidate_id, votes.election_id ORDER BY sum(votes.weight) DESC;
+
+
+CREATE VIEW fvotecount AS
+    SELECT c.id, c.name, v.election_id, v.novotes FROM votecount v, candidates c WHERE (c.id = v.candidate_id) ORDER BY v.novotes DESC;
+
+
+CREATE VIEW uservotes AS
+    SELECT votes.election_id, votes.voter, count(votes.voter) AS novotes FROM votes GROUP BY votes.election_id, votes.voter;
