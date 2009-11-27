@@ -17,12 +17,14 @@ CREATE TABLE elections (
 -- was info
     description text NOT NULL,
     url text NOT NULL,
-    start_date timestamp NOT NULL,
-    end_date timestamp NOT NULL,
+    start_date timestamp without time zone NOT NULL,
+    end_date timestamp without time zone NOT NULL,
 -- was max_seats
     seats_elected integer NOT NULL,
     votes_per_user integer NOT NULL,
-    embargoed integer default 0 not null,
+    embargoed integer default 0 NOT NULL,
+    usefas integer default 0 NOT NULL,
+    allow_nominations integer default 0 NOT NULL,
     unique (shortdesc),
     primary key (id)
 );
@@ -32,6 +34,7 @@ CREATE TABLE candidates (
     election_id integer NOT NULL,
     name text NOT NULL,
     url text,
+    formalname text,
     human integer,
     status integer,
     foreign key (election_id) references elections (id),
@@ -50,7 +53,7 @@ CREATE TABLE legalvoters (
 CREATE TABLE votes (
     id serial,
     voter text NOT NULL,
-    "timestamp" timestamp without time zone  NOT NULL,
+    timestamp timestamp without time zone  NOT NULL,
     candidate_id integer NOT NULL,
     weight integer NOT NULL,
     election_id integer NOT NULL,
