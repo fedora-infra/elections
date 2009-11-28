@@ -36,6 +36,7 @@ import sqlalchemy
 from turbogears.database import session
 
 from datetime import datetime
+import re
 
 class Vote(controllers.Controller):
     def __init__(self, fas, appTitle):
