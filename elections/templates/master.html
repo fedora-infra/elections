@@ -32,6 +32,7 @@
 
         <ul class="toolbar" id="#main-toolbar">
           <logintoolitem href="${tg.url('/')}" />
+          <li py:if="('elections' in tg.identity.groups)">Admin</li>
         </ul>
         <div py:if="tg_flash" class="flash">
           ${tg_flash}

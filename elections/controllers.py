@@ -121,6 +121,23 @@ class Root(controllers.RootController):
         votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()
         return dict(votecount=votecount, usernamemap=usernamemap, election=election, appTitle=self.appTitle)
 
+    @identity.require(identity.not_anonymous())
+    @expose(template="elections.templates.verify")
+    def verify(self):
+        validvotes = {}
+	invalidvotes = {}
+        c = 0
+        allvotes = UserVoteCount.query.filter_by(voter=turbogears.identity.current.user_name).all()
+        for v in allvotes:
+            if len(v.election.candidates) == v.novotes:
+                validvotes[c] = v
+                c=c+1
+            else:
+                invalidvotes[c] = v
+                c=c+1
+        return dict(validvotes=validvotes, invalidvotes=invalidvotes, appTitle=self.appTitle)
+            
+
     @expose(template="elections.templates.login", allow_json=True)
     def login(self, forward_url=None, *args, **kwargs):
         login_dict = fc_login(forward_url, args, kwargs)
