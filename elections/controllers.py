@@ -80,7 +80,11 @@ class Root(controllers.RootController):
 
         if election.usefas:
             for c in candidates:
-                usernamemap[c.id] = self.fas.person_by_username(c.name)['human_name']
+                try:
+                    usernamemap[c.id] = self.fas.person_by_username(c.name)['human_name']
+                except KeyError:
+                    # User has their name set to private
+                    usernamemap[c.id] = c.name
 
         curtime = datetime.utcnow()
 
@@ -106,7 +110,11 @@ class Root(controllers.RootController):
 
         if election.usefas:
             for c in election.candidates:
-                usernamemap[c.id] = self.fas.person_by_username(c.name)['human_name']
+                try:
+                    usernamemap[c.id] = self.fas.person_by_username(c.name)['human_name']
+                except KeyError:
+                    # User has their name set to private
+                    usernamemap[c.id] = c.name
 
         curtime = datetime.utcnow()
         if election.end_date > curtime:

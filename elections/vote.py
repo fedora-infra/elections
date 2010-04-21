@@ -82,7 +82,11 @@ class Vote(controllers.Controller):
 
         if election.usefas:
             for c in candidates:
-                usernamemap[c.id] = self.fas.person_by_username(c.name)['human_name']
+                try:
+                    usernamemap[c.id] = self.fas.person_by_username(c.name)['human_name']
+                except KeyError:
+                    # User has human_name set to private
+                    usernamemap[c.id] = c.name
 
         uvotes = {}
         next_action = ""
