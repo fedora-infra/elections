@@ -28,6 +28,7 @@
 import turbogears
 from turbogears import controllers, expose, flash, redirect, config
 from turbogears import identity
+from fedora.client import AuthError, AppError
 from elections import model
 from elections.model import Elections, ElectionsTable, Candidates, LegalVoters
 
@@ -90,11 +91,61 @@ class Admin(controllers.Controller):
 
     @identity.require(identity.in_group("elections"))
     @expose(template="elections.templates.admedit")
-    def edit(self,eid=None):
+    def edit(self, eid=None, **kw):
+        if "submit" in kw:
+            for entry in kw['newgroups'].split("|"):
+                entry.strip()
+		if len(entry) :
+                    LegalVoters(election_id=kw['id'], group_name=entry)
+            for key, value in kw.items():
+                if key.startswith('remove_'):
+                    group = key[len('remove_'):]
+                    for lv in LegalVoters.query.filter_by(election_id=kw['id'],group_name=group) :
+                        session.delete(lv)
+            setembargo=1
+            usefas=1
+            nominations=1
+            if "embargoed" not in kw:
+                setembargo=0
+            if "usefas" not in kw:
+                usefas=0
+            if "allownominations" not in kw:
+                nominations=0
+            try:
+                election = Elections.query.filter_by(id=int(eid)).all()[0]
+            except ValueError:
+                election = Elections.query.filter_by(alias=eid).all()[0]
+            election.alias=kw['alias']
+            election.status=0
+            election.method=0
+            election.shortdesc=kw['shortdesc']
+            election.description=kw['info']
+            election.url=kw['url']
+            election.start_date=kw['startdate']
+            election.end_date=kw['enddate']
+            election.embargoed=setembargo
+            election.seats_elected=kw['seats']
+            election.usefas=usefas
+            election.votes_per_user=kw['votes']
+            election.allow_nominations=nominations
+            raise turbogears.redirect("/admin/edit/"+kw['id'])
+
         try:
             election = Elections.query.filter_by(id=int(eid)).all()[0]
         except ValueError:
             election = Elections.query.filter_by(alias=eid).all()[0]
+
+        if "removeembargo" in kw:
+            election.embargoed=0
+            raise turbogears.redirect("/admin/")
+
         candidates = Candidates.query.filter_by(election_id=election.id).all()
 	votergroups = LegalVoters.query.filter_by(election_id=election.id).all()
-        return dict(e=election, candidates=candidates, groups=votergroups)
+        groupnamemap = {}
+        for g in votergroups:
+            try:
+                groupnamemap[g.group_name] = g.group_name + " (" + self.fas.group_by_name(g.group_name)['display_name'] +")"
+            except (AppError, AuthError, KeyError) :
+                groupnamemap[g.group_name] = g.group_name 
+
+        return dict(e=election, candidates=candidates, groups=votergroups, groupnamemap=groupnamemap)

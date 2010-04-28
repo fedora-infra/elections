@@ -26,7 +26,7 @@
           <a href="${tg.url('/admin/edit/' + str(election.alias))}">More Information</a> 
           <py:if test="election.embargoed"> 
             | 
-            <a href="${tg.url('/admin/edit/' + str(election.alias))}">Remove Embargo</a>
+            <a href="${tg.url('/admin/edit/' + str(election.alias) + '?removeembargo=1')}">Remove Embargo</a>
           </py:if>
         </td>
       </tr>
