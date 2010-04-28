@@ -48,11 +48,12 @@ class Admin(controllers.Controller):
         elections = [{'id': e.id, 'alias': e.alias, 'shortdesc': e.shortdesc, 'start_date': e.start_date, 'end_date': e.end_date, 'legal_voters': [{'groupname': lv.group_name} for lv in LegalVoters.query.filter_by(election_id=e.id)]} for e in electlist]
         return dict(elections=elections, servertime=datetime.utcnow(), appTitle=self.appTitle)
 
-    #@expose(template='elections.templates.adminlist')
+    @expose(template='elections.templates.admin')
     @identity.require(identity.in_group("elections"))
-    @expose()
     def index(self, **kw):
-        return "Hi"
+        electlist = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
+        elections = [{'id': e.id, 'alias': e.alias, 'shortdesc': e.shortdesc, 'start_date': e.start_date, 'end_date': e.end_date, 'legal_voters': [{'groupname': lv.group_name} for lv in LegalVoters.query.filter_by(election_id=e.id)], 'embargoed' : e.embargoed} for e in electlist]
+        return dict(elections=elections)
     
     @identity.require(identity.in_group("elections"))
     @expose(template="elections.templates.admnewe")
@@ -87,16 +88,13 @@ class Admin(controllers.Controller):
         else:
             return dict()
 
-    #@expose(template="elections.templates.admedit")
-    #def edit(self,eid=None):
-    #    try:
-    #        election = Elections.query.filter_by(id=int(eid)).all()[0]
-    #    except ValueError:
-    #        election = Elections.query.filter_by(shortname=eid).all()[0]
-    #    election = Elections.query.filter_by(id=int(eid)).all()[0]
-    #    candidates = Candidates.query.filter_by(election_id=eid).all()
-    #    return dict(e=election, candidates=candidates)
-
-    #@expose()
-    #def save(self, **kw):
-    #    return "Hi"
+    @identity.require(identity.in_group("elections"))
+    @expose(template="elections.templates.admedit")
+    def edit(self,eid=None):
+        try:
+            election = Elections.query.filter_by(id=int(eid)).all()[0]
+        except ValueError:
+            election = Elections.query.filter_by(alias=eid).all()[0]
+        candidates = Candidates.query.filter_by(election_id=election.id).all()
+	votergroups = LegalVoters.query.filter_by(election_id=election.id).all()
+        return dict(e=election, candidates=candidates, groups=votergroups)
