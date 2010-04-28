@@ -28,6 +28,7 @@ from turbogears import identity
 from turbogears.database import session
 from cherrypy import request, response
 
+from fedora.client import AuthError
 from fedora.client.fas2 import AccountSystem
 from fedora.tg.controllers import login as fc_login
 from fedora.tg.controllers import logout as fc_logout
@@ -51,7 +52,6 @@ class Root(controllers.RootController):
 
     admin = Admin(fas, appTitle)
     vote = Vote(fas, appTitle)
-
 
     @expose(template="elections.templates.index")
     def index(self):
@@ -82,8 +82,8 @@ class Root(controllers.RootController):
             for c in candidates:
                 try:
                     usernamemap[c.id] = self.fas.person_by_username(c.name)['human_name']
-                except KeyError:
-                    # User has their name set to private
+                except (KeyError, AuthError):
+                    # User has their name set to private or user doesn't exist
                     usernamemap[c.id] = c.name
 
         curtime = datetime.utcnow()
@@ -112,7 +112,7 @@ class Root(controllers.RootController):
             for c in election.candidates:
                 try:
                     usernamemap[c.id] = self.fas.person_by_username(c.name)['human_name']
-                except KeyError:
+                except (AuthError, KeyError) :
                     # User has their name set to private
                     usernamemap[c.id] = c.name
 
