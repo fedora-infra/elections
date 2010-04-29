@@ -29,7 +29,18 @@
           </py:otherwise>
           </py:choose>
         </td>
-        <td><a py:if="curtime > election.end_date" href="${tg.url('/results/' + str(election.alias))}">Results</a></td>
+        <td>
+          <py:if test="curtime > election.end_date">
+          <py:choose test="1">
+          <py:when test="election.alias == ''">
+            <a href="${tg.url('/results/' + str(election.id))}">Results</a>
+          </py:when>
+          <py:otherwise>
+            <a href="${tg.url('/results/' + str(election.alias))}">Results</a>
+          </py:otherwise>
+          </py:choose>
+          </py:if>
+        </td>
       </tr>
     </table>
   </body>

@@ -4,7 +4,7 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="master.html" />
   <head>
-    <title>${appTitle} -- Election Information</title>
+    <title>Fedora Elections -- Election Information</title>
   </head>
   <body>
     <h1>${election.shortdesc}</h1>
@@ -17,18 +17,34 @@
         <py:choose test="curtime > election.end_date"><py:when test="0">
           <py:choose test="election.start_date > curtime"><py:when test="0">
                <tr>
-                 <td><a href="${tg.url('/vote/' + election.alias)}">Vote Now!</a></td>
+                 <td>
+                   <py:choose test="1">
+                   <py:when test="election.alias == ''">
+                     <a href="${tg.url('/vote/' + str(election.id))}">Vote Now!</a>
+                   </py:when>
+                   <py:otherwise>
+                     <a href="${tg.url('/vote/' + str(election.alias))}">Vote Now!</a>
+                   </py:otherwise>
+                   </py:choose>
+                 </td>
                </tr>
           </py:when></py:choose>
         </py:when><py:when test="1">
-              <tr>
-                <td><a href="${tg.url('/results/' + election.alias)}">Show Results!</a></td>
-              </tr>
+               <tr>
+                 <py:choose test="1">
+                 <py:when test="election.alias == ''">
+                   <a href="${tg.url('/results/' + str(election.id))}">Show Results!</a>
+                 </py:when>
+                 <py:otherwise>
+                   <a href="${tg.url('/results/' + str(election.alias))}">Show Results!</a>
+                 </py:otherwise>
+                 </py:choose>
+               </tr>
         </py:when></py:choose>
       </table>
     <p>To vote in this election you must be a member of any one of the following groups:</p>
     <ul>
-      <li py:for="g in votergroups"><py:choose test="g.group_name == 'anyany'"><py:when test="0"><py:choose test="g.group_name == 'anycla'"><py:when test="0">${g.group_name}</py:when><py:when test="1">Any non-CLA Group</py:when></py:choose></py:when><py:when test="1">Any Group</py:when></py:choose></li>
+      <li py:for="g in votergroups"><py:choose test="g.group_name == 'anyany'"><py:when test="0"><py:choose test="g.group_name == 'anycla'"><py:when test="0">${groupnamemap[g.group_name]}</py:when><py:when test="1">Any non-CLA Group</py:when></py:choose></py:when><py:when test="1">Any Group</py:when></py:choose></li>
     </ul>
   </body>
 </html>
