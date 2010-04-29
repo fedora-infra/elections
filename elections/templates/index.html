@@ -4,7 +4,7 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="master.html" />
   <head>
-    <title>${appTitle}</title>
+    <title>Fedora Elections</title>
   </head>
   <body>
     <table>
@@ -19,7 +19,16 @@
         <td>${election.shortdesc}</td>
         <td>${election.start_date}</td>
         <td>${election.end_date}</td>
-        <td><a href="${tg.url('/about/' + str(election.alias))}">More Information</a></td>
+        <td>
+          <py:choose test="1">
+          <py:when test="election.alias == ''">
+            <a href="${tg.url('/about/' + str(election.id))}">More Information</a>
+          </py:when>
+          <py:otherwise>
+            <a href="${tg.url('/about/' + str(election.alias))}">More Information</a>
+          </py:otherwise>
+          </py:choose>
+        </td>
         <td><a py:if="curtime > election.end_date" href="${tg.url('/results/' + str(election.alias))}">Results</a></td>
       </tr>
     </table>

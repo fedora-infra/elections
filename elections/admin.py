@@ -131,12 +131,22 @@ class Admin(controllers.Controller):
             raise turbogears.redirect("/admin/edit/"+kw['id'])
 
         try:
-            election = Elections.query.filter_by(id=int(eid)).all()[0]
+            eid = int(eid)
+            election = Elections.query.filter_by(id=eid).all()[0]
         except ValueError:
-            election = Elections.query.filter_by(alias=eid).all()[0]
+            try:
+                election = Elections.query.filter_by(alias=eid).all()[0]
+                eid = election.id
+            except IndexError:
+                turbogears.flash("This election does not exist, check if you have used the correct URL.")
+                raise turbogears.redirect("/admin/")
+        except (IndexError, TypeError):
+            turbogears.flash("This election does not exist, check if you have used the correct URL.")
+            raise turbogears.redirect("/admin/")
 
         if "removeembargo" in kw:
             election.embargoed=0
+            turbogears.flash("Embargo on election results removed")
             raise turbogears.redirect("/admin/")
 
         candidates = Candidates.query.filter_by(election_id=election.id).all()

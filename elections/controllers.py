@@ -70,7 +70,7 @@ class Root(controllers.RootController):
             except IndexError:
                 turbogears.flash("This election does not exist, check if you have used the correct URL.")
                 raise turbogears.redirect("/")
-        except IndexError:
+        except (IndexError, TypeError):
             turbogears.flash("This election does not exist, check if you have used the correct URL.")
             raise turbogears.redirect("/")
 
@@ -108,7 +108,7 @@ class Root(controllers.RootController):
             except IndexError:
                 turbogears.flash("This election does not exist, check if you have used the correct URL.")
                 raise turbogears.redirect("/")
-        except IndexError:
+        except (IndexError, TypeError):
             turbogears.flash("This election does not exist, check if you have used the correct URL.")
             raise turbogears.redirect("/")
 
