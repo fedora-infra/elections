@@ -26,6 +26,7 @@
       <tr><td>Use FAS?</td><td><input type="checkbox" name="usefas" py:attrs="{'checked':''} if e.usefas else {}" /> </td></tr>
       <tr><td>Embargoed?</td><td><input type="checkbox" name="embargoed" py:attrs="{'checked':''} if e.embargoed else {}" /> </td></tr>                        
       <tr><td></td><td><input type="submit" name="submit" value="Submit"/></td></tr>
+
       <tr>
         <th colspan="2"> Allowed Groups </th>
       </tr>
@@ -36,6 +37,20 @@
         <td>Remove group: <input type="checkbox" name="remove_${g.group_name}" /> </td>
       </tr>
       <tr><td>New Groups:<br/>( entries seperated by | )</td><td><input type="text" name="newgroups" value="" /> </td></tr>
+      <tr><td></td><td><input type="submit" name="submit" value="Submit"/></td></tr>
+
+      <tr>
+        <th colspan="2"> Candidates </th>
+      </tr>
+      <tr py:for="c in candidates">
+        <td>
+          ${c.name}
+        </td>
+        <td>
+          ${c.url}
+        </td>
+      </tr>
+      <tr><td>New Candidates:<br/>( Formated as [URL optional]: Name1!URL1|Name2!URL2 )</td><td><input type="text" name="newcandidates" value="" /> </td></tr>
       <tr><td></td><td><input type="submit" name="submit" value="Submit"/></td></tr>
     </table>
     </form>

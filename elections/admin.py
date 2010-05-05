@@ -104,6 +104,17 @@ class Admin(controllers.Controller):
                     group = key[len('remove_'):]
                     for lv in LegalVoters.query.filter_by(election_id=kw['id'],group_name=group) :
                         session.delete(lv)
+            for entry in kw['newcandidates'].split("|"):
+                candidate = entry.split("!")
+                #Python doesn't have a good way of doing case/switch statements
+                if len(candidate) == 1:
+                    if len(candidate[0]) : 
+                        Candidates(election_id=kw['id'],name=candidate[0], status=0, human=1)
+                elif len(candidate) == 2:
+                    if len(candidate[0]) : 
+                        Candidates(election_id=kw['id'],name=candidate[0],url=candidate[1], status=0, human=1)
+                else:
+                    turbogears.flash("There was an issue!")
             setembargo=1
             usefas=1
             nominations=1
