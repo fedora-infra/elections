@@ -20,7 +20,7 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="master.html" />
   <head>
-    <title>${appTitle} -- Cast Your Vote</title>
+    <title>${appTitle} -- Cast Your Vote -- ${election.shortdesc}</title>
   </head>
   <body>
     <h1>${election.shortdesc}</h1>
@@ -42,7 +42,10 @@
         </tr>
         <tr>
           <td><input py:if="nextaction=='confirm'" type="button" value="Go Back" onClick="history.go(-1)" /></td>
-          <td><input type="submit" name="${nextaction}" value="Submit" /></td>
+          <td>
+            <input py:if="nextaction!='confirm'" type="submit" name="${nextaction}" value="Preview" />
+            <input py:if="nextaction=='confirm'" type="submit" name="${nextaction}" value="Submit" />
+          </td>
         </tr>
     </table>
     </form>
