@@ -7,6 +7,63 @@
     <title>Fedora Elections</title>
   </head>
   <body>
+
+    <py:if test="len(current)">
+    <h2>Current Elections</h2>
+    <table>
+      <tr>
+        <th></th>
+        <th>Start Date (UTC)</th>
+        <th>End Date (UTC)</th>
+        <th></th>
+      </tr>
+      <tr py:for="election in current">
+        <td>${election.shortdesc}</td>
+        <td>${election.start_date}</td>
+        <td>${election.end_date}</td>
+        <td>
+          <py:choose test="1">
+          <py:when test="election.alias == ''">
+            <a href="${tg.url('/about/' + str(election.id))}">More Information</a>
+          </py:when>
+          <py:otherwise>
+            <a href="${tg.url('/about/' + str(election.alias))}">More Information</a>
+          </py:otherwise>
+          </py:choose>
+        </td>
+      </tr>
+    </table>
+    </py:if>
+
+    <py:if test="len(future)">
+    <h2>Elections Coming soon...</h2>
+    <table>
+      <tr>
+        <th></th>
+        <th>Start Date (UTC)</th>
+        <th>End Date (UTC)</th>
+        <th></th>
+      </tr>
+      <tr py:for="election in future">
+        <td>${election.shortdesc}</td>
+        <td>${election.start_date}</td>
+        <td>${election.end_date}</td>
+        <td>
+          <py:choose test="1">
+          <py:when test="election.alias == ''">
+            <a href="${tg.url('/about/' + str(election.id))}">More Information</a>
+          </py:when>
+          <py:otherwise>
+            <a href="${tg.url('/about/' + str(election.alias))}">More Information</a>
+          </py:otherwise>
+          </py:choose>
+        </td>
+      </tr>
+    </table>
+    </py:if>
+
+    <py:if test="len(past)">
+    <h2>Past Elections</h2>
     <table>
       <tr>
         <th></th>
@@ -15,7 +72,7 @@
         <th></th>
         <th></th>
       </tr>
-      <tr py:for="election in elections">
+      <tr py:for="election in past">
         <td>${election.shortdesc}</td>
         <td>${election.start_date}</td>
         <td>${election.end_date}</td>
@@ -30,18 +87,25 @@
           </py:choose>
         </td>
         <td>
-          <py:if test="curtime > election.end_date">
           <py:choose test="1">
-          <py:when test="election.alias == ''">
-            <a href="${tg.url('/results/' + str(election.id))}">Results</a>
-          </py:when>
-          <py:otherwise>
-            <a href="${tg.url('/results/' + str(election.alias))}">Results</a>
-          </py:otherwise>
+            <py:when test="0 == election.embargoed">
+              <py:choose test="1">
+                <py:when test="election.alias == ''">
+                  <a href="${tg.url('/results/' + str(election.id))}">Results</a>
+                </py:when>
+                <py:otherwise>
+                  <a href="${tg.url('/results/' + str(election.alias))}">Results</a>
+                </py:otherwise>
+              </py:choose>
+            </py:when>
+            <py:otherwise>
+              Election Results under Embargo
+            </py:otherwise>
           </py:choose>
-          </py:if>
         </td>
       </tr>
     </table>
+    </py:if>
+
   </body>
 </html>

@@ -55,8 +55,19 @@ class Root(controllers.RootController):
 
     @expose(template="elections.templates.index")
     def index(self):
-        electlist = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
-        return dict(elections=electlist, curtime=datetime.utcnow(), appTitle=self.appTitle)
+        elections = Elections.query.order_by(ElectionsTable.c.start_date).filter('id>0').all()
+        past = []
+        current = []
+        future = []
+        now = datetime.utcnow()
+	for e in elections:
+            if e.start_date > now :
+                future.append(e)
+            elif e.end_date < now :
+                past.append(e)
+            else :
+                current.append(e)               
+        return dict(past=past, current=current, future=future, curtime=datetime.utcnow(), appTitle=self.appTitle)
 
     @expose(template="elections.templates.about")
     def about(self,eid=None):
