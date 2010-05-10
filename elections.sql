@@ -25,6 +25,7 @@ CREATE TABLE elections (
     embargoed integer default 0 NOT NULL,
     usefas integer default 0 NOT NULL,
     allow_nominations integer default 0 NOT NULL,
+    nominations_until timestamp without time zone,
     unique (shortdesc),
     primary key (id)
 );
@@ -43,6 +44,14 @@ CREATE TABLE candidates (
 );
 
 CREATE TABLE legalvoters (
+    id serial,
+    election_id integer not null,
+    group_name text not null,
+    foreign key (election_id) references elections (id),
+    primary key (id)
+);
+
+CREATE TABLE electionadmins (
     id serial,
     election_id integer not null,
     group_name text not null,

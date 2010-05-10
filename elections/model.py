@@ -28,6 +28,7 @@ ElectionsTable = Table('elections', metadata, autoload=True)
 VotesTable = Table('votes', metadata, autoload=True)
 CandidatesTable = Table('candidates', metadata, autoload=True)
 LegalVotersTable = Table('legalvoters', metadata, autoload=True)
+ElectionAdminsTable = Table('electionadmins', metadata, autoload=True)
 
 # View in the DB.  Needs to have the column keys defined
 VoteTallyTable = Table('fvotecount', metadata,
@@ -59,6 +60,9 @@ class Candidates(SABase):
 class LegalVoters(SABase):
     pass
 
+class ElectionAdmins(SABase):
+    pass
+
 class VoteTally(SABase):
     pass
 
@@ -80,5 +84,6 @@ mapper(Candidates, CandidatesTable, properties = {
     'tally': relation(VoteTally, backref='candidate')
     })
 mapper(LegalVoters, LegalVotersTable)
+mapper(ElectionAdmins, ElectionAdminsTable)
 mapper(VoteTally, VoteTallyTable)
 mapper(UserVoteCount, UserVoteCountTable)

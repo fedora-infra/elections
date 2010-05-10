@@ -141,8 +141,17 @@ class Root(controllers.RootController):
             turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election has not started.")
             raise turbogears.redirect("/")
         elif election.embargoed == 1:
-            turbogears.flash("We are sorry, the results for this election cannot be viewed because they are currently embargoed pending formal announcement.")
-            raise turbogears.redirect("/")
+            if identity.in_group('elections') :
+                pass
+            else :
+                match = 0
+                admingroups = ElectionAdmins.query.filter_by(election_id=eid).all()
+                for group in admingroups:
+                    if identity.in_group(group.group_name):
+                        match = 1
+                if match == 0:
+                    turbogears.flash("Meep, We are sorry, the results for this election cannot be viewed because they are currently embargoed pending formal announcement.")
+                    raise turbogears.redirect("/")
         votecount = VoteTally.query.filter_by(election_id=eid).order_by(VoteTally.novotes.desc()).all()
         return dict(votecount=votecount, usernamemap=usernamemap, election=election, appTitle=self.appTitle)
 
