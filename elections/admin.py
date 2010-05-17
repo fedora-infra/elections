@@ -30,7 +30,7 @@ from turbogears import controllers, expose, flash, redirect, config
 from turbogears import identity
 from fedora.client import AuthError, AppError
 from elections import model
-from elections.model import Elections, ElectionsTable, Candidates, LegalVoters
+from elections.model import Elections, ElectionsTable, Candidates, LegalVoters, ElectionAdmins
 
 from datetime import datetime
 
@@ -99,11 +99,20 @@ class Admin(controllers.Controller):
                 entry.strip()
 		if len(entry) :
                     LegalVoters(election_id=kw['id'], group_name=entry)
+            for entry in kw['newadmins'].split("|"):
+                entry.strip()
+		if len(entry) :
+                    LegalVoters(election_id=kw['id'], group_name=entry)
             for key, value in kw.items():
                 if key.startswith('remove_'):
                     group = key[len('remove_'):]
                     for lv in LegalVoters.query.filter_by(election_id=kw['id'],group_name=group) :
                         session.delete(lv)
+            for key, value in kw.items():
+                if key.startswith('removeadmin_'):
+                    group = key[len('removeadmin_'):]
+                    for admin in ElectionAdmins.query.filter_by(election_id=kw['id'],group_name=group) :
+                        session.delete(admin)
             for entry in kw['newcandidates'].split("|"):
                 candidate = entry.split("!")
                 #Python doesn't have a good way of doing case/switch statements
@@ -164,11 +173,17 @@ class Admin(controllers.Controller):
 
         candidates = Candidates.query.filter_by(election_id=election.id).all()
 	votergroups = LegalVoters.query.filter_by(election_id=election.id).all()
+	admingroups = ElectionAdmins.query.filter_by(election_id=election.id).all()
         groupnamemap = {}
+        for g in admingroups:
+            try:
+                groupnamemap[g.group_name] = g.group_name + " (" + self.fas.group_by_name(g.group_name)['display_name'] +")"
+            except (AppError, AuthError, KeyError) :
+                groupnamemap[g.group_name] = g.group_name 
         for g in votergroups:
             try:
                 groupnamemap[g.group_name] = g.group_name + " (" + self.fas.group_by_name(g.group_name)['display_name'] +")"
             except (AppError, AuthError, KeyError) :
                 groupnamemap[g.group_name] = g.group_name 
 
-        return dict(e=election, candidates=candidates, groups=votergroups, groupnamemap=groupnamemap)
+        return dict(e=election, candidates=candidates, admingroups=admingroups, groups=votergroups, groupnamemap=groupnamemap)
