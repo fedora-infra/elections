@@ -23,14 +23,15 @@
         <td>${election.start_date}</td>
         <td>${election.end_date}</td>
         <td>
-          <a href="${tg.url('/admin/edit/' + str(election.alias))}">More Information</a> 
+          <a href="${tg.url('/admin/edit/' + str(election.id))}">More Information</a> 
           <py:if test="election.embargoed"> 
             | 
-            <a href="${tg.url('/admin/edit/' + str(election.alias) + '?removeembargo=1')}">Remove Embargo</a>
+            <a href="${tg.url('/admin/edit/' + str(election.id) + '?removeembargo=1')}">Remove Embargo</a>
           </py:if>
         </td>
       </tr>
     </table>
+    <p><a href="${tg.url('/admin/newe/')}">Create a new election</a></p>
     
   </body>
 </html>
