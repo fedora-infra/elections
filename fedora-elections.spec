@@ -53,7 +53,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Fri Sep 17 2010 Mark Chappell <tremble@fedoraproject.org> - 0.4.0-1
-- Bump, some minor improvements etc etc, mainly geared towards FESCo election
+- Bump, various GUI improvements
 
 * Mon Jul 14 2008 Nigel Jones <dev@nigelj.com> - 0.1.5-1
 - Bump, some minor improvements etc etc, mainly geared towards FESCo election
