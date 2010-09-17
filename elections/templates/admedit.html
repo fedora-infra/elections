@@ -21,10 +21,10 @@
       <tr><td>End Date:</td><td><input type="text" name="enddate" value="${e.end_date}" /></td></tr>
       <tr><td>Seats Elected:</td><td><input type="text" name="seats" value="${e.seats_elected}" /></td></tr>
       <tr><td>Votes Per User:</td><td><input type="text" name="votes" value="${e.votes_per_user}" /></td></tr>
-      <tr><td>Allow Nominations?</td><td><input type="checkbox" name="allownominations" py:attrs="{'checked':''} if e.allow_nominations else {}" /> </td></tr>
+      <tr><td>Allow Nominations?</td><td><input type="checkbox" name="allownominations" py:attrs="{'checked':tg.checker(e.allow_nominations)}" /> </td></tr>
       <tr><td>Until When?</td><td><input type="text" name="nominationend" value="" /> </td></tr>
-      <tr><td>Use FAS?</td><td><input type="checkbox" name="usefas" py:attrs="{'checked':''} if e.usefas else {}" /> </td></tr>
-      <tr><td>Embargoed?</td><td><input type="checkbox" name="embargoed" py:attrs="{'checked':''} if e.embargoed else {}" /> </td></tr>                        
+      <tr><td>Use FAS?</td><td><input type="checkbox" name="usefas" py:attrs="{'checked':tg.checker(e.usefas)}" /> </td></tr>
+      <tr><td>Embargoed?</td><td><input type="checkbox" name="embargoed" py:attrs="{'checked':tg.checker(e.embargoed)}" /> </td></tr>                        
       <tr><td></td><td><input type="submit" name="submit" value="Submit"/></td></tr>
 
       <tr>
