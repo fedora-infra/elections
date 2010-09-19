@@ -60,7 +60,7 @@ class Root(controllers.RootController):
         current = []
         future = []
         now = datetime.utcnow()
-	for e in elections:
+        for e in elections:
             if e.start_date > now :
                 future.append(e)
             elif e.end_date < now :
@@ -101,7 +101,7 @@ class Root(controllers.RootController):
             try:
                 groupnamemap[g.group_name] = g.group_name + " (" + self.fas.group_by_name(g.group_name)['display_name'] +")"
             except (AppError, AuthError, KeyError) :
-	        groupnamemap[g.group_name] = g.group_name
+                groupnamemap[g.group_name] = g.group_name
 
         curtime = datetime.utcnow()
 
@@ -159,7 +159,7 @@ class Root(controllers.RootController):
     @expose(template="elections.templates.verify")
     def verify(self):
         validvotes = {}
-	invalidvotes = {}
+        invalidvotes = {}
         c = 0
         allvotes = UserVoteCount.query.filter_by(voter=turbogears.identity.current.user_name).all()
         for v in allvotes:

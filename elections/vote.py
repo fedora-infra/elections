@@ -62,7 +62,7 @@ class Vote(controllers.Controller):
             raise turbogears.redirect("/")
 
         votergroups = LegalVoters.query.filter_by(election_id=eid).all()
-	foo = identity.current.groups
+        foo = identity.current.groups
 
         match = 0
         for group in votergroups:

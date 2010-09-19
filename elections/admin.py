@@ -97,12 +97,12 @@ class Admin(controllers.Controller):
         if "submit" in kw:
             for entry in kw['newgroups'].split("|"):
                 entry.strip()
-		if len(entry) :
+                if len(entry) :
                     LegalVoters(election_id=kw['id'], group_name=entry)
             for entry in kw['newadmins'].split("|"):
                 entry.strip()
-		if len(entry) :
-                    LegalVoters(election_id=kw['id'], group_name=entry)
+                if len(entry) :
+                    ElectionAdmins(election_id=kw['id'], group_name=entry)
             for key, value in kw.items():
                 if key.startswith('remove_'):
                     group = key[len('remove_'):]
@@ -172,8 +172,8 @@ class Admin(controllers.Controller):
             raise turbogears.redirect("/admin/")
 
         candidates = Candidates.query.filter_by(election_id=election.id).all()
-	votergroups = LegalVoters.query.filter_by(election_id=election.id).all()
-	admingroups = ElectionAdmins.query.filter_by(election_id=election.id).all()
+        votergroups = LegalVoters.query.filter_by(election_id=election.id).all()
+        admingroups = ElectionAdmins.query.filter_by(election_id=election.id).all()
         groupnamemap = {}
         for g in admingroups:
             try:
