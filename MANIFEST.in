@@ -2,3 +2,5 @@ recursive-include elections2/public *
 include elections2/public/favicon.ico
 recursive-include elections2/i18n *
 recursive-include elections2/templates *
+include *.spec
+*.ini
