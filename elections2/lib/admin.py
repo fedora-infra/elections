@@ -44,6 +44,8 @@ import sqlalchemy, tg
 identity = request.environ.get('repoze.who.identity')
 
 class Admin(BaseController):
+    allow_only = predicates.in_group("elections")
+    
     def __init__(self, fas, appTitle):
         #print dir(fas), fas.username
         self.fas = fas
@@ -67,7 +69,6 @@ class Admin(BaseController):
 
     @expose(template='elections2.templates.admin')
     def index(self, *kw, **args):
-        print "test"
         electlist = model.DBSession.query(Elections).order_by(
                     Elections.start_date).filter('id>0').all()
         elections = [{'id': e.id, 'alias': e.alias, 
@@ -84,8 +85,6 @@ class Admin(BaseController):
         print "here"
         return dict(elections=elections)
     
-    #print "   -> ", request.environ.get("FAS_LOGIN_INFO")
-    #@identity.require(identity.in_group("elections"))
     @expose(template="elections2.templates.admnewe")
     def newe(self, **kw):
         print "newe"
@@ -122,7 +121,6 @@ class Admin(BaseController):
             print "return"
             return dict()
 
-    #@identity.require(identity.in_group("elections"))
     @expose(template="elections2.templates.admnewc")
     def newc(self, **kw):        
         if "submit" in kw:
@@ -141,7 +139,6 @@ class Admin(BaseController):
         else:
             return dict()
 
-    #@identity.require(identity.in_group("elections"))
     @expose(template="elections2.templates.admedit")
     def edit(self, eid=None, **kw):
         print "**", eid, kw

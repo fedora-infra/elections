@@ -43,13 +43,14 @@ from datetime import datetime
 import re
 
 class Vote(BaseController):
+    allow_only = predicates.not_anonymous()
+    
     def __init__(self, fas, appTitle):
         self.fas = fas
         self.appTitle = appTitle
 
     #TODO: This function will be split off into: default => submit => 
     #confirm functions, hopefully it was simplify everything
-    #@identity.require(identity.not_anonymous())
     @expose(template="elections2.templates.vote")
     def default(self, eid=None, **kw):
         print dir(Elections)
