@@ -21,10 +21,6 @@ from elections2.model import *
 from elections2.lib.admin import Admin
 from elections2.lib.vote import Vote
 
-#import fedora.tg.tg2utils
-
-#from fedora.tg.controllers import login as fc_login
-#from fedora.tg.controllers import logout as fc_logout
 
 from datetime import datetime
 
@@ -66,12 +62,7 @@ class RootController(BaseController):
     @expose('elections2.templates.index')
     def index(self):
         """Handle the front-page."""
-        print "***************"
-        print request.identity
-        print "***************"
         if request.identity:
-            print request.identity.keys()
-            print request.identity['username']
             userid = request.identity['repoze.who.userid']
             flash(_('Welcome back, %s!') % userid)
         
@@ -141,8 +132,8 @@ class RootController(BaseController):
                     curtime=curtime, votergroups=votergroups,
                     appTitle=self.appTitle, groupnamemap=groupnamemap)
 
-    #@identity.require(identity.not_anonymous())
     @expose(template="elections2.templates.verify")
+    @require(predicates.not_anonymous("Please log-in"))
     def verify(self):
         validvotes = {}
         invalidvotes = {}
