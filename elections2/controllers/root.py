@@ -172,7 +172,7 @@ class RootController(BaseController):
         if login_counter > 0:
             flash(_('Wrong credentials'), 'warning')
         if login_counter > 5:
-            flash(_('Too many wront attempt -- Blocked user'), 'warning')
+            flash(_('Too many wrong attempts -- Blocked user'), 'warning')
         login_dict['login_counter'] = str(login_counter)
         login_dict['page'] = 'login'
         login_dict['came_from'] = came_from
