@@ -61,7 +61,7 @@
       </tr>
     </table>
     </py:if>
-
+	
     <py:if test="len(past)">
     <h2>Past Elections</h2>
     <table>
@@ -73,6 +73,7 @@
         <th></th>
       </tr>
       <tr py:for="election in past">
+      	
         <td>${election.shortdesc}</td>
         <td>${election.start_date}</td>
         <td>${election.end_date}</td>
@@ -103,6 +104,7 @@
             </py:otherwise>
           </py:choose>
         </td>
+        
       </tr>
     </table>
     </py:if>
