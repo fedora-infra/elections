@@ -29,6 +29,7 @@
 #from turbogears import controllers, expose, flash, redirect, config
 #from turbogears import identity
 from tg import expose, flash, require, url, request, redirect
+from repoze.what import predicates
 from elections2.lib.base import BaseController
 
 from elections2 import model
