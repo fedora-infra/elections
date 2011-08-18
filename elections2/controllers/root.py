@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Main Controller"""
 
-from tg import expose, flash, require, url, request, redirect
+from tg import config, expose, flash, require, url, request, redirect
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from tgext.admin.tgadminconfig import TGAdminConfig
 from tgext.admin.controller import AdminController
@@ -224,7 +224,7 @@ class RootController(BaseController):
             turbogears.flash("We are sorry, the results for this election cannot be viewed at this time because the election has not started.")
             raise turbogears.redirect("/")
         elif election.embargoed == 1:
-            if identity.in_group('elections') :
+            if identity.in_group(config.get('admingroup', 'elections')):
                 pass
             else :
                 match = 0

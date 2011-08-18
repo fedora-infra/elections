@@ -37,7 +37,7 @@
             <li py:if="request.identity" id="admin" class="loginlogout"><a href="${tg.url('/admin')}">Admin</a></li>
           </span>
 <!--
-          <li py:if="('elections' in tg.identity.groups)">Admin</li>
+          <li py:if="(tg.config.get('admingroup', 'elections') in tg.identity.groups)">Admin</li>
 -->
         </ul>
         <div py:if="tg.flash" class="flash">

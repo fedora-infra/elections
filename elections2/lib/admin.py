@@ -28,7 +28,7 @@
 #import turbogears
 #from turbogears import controllers, expose, flash, redirect, config
 #from turbogears import identity
-from tg import expose, flash, require, url, request, redirect
+from tg import config, expose, flash, require, url, request, redirect
 from elections2.lib.base import BaseController
 from fedora.client import AuthError, AppError
 from elections2 import model
@@ -44,7 +44,7 @@ import sqlalchemy, tg
 identity = request.environ.get('repoze.who.identity')
 
 class Admin(BaseController):
-    allow_only = predicates.in_group("elections")
+    allow_only = predicates.in_group(config.get('admingroup', 'elections'))
     
     def __init__(self, fas, appTitle):
         #print dir(fas), fas.username
