@@ -18,7 +18,7 @@ from tg.configuration import AppConfig
 import elections2
 from elections2 import model
 from elections2.lib import app_globals, helpers 
-from fedora.tg.tg2utils import add_fas_auth_middleware
+from fedora.tg2.utils import add_fas_auth_middleware
 
 class MyAppConfig(AppConfig):
     add_auth_middleware = add_fas_auth_middleware
