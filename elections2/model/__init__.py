@@ -8,8 +8,6 @@ from sqlalchemy.types import Unicode, Integer, DateTime, String
 #from sqlalchemy import MetaData
 from sqlalchemy.ext.declarative import declarative_base
 
-from fedora.tg.json import SABase
-
 # Global session manager: DBSession() returns the Thread-local
 # session object appropriate for the current web request.
 maker = sessionmaker(autoflush=True, autocommit=False,
@@ -53,48 +51,8 @@ def init_model(engine):
     # use the model outside tg2, you need to make sure this is called before
     # you use the model.
 
-    #
-    # See the following example:
-
-    #global t_reflected
-
-    #t_reflected = Table("Reflected", metadata,
-    #    autoload=True, autoload_with=engine)
-    ElectionsTable = Table('elections', metadata, autoload=True)
-    VotesTable = Table('votes', metadata, autoload=True)
-    CandidatesTable = Table('candidates', metadata, autoload=True)
-    LegalVotersTable = Table('legalvoters', metadata, autoload=True)
-    ElectionAdminsTable = Table('electionadmins', metadata, autoload=True)
-
     # View in the DB.  Needs to have the column keys defined
-    VoteTallyTable = Table('fvotecount', metadata,
-        Column('id', Integer,
-                ForeignKey('candidates.id'), primary_key=True),
-        Column('election_id', Integer),
-        Column('name', String, nullable=False),
-        Column('novotes', Integer, nullable=False)
-    )
-    UserVoteCountTable = Table('uservotes', metadata,
-        Column('election_id', Integer, ForeignKey('elections.id'), primary_key=True),
-        Column('voter', String, nullable=False, primary_key=True),
-        Column('novotes', Integer, nullable=False)
-    )
 
-    #mapper(Reflected, t_reflected)
-    mapper(Elections, ElectionsTable, properties = {
-        'legalVoters': relation(LegalVoters, backref='election'),
-        'candidates': relation(Candidates, backref='election'),
-        'uservotes': relation(UserVoteCount, backref='election')
-        })
-    mapper(Votes, VotesTable)
-    mapper(Candidates, CandidatesTable, properties = {
-        'votes': relation(Votes, backref='candidate'),
-        'tally': relation(VoteTally, backref='candidate')
-        })
-    mapper(LegalVoters, LegalVotersTable)
-    mapper(ElectionAdmins, ElectionAdminsTable)
-    mapper(VoteTally, VoteTallyTable)
-    mapper(UserVoteCount, UserVoteCountTable)
 
 # Import your model modules here.
 from elections2.model.auth import User, Group, Permission
@@ -103,23 +61,163 @@ from elections2.model.auth import User, Group, Permission
 # Classes to map to
 #
 
-class Elections(SABase):
-    pass
 
-class Votes(SABase):
-    pass
+class LegalVoters(DeclarativeBase):
+    """
+    Define the voters.
+    """
+    __tablename__ = 'legalvoters'
 
-class Candidates(SABase):
-    pass
+    #{ Columns
+    id = Column(Integer, autoincrement=True, primary_key=True, unique=True)
+    election_id = Column(Integer, ForeignKey('elections.id'), nullable=False)
+    group_name = Column(Unicode(150), nullable=False)
 
-class LegalVoters(SABase):
-    pass
+    #{ Special methods
+    def __repr__(self):
+        return '<LegalVoters: group=%r>' % self.group_name
 
-class ElectionAdmins(SABase):
-    pass
+    def __unicode__(self):
+        return self.group_name
+    #}
 
-class VoteTally(SABase):
-    pass
 
-class UserVoteCount(SABase):
-    pass
+class ElectionAdmins(DeclarativeBase):
+    """
+    Define the Admins.
+    """
+    __tablename__ = 'electionadmins'
+
+    #{ Columns
+    id = Column(Integer, autoincrement=True, primary_key=True, unique=True)
+    election_id = Column(Integer, ForeignKey('elections.id'), nullable=False)
+    group_name = Column(Unicode(150), nullable=False)
+
+    #{ Special methods
+    def __repr__(self):
+        return '<ElectionAdmins: group=%r>' % self.group_name
+
+    def __unicode__(self):
+        return self.group_name
+    #}
+
+class VoteTally(DeclarativeBase):
+    __tablename__ =  'fvotecount'
+
+    #{ Columns
+    id = Column(Integer, ForeignKey('candidates.id'), primary_key=True)
+    name = Column(String, nullable=False)
+    novotes = Column(Integer, nullable=False)
+
+    #{ Special methods
+    def __repr__(self):
+        return '<VoteTally: id=%r election=%r group=%r>' % ( self.id,
+            self.election_id, self.group_name)
+
+    def __unicode__(self):
+        return self.group_name
+    #}
+
+class UserVoteCount(DeclarativeBase):
+
+    __tablename__ = 'uservotes'
+
+    #{ Columns
+    election_id = Column(Integer, ForeignKey('elections.id'), primary_key=True)
+    voter = Column(String, nullable=False, primary_key=True)
+    novotes = Column(Integer, nullable=False)
+
+    #{ Special methods
+    def __repr__(self):
+        return '<UserVoteCount: id=%r voter=%r novotes=%r>' % (
+            self.election_id, self.voter, self.novotes)
+
+    def __unicode__(self):
+        return self.group_name
+    #}
+
+class Elections(DeclarativeBase):
+    """
+    Define the different elections.
+    """
+    __tablename__ = 'elections'
+
+    #{ Columns
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    shortdesc = Column(Unicode(150), unique=True, nullable=False)
+    alias = Column(Unicode(150), unique=True, nullable=False)
+    description = Column(Unicode(150), unique=True, nullable=False)
+    url = Column(Unicode(150), unique=True, nullable=False)
+    start_date = Column(DateTime, nullable=False)
+    end_date = Column(DateTime, nullable=False)
+    seats_elected = Column(Integer, nullable=False)
+    votes_per_user = Column(Integer, nullable=False)
+    embargoed = Column(Integer, nullable=False, default=0)
+    usefas = Column(Integer, nullable=False, default=0)
+    allow_nominations = Column(Integer, nullable=False, default=0)
+    nominations_until = Column(DateTime)
+
+    #{ Relations
+    legalVoters =  relation('LegalVoters')
+    candidates = relation('Candidates')
+    uservotes = relation('UserVoteCount')
+
+    #{ Special methods
+    def __repr__(self):
+        return '<Elections: election=%r>' % self.shortdesc
+
+    def __unicode__(self):
+        return self.shortdesc
+    #}
+
+
+class Votes(DeclarativeBase):
+    """
+    Define the different votes.
+    """
+    __tablename__ = 'votes'
+
+    #{ Columns
+    id = Column(Integer, autoincrement=True, primary_key=True, unique=True)
+    election_id = Column(Integer, ForeignKey('elections.id'), nullable=False)
+    voter = Column(Unicode(150), nullable=False)
+    timestamp = Column(DateTime, nullable=False)
+    candidate_id = Column(Integer, ForeignKey('candidates.id'), nullable=False)
+    weight = Column(Integer, nullable=False)
+
+    #{ Special methods
+    def __repr__(self):
+        return '<Votes: voter=%r>' % self.voter
+
+    def __unicode__(self):
+        return self.voter
+    #}
+
+
+class Candidates(DeclarativeBase):
+    """
+    Define the candidates.
+    """
+    __tablename__ = 'candidates'
+
+    #{ Columns
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    election_id = Column(Integer, ForeignKey('elections.id'),
+            primary_key=True, nullable=False)
+    name = Column(Unicode(150), nullable=False)
+    url = Column(Unicode(150))
+    formalname = Column(Unicode(150), nullable=True)
+    human = Column(Integer)
+    status = Column(Integer)
+
+    #{ Relations
+    #votes = relation('Votes', backref='candidate'),
+    #tally = relation('VoteTally', backref='candidate')
+    
+    #{ Special methods
+    def __repr__(self):
+        return '<Candidates: candidate=%r>' % self.name
+
+    def __unicode__(self):
+        return self.name
+    #}
