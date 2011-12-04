@@ -42,13 +42,12 @@ import sqlalchemy, tg
 
 #from turbogears.database import session
 
-identity = request.environ.get('repoze.who.identity')
+request.identity = request.environ.get('repoze.who.identity')
 
 class Admin(BaseController):
     allow_only = predicates.in_group(config.get('admingroup', 'elections'))
     
     def __init__(self, fas, appTitle):
-        #print dir(fas), fas.username
         self.fas = fas
         self.appTitle = appTitle
 
@@ -106,8 +105,10 @@ class Admin(BaseController):
             election.shortdesc=kw['shortdesc']
             election.description=kw['info']
             election.url=kw['url']
-            election.start_date=kw['startdate']
-            election.end_date=kw['enddate']
+            election.start_date= datetime.strptime(kw['startdate'],
+                "%Y-%m-%d %H:%M:%S")
+            election.end_date=datetime.strptime(kw['enddate'],
+                "%Y-%m-%d %H:%M:%S")
             election.embargoed=setembargo
             election.seats_elected=kw['seats']
             election.usefas=usefas
@@ -174,7 +175,7 @@ class Admin(BaseController):
                 candidate = entry.split("!")
                 #Python doesn't have a good way of doing case/switch statements
                 if len(candidate) == 1:
-                    if len(candidate[0]) : 
+                    if len(candidate[0]):
                         c=Candidates()
                         c.election_id=kw['id']
                         c.name=candidate[0]
@@ -182,10 +183,10 @@ class Admin(BaseController):
                         c.human=1
                         model.DBSession.add(c)
                 elif len(candidate) == 2:
-                    if len(candidate[0]) : 
+                    if len(candidate[0]):
                         c = Candidates()
                         c.election_id=kw['id']
-                        c.name=candidate[0],
+                        c.name=candidate[0]
                         c.url=candidate[1]
                         c.status=0
                         c.human=1
@@ -214,8 +215,10 @@ class Admin(BaseController):
             election.shortdesc=kw['shortdesc']
             election.description=kw['info']
             election.url=kw['url']
-            election.start_date=kw['startdate']
-            election.end_date=kw['enddate']
+            election.start_date=election.end_date=datetime.strptime(kw['startdate'],
+                "%Y-%m-%d %H:%M:%S")
+            election.end_date=election.end_date=datetime.strptime(kw['enddate'],
+                "%Y-%m-%d %H:%M:%S")
             election.embargoed=setembargo
             election.seats_elected=kw['seats']
             election.usefas=usefas
