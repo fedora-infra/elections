@@ -43,7 +43,7 @@ class RootController(BaseController):
     """
     secc = SecureController()
 
-    admin = AdminController(model, DBSession, config_type=TGAdminConfig)
+    #admin = AdminController(model, DBSession, config_type=TGAdminConfig)
 
     error = ErrorController()
     
@@ -176,7 +176,6 @@ class RootController(BaseController):
         login_dict['login_counter'] = str(login_counter)
         login_dict['page'] = 'login'
         login_dict['came_from'] = came_from
-        print csrf_login
 
         return login_dict
 
@@ -252,12 +251,10 @@ class RootController(BaseController):
 
         """
         ## default code from TG2:
-        print request.identity
         if not request.identity:
             login_counter = request.environ['repoze.who.logins'] + 1
             redirect('/login', came_from=came_from, __logins=login_counter)
         userid = request.identity['repoze.who.userid']
-        print request.identity.keys()
         flash(_('Welcome back, %s!') % userid)
         redirect(came_from)
 
