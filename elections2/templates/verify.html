@@ -11,11 +11,19 @@
     <p>Please check the below content to ensure that all of your cast votes are marked as 'valid', if you notice any elections showing that you have an invalid vote cast please contact the election administration team by creating a ticket at the <a href="https://fedorahosted.org/fedora-infrastructure/">Fedora Infrastructure ticket system</a> and select the 'Elections' component with your FAS username and the election that is marked as invalid.</p>
     <h2 py:if="validvotes">Valid Votes</h2>
     <ul py:if="validvotes">
-      <li py:for="vote in validvotes"><a href="${tg.url('/about/' + validvotes[vote].election.id)}">${validvotes[vote].election.shortdesc}</a></li>
+        <li py:for="vote in validvotes">
+            <a href="${tg.url('/about/' + validvotes[vote].election.id)}">
+                ${validvotes[vote].election.shortdesc}
+            </a>
+        </li>
     </ul>
     <h2 py:if="invalidvotes">Invalid Votes</h2>
     <ul py:if="invalidvotes">
-      <li py:for="vote in invalidvotes"><a href="${tg.url('/about/' + invalidvotes[vote].election.id)}">${invalidvotes[vote].election.shortdesc}</a></li>
+        <li py:for="vote in invalidvotes">
+            <a href="${tg.url('/about/' + invalidvotes[vote].election.id)}">
+                ${invalidvotes[vote].election.shortdesc}
+            </a>
+        </li>
     </ul>
 
   </body>
