@@ -34,9 +34,10 @@ from elections2.lib.base import BaseController
 
 from elections2 import model
 from elections2.model import Elections, LegalVoters, Candidates, \
-    Votes, UserVoteCount
+    Votes
 
 import sqlalchemy
+from sqlalchemy import func
 
 #from turbogears.database import session
 
@@ -87,7 +88,7 @@ class Vote(BaseController):
                         usergroups if re.match("cla_.*",g)])
                         ):
                     match = 1
-            elif request.identity.in_group(group.group_name) or \
+            elif predicates.in_group(group.group_name) or \
                     group.group_name == "anyany":
                 match = 1
         if match == 0:
@@ -99,9 +100,9 @@ class Vote(BaseController):
         candidates = model.DBSession.query(Candidates
                             ).filter_by(election_id=eid
                             ).order_by(Candidates.name).all()
-        uservote = model.DBSession.query(UserVoteCount
-                            ).filter_by(election_id=eid,
-                    voter=request.identity['username']).all()
+        uservote = model.DBSession.query(Votes.election_id,
+            Votes.voter, func.count(Votes.voter)
+            ).group_by(Votes.voter).all()
 
         usernamemap = {}
 

@@ -101,40 +101,6 @@ class ElectionAdmins(DeclarativeBase):
         return self.group_name
     #}
 
-class VoteTally(DeclarativeBase):
-    __tablename__ =  'fvotecount'
-
-    #{ Columns
-    id = Column(Integer, ForeignKey('candidates.id'), primary_key=True)
-    name = Column(String, nullable=False)
-    novotes = Column(Integer, nullable=False)
-
-    #{ Special methods
-    def __repr__(self):
-        return '<VoteTally: id=%r election=%r group=%r>' % ( self.id,
-            self.election_id, self.group_name)
-
-    def __unicode__(self):
-        return self.group_name
-    #}
-
-class UserVoteCount(DeclarativeBase):
-
-    __tablename__ = 'uservotes'
-
-    #{ Columns
-    election_id = Column(Integer, ForeignKey('elections.id'), primary_key=True)
-    voter = Column(String, nullable=False, primary_key=True)
-    novotes = Column(Integer, nullable=False)
-
-    #{ Special methods
-    def __repr__(self):
-        return '<UserVoteCount: id=%r voter=%r novotes=%r>' % (
-            self.election_id, self.voter, self.novotes)
-
-    def __unicode__(self):
-        return self.group_name
-    #}
 
 class Elections(DeclarativeBase):
     """
@@ -160,7 +126,7 @@ class Elections(DeclarativeBase):
     #{ Relations
     legalVoters =  relation('LegalVoters')
     candidates = relation('Candidates')
-    uservotes = relation('UserVoteCount')
+    #uservotes = relation('UserVoteCount')
 
     #{ Special methods
     def __repr__(self):
@@ -211,7 +177,7 @@ class Candidates(DeclarativeBase):
     status = Column(Integer)
 
     #{ Relations
-    #votes = relation('Votes', backref='candidate'),
+    votes = relation('Votes', backref='candidate'),
     #tally = relation('VoteTally', backref='candidate')
     
     #{ Special methods

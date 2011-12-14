@@ -23,6 +23,7 @@ from elections2.lib.vote import Vote
 
 
 from datetime import datetime
+from sqlalchemy import func
 
 __all__ = ['RootController']
 
@@ -138,8 +139,11 @@ class RootController(BaseController):
         validvotes = {}
         invalidvotes = {}
         c = 0
-        allvotes = UserVoteCount.query.filter_by(voter=
-                        turbogears.identity.current.user_name).all()
+        print request.identity['user']
+        allvotes = model.DBSession.query(Votes.election_id,
+            Votes.voter, func.count(Votes.voter)
+            ).filter_by(voter=request.identity['user']
+            ).group_by(Votes.voter).all()
         for v in allvotes:
             if len(v.election.candidates) == v.novotes:
                 validvotes[c] = v
@@ -188,10 +192,12 @@ class RootController(BaseController):
     def results(self, eid=None):
         try:
             eid = int(eid)
-            election = model.DBSession.query(Elections).filter_by(id=eid).all()[0]
+            election = model.DBSession.query(Elections).filter_by(
+                    id=eid).all()[0]
         except ValueError:
             try:
-                election = model.DBSession.query(Elections).filter_by(alias=eid).all()[0]
+                election = model.DBSession.query(Elections).filter_by(
+                    alias=eid).all()[0]
                 eid = election.id
             except IndexError:
                 flash("This election does not exist, check"\
@@ -238,8 +244,17 @@ class RootController(BaseController):
                     " are currently embargoed pending formal"
                     " announcement.")
                     raise turbogears.redirect("/")
-        votecount = model.DBSession.query(VoteTally).filter_by(election_id=eid
-                            ).order_by(VoteTally.novotes.desc()).all()
+        votecount = model.DBSession.query(Candidates,
+                func.sum(Votes.weight).label('novotes'
+                )).filter(
+                    Candidates.id == Votes.candidate_id
+                ).filter_by(
+                    election_id=eid,
+                ).order_by(
+                    func.sum(Votes.weight).desc()
+                ).all()
+        
+    
         return dict(votecount=votecount, usernamemap=usernamemap,
                     election=election, appTitle=self.appTitle)
 
