@@ -1,0 +1,1 @@
+FEDORA_ELECTIONS_CONFIG=../development.cfg python createdb.py

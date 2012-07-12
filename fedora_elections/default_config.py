@@ -1,0 +1,1 @@
+FEDORA_ELECTIONS_ADMIN_GROUP = 'elections'
