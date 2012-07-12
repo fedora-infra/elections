@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% block title %}{{ submit_text }}{% endblock %}
+{% block body %}
+<h2>{{ submit_text }}</h2>
+
+<form action="" method="post">
+	<fieldset>
+		{{ render_field(form.name) }}
+		{{ render_field(form.url) }}
+	</fieldset>
+
+	<br class="clear">
+	<p class="buttons"><input type="submit" class="submit positive" value="{{ submit_text }}"></p>
+	{{ form.csrf_token }}
+</form>
+{% endblock %}

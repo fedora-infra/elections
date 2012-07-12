@@ -1,0 +1,4 @@
+database.sqlite
+*.pyc
+*.pyo
+*.swp
