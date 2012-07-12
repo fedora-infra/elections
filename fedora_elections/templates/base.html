@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% block head %}
+		<title>Fedora Elections{% if self.title() %} &mdash; {% block title %}{% endblock %}{% endif %}</title>
+		<link rel="stylesheet" href="{{ url_for("static", filename="style.css") }}">
+		{% endblock %}
+	</head>
+	<body>
+		<h1>Fedora Elections</h1>
+		{% if g.fas_user %}
+		<p>Hello, {{ g.fas_user.username }} &mdash; <a href="{{ url_for("auth_logout") }}">log out</a></p>
+		{% else %}
+		<p>You are not logged in &mdash; <a href="{{ url_for("auth_login") }}">log in</a></p>
+		{% endif %}
+		<nav>
+			<h2>Elections</h2>
+			<ul>
+				<li><a href="{{ url_for("index") }}">Open elections</a></li>
+				<li><a href="{{ url_for("archived_elections") }}">Archived elections</a></li>
+			</ul>
+			<br>
+			<h2>Administration</h2>
+			<ul>
+				<li><a href="{{ url_for("admin_view_elections") }}">My elections</a></li>
+				<li><a href="{{ url_for("admin_new_election") }}">Create new election</a></li>
+			</ul>
+		</nav>
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		<ul id="flashes">
+			{% for message in messages %}
+			<li>{{ message }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+		{% block body %}{% endblock %}
+	</body>
+</html>
