@@ -53,7 +53,7 @@ def election_admin_required(f):
 @app.route('/')
 def index():
     elections = models.Election.query.filter_by(frontpage=True).all()
-    return flask.render_template('list/index.html')
+    return flask.render_template('list/index.html', elections=elections)
 
 
 @app.route('/archive')
