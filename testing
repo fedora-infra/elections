@@ -1,0 +1,3 @@
+#!/bin/sh
+FEDORA_ELECTIONS_CONFIG=../development.cfg nosetests $*
+
