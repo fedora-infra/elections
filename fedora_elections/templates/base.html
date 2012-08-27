@@ -4,6 +4,8 @@
 		{% block head %}
 		<title>Fedora Elections{% if self.title() %} &mdash; {% block title %}{% endblock %}{% endif %}</title>
 		<link rel="stylesheet" href="{{ url_for("static", filename="style.css") }}">
+		{% for css in config.get('EXTRA_CSS', []) %}<link rel="stylesheet" href="{{ css }}">
+		{% endfor %}
 		{% endblock %}
 	</head>
 	<body>
