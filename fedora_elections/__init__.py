@@ -80,7 +80,7 @@ def auth_login():
 @app.route('/logout')
 def auth_logout():
     if not flask.g.fas_user:
-        return safe_redirect_back()
+        return redirect.safe_redirect_back()
     fas.logout()
     flask.flash('You have been logged out')
     return redirect.safe_redirect_back()
