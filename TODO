@@ -1,0 +1,28 @@
+Things that need doing to get this deployed
+===========================================
+
+* Write a conversion script for the old db model to the new one
+* rpmify
+* rpmify flask-fas (or get flask-fas into python-fedora)
+* Implement a voting method for range voting
+
+* CSRF protection -- anything going through wtf forms is protected.  It's up to
+  us to make sure that no data changing requests are coded without wtf forms.
+  So this is really: audit to make sure everything is using wtf forms
+
+Future enhancements (anything not necessary for deploying)
+==========================================================
+
+* Make voting methods modular
+* Give this a Fedora theme
+* Break the main program logic out into library modules
+** Controllers should be as lightweight as possible
+*** validation of input
+**** Might decorate the controller method but the validation itself should live
+     in another module.  Might want to break validation schemas into another
+     module too
+*** Authentication
+**** decorators can go here and calls that return True or False.  Logic itself
+     should go in a different module
+*** return data to templating engine
+*** Association with a URL
