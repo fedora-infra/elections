@@ -10,10 +10,14 @@
 	{% for candidate in election.candidates %}
 	<tr>
 		<td>{{candidate.name}} <a href="{{candidate.url}}">[Info]</a></td>
+		<!-- If user is logged in: -->
+		<td><!-- Render the wtform for the candidate voting box here --></td>
+		<!-- End if user logged in -->
 	</tr>
 	{% endfor %}
 </table>
 
+<!-- Make this conditional on whether the user is logged in and can vote in the election -->
 To vote in this election you must be a member of any one of the following groups:
 <ul>
 	{% for group in election.legal_voters %}
