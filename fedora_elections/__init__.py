@@ -63,12 +63,6 @@ def archived_elections():
 
 ### ELECTION VIEWS #############################################
 
-@app.route('/about/<election_alias>')
-def about(election_alias):
-    election = models.Election.query.filter_by(alias=election_alias).one()
-    return flask.render_template('election/about.html', election=election)
-
-
 @app.route('/vote/<election_alias>')
 def vote(election_alias):
     election = models.Election.query.filter_by(alias=election_alias).one()
