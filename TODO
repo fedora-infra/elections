@@ -10,6 +10,8 @@ Things that need doing to get this deployed
   us to make sure that no data changing requests are coded without wtf forms.
   So this is really: audit to make sure everything is using wtf forms
 
+* Error handling -- unknown elections, etc
+
 Future enhancements (anything not necessary for deploying)
 ==========================================================
 
@@ -26,4 +28,7 @@ Future enhancements (anything not necessary for deploying)
      should go in a different module
 *** return data to templating engine
 *** Association with a URL
-
+* i18n.  Need review: https://bugzilla.redhat.com/show_bug.cgi?id=839071
+** mark strings
+** Pull translatable strings out
+** set up transifex
