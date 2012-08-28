@@ -1,26 +1,23 @@
 {% extends "base.html" %}
 {% block body %}
-<h2>Open elections</h2>
+<h2>{{election.summary}}</h2>
+
+<p>{{election.description}}</p>
+
+<p><a href="{{election.url}}">[More Information]</a></p>
+
 <table>
+	{% for candidate in election.candidates %}
 	<tr>
-		<th>Election</th>
-		<th>Start date (UTC)</th>
-		<th>End date (UTC)</th>
-		<th>Status</th>
-		<th></th>
-	</tr>
-	{% for election in elections %}
-	<tr>
-		<td>{{ election.summary }}</td>
-		<td>{{ election.start_date }}</td>
-		<td>{{ election.end_date }}</td>
-		<td>{{ election.status }}</td>
-		<td>
-			{% if election.status == "In progress" %}
-			<a href="{{ url_for('vote', election_alias=election.alias) }}">Vote now!</a>
-			{% endif %}
-		</td>
+		<td>{{candidate.name}} <a href="{{candidate.url}}">[Info]</a></td>
 	</tr>
 	{% endfor %}
 </table>
+
+To vote in this election you must be a member of any one of the following groups:
+<ul>
+	{% for group in election.legal_voters %}
+	<li>{{group.group_name}}</li>
+	{% endfor %}
+</ul>
 {% endblock %}
