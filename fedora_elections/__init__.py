@@ -61,6 +61,20 @@ def archived_elections():
     raise NotImplementedError
 
 
+### ELECTION VIEWS #############################################
+
+@app.route('/about/<election_alias>')
+def about(election_alias):
+    election = models.Election.query.filter_by(alias=election_alias).one()
+    return flask.render_template('election/about.html', election=election)
+
+
+@app.route('/vote/<election_alias>')
+def vote(election_alias):
+    election = models.Election.query.filter_by(alias=election_alias).one()
+    return flask.render_template('election/vote.html', election=election)
+
+
 ### AUTH VIEWS #############################################
 
 @app.route('/login', methods=('GET', 'POST'))
