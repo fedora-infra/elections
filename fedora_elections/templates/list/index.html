@@ -17,7 +17,7 @@
 		<td>{{ election.status }}</td>
 		<td>
 			{% if election.status == "In progress" %}
-			<a href="{{ url_for('about', election_alias=election.alias) }}">Vote now!</a>
+			<a href="{{ url_for('vote', election_alias=election.alias) }}">Vote now!</a>
 			{% endif %}
 		</td>
 	</tr>
