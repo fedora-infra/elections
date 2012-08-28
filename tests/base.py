@@ -22,8 +22,8 @@ class BaseRequestTests(object):
         fedora_elections.db.drop_all()
 
 url_subs = {'election_alias': None, 'candidate_id': None}
-anon_urls = ('/', '/archive', '/login', '/logout')
-authed_view_urls = ('/logout',)
+anon_urls = ('/', '/archive', '/login', '/logout', '/about/%(election_alias)s')
+authed_view_urls = ('/logout', '/vote/%(election_alias)s')
 admin_view_urls = ('/admin', '/admin/new', '/admin/%(election_alias)s')
 admin_modify_urls = ('/admin/new', '/admin/%(election_alias)s/edit',
     '/admin/%(election_alias)s/candidates/new',
