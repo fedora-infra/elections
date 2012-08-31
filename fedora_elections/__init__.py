@@ -2,6 +2,8 @@ import flask
 from flask.ext.fas import FAS
 from flask.ext.sqlalchemy import SQLAlchemy
 
+import fedmsg
+
 from datetime import datetime, time
 from functools import wraps
 from urlparse import urlparse, urljoin
@@ -121,6 +123,7 @@ def admin_new_election():
         db.session.add(admin)
         db.session.commit()
         flask.flash('Election "%s" added' % election.summary)
+        fedmsg.publish(topic="election.new", msg=election)
         return flask.redirect(flask.url_for('admin_view_election',
                                             election_alias=election.alias))
     return flask.render_template('admin/election_form.html', form=form,
