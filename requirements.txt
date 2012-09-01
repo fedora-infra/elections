@@ -6,4 +6,3 @@ python-fedora
 Flask-FAS
 Flask-sqlalchemy
 Flask-wtf
-fedmsg>=0.3.9
