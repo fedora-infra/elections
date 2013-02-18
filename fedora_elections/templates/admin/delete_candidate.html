@@ -2,12 +2,17 @@
 {% from "_formhelpers.html" import render_field %}
 {% block title %}Delete candidate{% endblock %}
 {% block body %}
-<h2>{{ self.title() }}</h2>
+  <h2>{{ self.title() }}</h2>
 
-<form action="" method="post">
-	<p>Are you sure you want to delete candidate "{{ candidate.name }}"?</p>
-	<p class="buttons"><input type="submit" value="Delete candidate">
-	<a href="{{ url_for('admin_view_election', election_alias=candidate.election.alias) }}">Cancel</a></p>
-	{{ form.csrf_token }}
-</form>
+  <form action="" method="post">
+    <p>Are you sure you want to delete candidate "{{ candidate.name }}"?</p>
+    <p class="buttons">
+      <input type="submit" value="Delete candidate">
+      <a href="{{ url_for('admin_view_election',
+                          election_alias=candidate.election.alias) }}">
+        Cancel
+      </a>
+    </p>
+    {{ form.csrf_token }}
+  </form>
 {% endblock %}

@@ -6,22 +6,111 @@
 
 <p><a href="{{election.url}}">[More Information]</a></p>
 
-<table>
-	{% for candidate in election.candidates %}
-	<tr>
-		<td>{{candidate.name}} <a href="{{candidate.url}}">[Info]</a></td>
-		<!-- If user is logged in: -->
-		<td><!-- Render the wtform for the candidate voting box here --></td>
-		<!-- End if user logged in -->
-	</tr>
-	{% endfor %}
-</table>
+<form action="" method="post">
+  <table border="1" cellpadding="1">
+    {% for candidate in election.candidates %}
+      <tr>
+        <td>
+          {% if election.candidates_are_fasusers %}
+            {{ usernamemap[candidate.id] }}
+          {% else %}
+            {{ candidate.name }}
+          {% endif %}
+          <a href="{{candidate.url}}">[Info]</a>
+        </td>
+        <!-- If user is logged in: -->
+        {% if g.fas_user %}
+          {% if nextaction == 'vote' %}
+            <td>
+              <select name="{{candidate.id}}">
+                {% for opt in range(0, num_candidates+1) %}
+                  <option value={{opt}}>{{opt}}</option>
+                {% endfor %}
+              </select>
+            </td>
+          {% endif %}
+          {% if nextaction == 'confirm' %}
+            <td>
+              {% set cid = candidate.id %}
+              <input type="hidden" name="{{candidate.id}}"
+                     value="{{voteinfo[cid]}}" />
+              {% set weightpercent = (voteinfo[candidate.id]*100)/num_candidates %}
+              {% if weightpercent >= 90 %}
+                <div class="vthot">
+                  {{voteinfo[cid]}}
+                </div>
+              {% elif weightpercent >= 70 %}
+                <div class="vtwarm">
+                  {{voteinfo[cid]}}
+                </div>
+              {% elif weightpercent >= 50 %}
+                <div class="vtmedwarm">
+                  {{voteinfo[cid]}}
+                </div>
+              {% elif weightpercent >= 30 %}
+                <div class="vtmedcool">
+                  {{voteinfo[cid]}}
+                </div>
+              {% elif weightpercent >= 10 %}
+                <div class="vtcool">
+                  {{voteinfo[cid]}}
+                </div>
+              {% else %}
+                <div class="vtcold">
+                  {{voteinfo[cid]}}
+                </div>
+              {% endif %}
+            </td>
+          {% endif %}
+        {% endif %}
+        <!-- End if user logged in -->
+      </tr>
+    {% endfor %}
+  </table>
+  {% if g.fas_user %}
+    <p>
+    {% if nextaction == 'confirm' %}
+      <input type="submit" name="{{nextaction}}" value="Submit" />
+    {% else %}
+      <input type="submit" name="{{nextaction}}" value="Preview" />
+    {% endif %}
+    </p>
+  {% endif %}
+</form>
 
 <!-- Make this conditional on whether the user is logged in and can vote in the election -->
-To vote in this election you must be a member of any one of the following groups:
+{% if election.legal_voters.count() != 0 %}
+<p>
+  To vote in this election you must be a member of any one of the following groups:
+</p>
 <ul>
-	{% for group in election.legal_voters %}
-	<li>{{group.group_name}}</li>
-	{% endfor %}
+  {% for group in election.legal_voters %}
+    <li>{{group.group_name}}</li>
+  {% endfor %}
 </ul>
+{% else %}
+<p />
+{% endif %}
+<div>
+  <h2>Information on Range Voting</h2>
+  <p>
+    Fedora Project has implemented
+    <a href="http://rangevoting.org/">Range Voting</a>
+    for this election, in particular the "Range (score-summing, blanks
+    treated as zero score, no quorum rule)" range voting system.
+  </p>
+  <p>
+    To cast your vote in this election simply select a value between 0 and
+    {{num_candidates}} with 0 as 'least or no preference' and
+    {{num_candidates}} as 'highest preference'.
+  </p>
+  <p>
+    At the end of the election, the highest ranking candidate(s) are marked
+    as the winners.
+  </p>
+  <p>
+    For more information about Range Voting, visit the
+    <a href="http://rangevoting.org/">Center for Range Voting</a>.
+  </p>
+</div>
 {% endblock %}

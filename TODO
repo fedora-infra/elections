@@ -2,8 +2,6 @@ Things that need doing to get this deployed
 ===========================================
 
 * Add legalvoters to an election
-* Add page to vote
-* Add page that summarizes the vote results
 * Write a conversion script for the old db model to the new one
 * rpmify
 * rpmify flask-fas (or get flask-fas into python-fedora)
@@ -19,7 +17,6 @@ Future enhancements (anything not necessary for deploying)
 ==========================================================
 
 * Make voting methods modular
-* Give this a Fedora theme
 * Break the main program logic out into library modules
 ** Controllers should be as lightweight as possible
 *** validation of input

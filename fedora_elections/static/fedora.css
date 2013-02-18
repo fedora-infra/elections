@@ -1,0 +1,1335 @@
+*
+{
+  margin: 0;
+  padding: 0;
+}
+
+html, body
+{
+  height: 100%;
+}
+
+body
+{
+  font-size: 76%;
+  background: #FFFFFF url(../images/border-left.png) 0 0 repeat-y;
+}
+
+a img
+{
+  border: none;
+}
+
+pre
+{
+  font-size: 2.6ex;
+  overflow: auto;
+}
+
+abbr, acronym {
+  border-bottom: 1px dotted #000000;
+  cursor: help;
+}
+
+#wrapper
+{
+  font: normal 1em/1.5 sans-serif;
+  margin-left: 18px;
+  min-height: 100%;
+  background: #FFFFFF url(../images/border-right.png) 100% 0 repeat-y;
+  padding-right: 18px;
+  overflow: hidden;
+}
+
+#head
+{
+  position: relative;
+  border-top: 10px solid #337ACC;
+  padding: 1ex 2ex 17px;
+  background: #FFFFFF url(../images/line.png) 0 100% repeat-x;
+}
+
+#head h1 a
+{
+  display: block;
+  text-indent: -9999px;
+  background: url(../images/fedora-logo.png) 20px 50% no-repeat;
+  height: 73px;
+  width: 175px;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+#sidebar
+{
+  float: left;
+  width: 180px;
+  margin: 2ex 0;
+  background: #FFFFFF;
+  padding-bottom: 120px;
+}
+
+#banner
+{
+  text-align: center;
+}
+
+#banner img
+{
+  display: block;
+  width: 200px;
+  margin-left: 10px;
+}
+
+#nav
+{
+  margin: 0 1.5ex;
+  padding: 0 1.5ex;
+}
+
+#nav h2
+{
+  font-size: 0.9em;
+  border-bottom: 1px dotted #AAAAAA;
+  color: #444444;
+  margin: 2ex 0 1ex;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+
+#nav ul
+{
+  list-style: url(../images/arrow.png);
+  margin-left: 15px;
+}
+
+#nav li
+{
+  margin: 0.25ex 1ex;
+  color: #777777;
+  font-size: 0.9em;
+}
+
+#nav a
+{
+  font-weight: bold;
+  margin-right: 0.75ex;
+  color: #729FCF;
+  font-size: 1.1em;
+  display: block;
+}
+
+.home #nav-home a, .get #nav-get a, .join #nav-join a, .help #nav-help a
+{
+  color: #777777;
+  text-decoration: none;
+}
+
+#content
+{
+  display: inline-block;
+  margin-left: 230px;
+  padding: 1.5ex 2ex 140px 0;
+  margin-bottom: 3ex;
+  color: #666666;
+  background: #FFFFFF;
+}
+
+#content p, #content ul, #content ol
+{
+  font-size: 1em;
+}
+
+/* Blame IE6 and the guillotine bug for this one */
+#content { display: block; }
+
+#content h2
+{
+  font-size: 1.6em;
+  padding-top: .75em;
+}
+
+#content h3
+{
+  color: #337acc;
+  margin: 1.5ex 0 0.5ex;
+  font-size: 1.4em;
+}
+
+#content h3.header {
+  display: block;
+}
+
+#content table
+{
+  border-collapse: collapse;
+}
+
+#content table th
+{
+  background: #DDDDDD;
+}
+
+#content table th, #content table td
+{
+  border: 1px solid #000000;
+  padding: 0.6ex;
+}
+
+#content p
+{
+  margin: 1ex 5ex 1ex 0;
+}
+
+#content ul, #content ol {
+  margin: 0 3ex 2ex;
+}
+
+#content ul
+{
+  list-style: square;
+}
+
+#content img
+{
+  margin: 2ex 0;
+}
+
+
+
+#content .download
+{
+  list-style-image: url(../images/arrow.png);
+  list-style-position: outside;
+  margin: 1.6ex 3ex;
+}
+
+#content .download li
+{
+  color: #777777;
+  font-size: 1.1em;
+  background: #EFEFEF;
+  padding: 1ex;
+  border-bottom: 1px dotted #AAAAAA;
+}
+
+#content .download a
+{
+  font-weight: bold;
+}
+
+#content .roles
+{
+  margin: 0!important;
+  list-style: none!important;
+  display: inline;
+}
+
+#content .roles li
+{
+  float: left;
+  width: 130px;
+  margin-bottom: 0.5ex;
+}
+
+#content .roles a
+{
+  line-height: 1;
+  height: 150px;
+  text-align: center;
+  display: block;
+  text-decoration: none;
+}
+
+#content .roles a:hover
+{
+  background-color: #EFEFEF;
+}
+
+#footer
+{
+  position: relative;
+  font: normal 0.8em/1.5 sans-serif;
+  text-align: center;
+  background: white url(../images/line-bottom.png) 0 0 repeat-x;
+  margin: -140px 0 0;
+  border-bottom: 10px solid #337ACC;
+  height: 130px;
+  color: #4D4D4D;
+}
+
+#bottom
+{
+  margin-left: 18px;
+  padding-right: 18px;
+}
+
+#footer ul
+{
+  list-style: none;
+  margin-bottom: .8em;
+}
+
+#footer li
+{
+  display: inline;
+  border-left: 1px solid #AAAAAA;
+  padding: 0 0.75ex;
+  margin-left: -1px;
+}
+
+#footer li.first
+{
+  border-left: none;
+}
+
+#footer a
+{
+  color: #3771C8;
+}
+
+#footer a:hover
+{
+  color: #112233;
+}
+
+#footer p
+{
+  margin: 0 1.5ex;
+}
+
+#footer .copy
+{
+}
+
+#footer .rh-logo {
+  padding-top: 3ex;
+  margin-bottom: 1em;
+}
+s
+#screenshot-banner {
+  text-align: left;
+}
+
+input, textarea, select
+{
+  border: #AAA 1px solid;
+}
+
+input, textarea, option
+{
+  padding: 2px 5px 2px 5px;
+}
+
+#content #sponsors
+{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+#content #sponsors li
+{
+  text-align: center;
+  float: left;
+  height: 100px;
+  margin: 0 1ex;
+}
+
+#content #sponsors li img
+{
+  display: block;
+}
+
+#content #primary-sponsors
+{
+  margin: 0 0 4ex;
+  padding: 0;
+  overflow: auto;
+  border-bottom: 1px #AAAAAA solid;
+}
+
+#content #primary-sponsors .psponsor
+{
+  text-align: center;
+  margin: 0 1ex;
+}
+
+#content #primary-sponsors .psponsor td
+{
+  border-style: none;
+}
+
+#content #primary-sponsors .psponsor img
+{
+  display: block;
+  float: left;
+  margin-right: 6ex;
+}
+
+#content #primary-sponsors .psponsor p
+{
+  display: block;
+  text-align: left;
+}
+
+#content ul.downloadbox
+{
+  overflow: hidden;
+  list-style: none;
+  margin: 0 2ex;
+  padding: 6ex 2ex 4ex 180px;
+  border-radius: 1.5ex;
+  -webkit-border-radius: 1.5ex;
+  -moz-border-radius: 1.5ex;
+  background: #C0DBDD 30px 50% no-repeat;
+  font-size: 0.9em;
+  display: inline-block;
+}
+
+#content ul.installdvd { background-image: url(../images/installdvd.png); }
+#content ul.gnomelive { background-image: url(../images/gnomelive.png); }
+#content ul.kdelive { background-image: url(../images/kdelive.png); }
+
+.downloadbox li
+{
+  width: 32ex;
+  float: left;
+  padding: 0 0 2ex;
+}
+
+.downloadbox li li
+{
+  width: auto;
+  float: none;
+  padding: 0;
+}
+
+
+#content pre.command
+{
+  font-size: 1.3em;
+  border: solid #DDDDDD;
+  border-width: 1px 1px 1px 5px;
+  background: #F2F5F6;
+  padding: 0.5ex 2ex;
+}
+
+#content p.mini-note
+{
+  padding: 1ex 2ex;
+  border: 1px solid #DDDDDD;
+  background: #FFABAB;
+  font-size: .8em;
+  color: #4c4c4c;
+  -webkit-border-radius: 1.5ex;
+  -moz-border-radius: 1.5ex;
+  width: 80%
+}
+
+#content p.note
+{
+  padding: 1ex 2ex;
+  border: 1px solid #DDDDDD;
+  background: #F2F5F6;
+}
+
+#content p.warning
+{
+  padding: 1ex 2ex;
+  border: 1px solid #DDDDDD;
+  background: #FF6666;
+  color: #000000;
+}
+
+#content p.warning a
+{
+  color: #00154F;
+}
+#content ul#resources
+{
+  list-style: none;
+}
+
+#content ul#resources a
+{
+  padding-left: 20px;
+  background: url(../images/arrow.png) 0 50% no-repeat;
+}
+
+#content ul#resources li
+{
+  padding-left: 70px;
+  margin-bottom: 3.5ex;
+}
+
+ul#resources li.resource-docs
+{
+  background: url(../images/icon-docs.png) 0 50% no-repeat;
+}
+
+ul#resources li.resource-communicate
+{
+  background: url(../images/icon-communicate.png) 0 50% no-repeat;
+}
+
+ul#resources li.resource-download
+{
+  background: url(../images/icon-download.png) 0 50% no-repeat;
+}
+
+#content img.smirk
+{
+  margin: 0 1ex 0 0;
+}
+
+#content p.joinlink
+{
+  border: 1px solid #DDDDDD;
+  background: #EEEEEE;
+  padding: 1ex 5ex 1ex 5ex;
+  text-align: center;
+  font-size: 120%;
+  font-weight: bold;
+}
+
+#content #subprojects
+{
+  margin-right: 5ex;
+  padding-top: 1ex;
+}
+
+#content a:link
+{
+  color: #337ACC;
+  text-decoration: none;
+}
+
+#content a:visited
+{
+  color: #729FCF;
+  text-decoration: none;
+}
+
+/* get-fedora styles */
+
+.download-block .button:hover {
+  background-color: #9ECFFF !important;
+}
+
+.download-block {
+  margin-right: 23em;
+}
+
+.download-sidebar {
+  float: right;
+  width: 21em;
+  margin-left: 2em;
+}
+
+.download-sidebar a {
+  font-size: 1.5em;
+  display: block;
+  padding: 1em;
+  margin: 1em 0;
+}
+
+#other {
+  margin-top: 2ex;
+  background-color: #F0F0F0!important;
+}
+
+.download-block h3 {
+  margin-top: 0!important;
+}
+
+
+.download-block em.byline {
+  display: block;
+  color: #999999;
+  font-size: 0.8em;
+}
+
+.download-block em.download-tagline {
+  color: #999999;
+  font-size: 0.8em;
+}
+
+.download-block .button {
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  color: #FFFFFF!important;
+  text-decoration: none;
+  font-weight: bold;
+  line-height: 3;
+  margin: 0;
+  padding: 0.4em 0.5em;
+  border: 1px solid #446382;
+  background-color: #5F94C9 !important;
+  margin-top: 0.9em;
+}
+
+.big-button {
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  color: #FFFFFF!important;
+  text-decoration: none;
+  font-weight: bold;
+  line-height: 3;
+  margin: 0;
+  padding: 0.4em 0.5em;
+  background-color: #337acc !important;
+  margin-top: 0.9em;
+  font-size: 1.7em;
+}
+
+.big-button:hover {
+  background-color: #295596 !important;
+}
+
+
+.fine-print {
+  font-size: .9em !important;
+  color: #999999;
+  font-style: italic;
+}
+
+.resources-pane {
+  float: right;
+  background-color: #E5E5E5;
+  padding: 0.5em 1em;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  margin-left: 1em;
+}
+
+.download-block p img {
+  float: left;
+  margin-right: 1.4em !important;
+}
+
+/** sidebar boxes for get-fedora **/
+
+.download-sidebar a {
+  display: block;
+  background: #337ACC url(../images/gradient_bg.png) repeat-x;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+}
+
+.download-sidebar a.even {
+    background-color: #1855A2;
+}
+
+.download-sidebar a:hover {
+    background-color: #1158AA;
+}
+
+.download-sidebar a.even:hover {
+    background-color: #003380;
+}
+
+.download-sidebar a {
+  color: #FFFFFF!important;
+  font-size: medium;
+  text-decoration: none;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+.download-sidebar span#thereismorefedora a {
+  display: block;
+  background: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.download-sidebar span#thereismorefedora img {
+  margin: 0px;
+  padding: 0px;
+}
+
+#breadcrumbs {
+  border-bottom: 1px solid #DDDDDD;
+  margin-bottom: 1ex;
+  margin-right: 24%;
+}
+
+#breadcrumbs a {
+  text-decoration: none;
+  font-size: 1em;
+  color: #7788DD;
+}
+
+/** Web App Styles **/
+/* Links to other web apps */
+a.bodhi {
+  padding-left: 20px;
+  background: url(../images/icons/fedora-infra-icon_bodhi.png) 0 50% no-repeat;
+}
+
+a.koji {
+  padding-left: 20px;
+  background: url(../images/icons/fedora-infra-icon_koji.png) 0 50% no-repeat;
+}
+
+a.bugz {
+  padding-left: 20px;
+  background: url(../images/icons/fedora-infra-icon_bugzilla.png) 0 50% no-repeat;
+}
+
+a.pkgdb {
+  padding-left: 20px;
+  background: url(../images/icons/fedora-infra-icon_pkgdb.png) 0 50% no-repeat;
+}
+
+a.cvs {
+  padding-left: 20px;
+  background: url(../images/icons/fedora-infra-icon_source-control.png) 0 50% no-repeat;
+}
+
+/* tooltip */
+.tooltip {
+  display: block;
+  position: absolute;
+  border: 1px solid black;
+  background-color: #ffffdd;
+  width: 200px;
+}
+
+/* style to hide an element */
+.invisible {
+  display: none;
+}
+
+/* styles for tg flash messages */
+.flash {
+  background: #DEE681;
+  border: 1px solid #CCBBAA;
+  padding: 1.5ex 15px 1.5ex 43px;
+  margin: 1ex 0;
+}
+
+.flash .success {
+  background: #DEE681 url(../images/success.png) 10px 50% no-repeat;
+}
+
+.flash .warning {
+  background: #DEE681 url(../images/important.png) 10px 50% no-repeat;
+}
+
+.flash .info {
+  background: #DEE681 url(../images/info.png) 10px 50% no-repeat;
+}
+
+/* toolbar styles */
+.toolbar {
+  list-style: none;
+  list-style-image: none;
+  list-style-position: outside;
+  list-style-type: none;
+  text-align: right;
+  color: #888888;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.toolbar * {
+  display: inline;
+}
+
+#head #main-toolbar {
+  float: right;
+  margin-top: 9px;
+  width: 50%;
+}
+
+.toolbar input.button {
+  background-color: #888888;
+  color: white;
+  font-size: 0.9em;
+  margin-left: 5px;
+  padding: 2px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* panel styles */
+#content .panel {
+  border: medium none;
+  margin-top: 12px;
+}
+
+#content .panel h3 {
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-bottomright: 0;
+  -moz-border-radius-topleft: 12px;
+  -moz-border-radius-topright: 12px;
+  background-color: #D2D2D2;
+  color: white;
+  font-size: 1em;
+  padding: 8px 6px 6px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Login panel */
+#login-box form .field {
+  margin: 0 0 1ex;
+  overflow: hidden;
+  text-align: left;
+}
+
+#login-box .field label {
+  clear: left;
+  float:left;
+  padding: 0 2ex 0 0;
+  text-align: left;
+  width: 32ex;
+}
+
+#content .login {
+  -moz-border-radius-bottomleft: 10px;
+  -moz-border-radius-bottomright: 10px;
+  -moz-border-radius-topleft: 10px;
+  -moz-border-radius-topright: 10px;
+  background-color: #5F94C9;
+  color: white;
+  padding: 8px 12px;
+}
+
+#content div.login * {
+  color: white;
+  padding: 0;
+  margin: 0;
+}
+
+#content .login h3 {
+  background-color: #5F94C9;
+}
+
+#content .login input {
+  padding: 2px 5px;
+  margin-bottom: 5px;
+  color: black;
+}
+
+#content .login label {
+  color: white;
+  display: block;
+  float: left;
+  font-size: 0.8em;
+  margin-right: 10px;
+  width: 60px;
+  text-align: left;
+}
+
+#content .login .button {
+  background-color: #777777;
+  border: 1px solid #555555;
+  color: white;
+}
+
+#content .login ul {
+  list-style-position: inside;
+}
+
+#export-regulations {
+  padding-top: 1em;
+  margin-left: 2em;
+}
+
+#export-regulations .read-more img, #export-regulations .details img {
+  margin: 0;
+}
+
+#export-regulations .details {
+  display: inline;
+}
+
+#export-regulations a {
+  text-decoration: none;
+}
+
+.read-more, .re-collapse {
+  float:right;
+}
+
+.read-more img {
+  float: none;
+}
+
+/* applies to get-* pages */
+
+#download-resources {
+  float:right;
+  margin-left:.5em;
+  width:21em; /* tofix */
+}
+
+#download-resources h4 {
+  text-transform: uppercase;
+  margin-bottom: .5em;
+}
+
+#download-resources li {
+  padding: 3px 0;
+}
+
+#download-resources ul.checkmark-list {
+  list-style: disc url("/static/images/icon-checkmark.png") outside;
+}
+
+#download-resources li.guide-list {
+  list-style: disc url("/static/images/icon-guide.png") outside;
+}
+
+#download-resources li.webpage-list {
+  list-style: disc url("/static/images/icon-webpage.png") outside;
+}
+
+#download-resources li.support-list {
+  list-style: disc url("/static/images/icon-support.png") outside;
+}
+
+#download-resources li.verify-list {
+  list-style: disc url("/static/images/icon-signed-verified.png") outside;
+}
+
+#download-resources div, #download-resources div h4 {
+  padding: 5px 0 5px 0;
+}
+
+#download-resources div p {
+  padding-left: 5px;
+}
+
+#download-resources p,
+#download-resources ul {
+  margin-bottom: 2em;
+}
+
+#download-resources ul {
+  margin-left: 2em;
+}
+
+#download-options-area {
+  background-color: #f2f2f2;
+  padding: 15px;
+}
+
+#download-options-area h4 {
+  color: #337ACC;
+}
+
+.other-options {
+  float: right;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  margin-left: 1em;
+  width: 45%;
+}
+
+.upgrade-section {
+  width: 50%;
+}
+
+/* get-* format tab */
+.format-arch {
+    border-bottom: 1px #E5E5E5 solid;
+    float:left;
+    width: 90%;
+    padding: 5px;
+}
+
+.support-icon {
+    border: 0px;
+    padding: 3px;
+}
+
+.vendor-header {
+    clear: left;
+    font-size: 1.3em;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.freemedia-header {
+    clear: left;
+    font-size: 1.3em;
+    padding-top: 15px;
+}
+
+
+.vendor1, .vendor2 {
+    width: 50%;
+}
+
+/* end: applies to get-* pages */
+
+/* tabs */
+/* root element for tabs  */
+ul.tabs {
+    margin: 0 !important;
+    padding: 0;
+    height: 30px;
+    border-bottom: 1px solid #dcdcdc;
+    width: 70%;
+}
+
+/* single tab */
+ul.tabs li {
+    float: left;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+/* link inside the tab. no background image */
+ul.tabs a {
+    float: left;
+    font-size: 13px;
+    display: block;
+    padding: 5px 10px;
+    text-decoration: none;
+    border: 1px solid #dcdcdc;
+    border-bottom: 0px;
+    height: 18px;
+    background-color: #dcdcdc;
+    color: #3771c8;
+    margin-right: 4px;
+    -moz-border-radius-topleft: 4px;
+    -moz-border-radius-topright: 4px;
+    position: relative;
+    top: 1px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+ul.tabs a:hover {
+    background-color: #fff;
+    color: #818181;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* selected tab */
+ul.tabs a.current {
+    background-color: #fff;
+    border-bottom: 2px solid #fff;
+    color: #808080;
+    cursor: default;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* tab pane */
+div.panes div {
+    display: none;
+    border: 0px;
+    border-left: 1px solid #dcdcdc;
+    min-height: 150px;
+    padding: 15px 10px;
+    /* tofix width: 70%; */
+    float: left;
+}
+
+#content a.current:link {
+    color: #828282;
+}
+/* end: tabs */
+
+/* --- */
+#content span.download-opt1
+{
+    float: left;
+    width: 45%;
+}
+
+div.panes span.download-option {
+    display: block;
+    /* tofix: width: 300px !important; */
+    width: 50%;
+}
+
+div.panes span.opt1 { float: left; }
+div.panes span.opt2 {
+  float: right;
+  width: 50%;
+}
+
+#export-regulations {
+  clear: both;
+  margin-bottom: 2em;
+}
+
+/* Hack to make it simple to get rid of borders in a table (ianweller) */
+#content table.nobordersplz th, #content table.nobordersplz td { border-width: 0px; }
+
+/* get-option common */
+/* keeps common stuff in get pages */
+.star-fedora-default, .star-most-compatible {
+    background-color: #F7FF9D;
+    border: 1px solid #A19800;
+    padding: 0.2em;
+    font-weight: bold;
+    color: #A19800;
+    font-size: 0.8em;
+    margin: 7px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.download-button-mini {
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  color: #FFFFFF!important;
+  text-decoration: none;
+  font-weight: bold;
+  line-height: 2;
+  font-size:0.85em;
+  padding: 5px;
+  background-color: #337ACC !important;
+  white-space: nowrap;
+}
+
+.download-button-mini:hover {
+  background-color: #295596 !important;
+}
+
+.opt1 { float: left; }
+.opt2 { float: right; }
+
+#content .format-arch .opt1 p, #content .format-arch .opt1 h3, #content .format-arch .opt2 p, #content .format-arch .opt2 h3 {
+  padding: 0px;
+  margin: 0px
+}
+
+.panes { 
+  width: 68% 
+}
+
+.shownojs { display: none; }
+
+.area-callout
+{
+  display: inline-block; /* to put icons next to header */
+}
+
+/* end: get-option common */
+
+/* get-option - desktop pane */
+#content .desktop-section table, #content .desktop-section table td {
+    border: 0px;
+}
+
+.desktop-section ul {
+    float: left;
+}
+
+.desktop-section img.desktop-screenshot {
+    float: right;
+}
+
+.desktop-section table tbody tr {
+  background-color: #fff;
+}
+
+.desktop-section td.description {
+  max-width: 230px;
+}
+
+.desktop-section td {
+  vertical-align: top;
+}
+
+img.desktop-screenshot:hover {
+  cursor: pointer;
+  cursor: hand;
+}
+
+/* end: get-option - desktop pane */
+
+
+/* get-option - architecture pane */
+.arch-section, .desktop-section {
+    clear:left;
+    display:block;
+    margin-bottom:1em;
+    padding:0.5em 1em;
+}
+
+img.download-media
+{
+    float: left;
+    padding-right: 7px;
+}
+
+.arch-sparc-area {
+  background-color: #f5f5f5;
+  padding: 1em;
+  clear: both;
+  display: block;
+}
+
+.arch-section h3 span {
+  color: black;
+}
+
+/* end: get-option - architecture pane */
+
+.panes table tr {
+    background-color:#F2F2F2;
+    border:0 none;
+}
+
+#get-acitivites td.rank {
+    background-color:white;
+    font-weight:bold;
+    padding-left:0;
+    padding-right:7px;
+    text-align:left;
+}
+
+#get-acitivites td.name {
+    font-size:xx-small;
+    font-style:italic;
+}
+
+#get-acitivites table td {
+    border-color: white !important;
+    border-style: solid !important;
+    border-width: 0 0 18px !important;
+    padding: 0.8em;
+    vertical-align: top;
+}
+
+.learn-more {
+    display: none;
+}
+
+/*
+ * note: probably not needed
+#content table th, #content table td {
+    border:1px solid #000000;
+    padding:0.6ex;
+}
+*/
+
+/* end: get-option - activites pane */
+
+#content img {
+    margin:0;
+}
+
+
+
+/* make it work in 1024x786 */
+
+#desktop-versions {
+  width: 100%;
+}
+
+.panes {
+  min-width: 50%;
+}
+
+.panes table {
+  width: 80%;
+}
+
+#download-resources {
+  min-width: 200px;
+  width: 20%;
+}
+
+
+#content .panes {
+  min-width: 400px;
+}
+
+#nav {
+  margin: 0 1em;
+  padding:0 0 0 1.5em;
+}
+
+tr.dl-buttons td {
+ min-width: 104px !important;
+}
+
+div.panes div {
+  background-color: transparent !important;
+  padding-right: 15 5 15 10;
+}
+
+.arch-section,
+.desktop-section {
+  padding-right: 0.5em 0 0.5em 1em;
+}
+
+/* the overlayed element */
+.simple_overlay {
+    
+    /* must be initially hidden */
+    display:none;
+    
+    /* place overlay on top of other elements */
+    z-index:10000;
+    
+    /* styling */
+    background-color:#333;
+    
+    /* disabled for now - so it fits around images
+     * width:675px;
+     */
+    min-height:200px;
+    border:1px solid #666;
+    
+    /* CSS3 styling for latest browsers */
+    -moz-box-shadow:0 0 90px 5px #000;
+    -webkit-box-shadow: 0 0 90px #000;  
+}
+
+/* close button positioned on upper right corner */
+.simple_overlay .close {
+    background-image:url(../images/overlay-close.png);
+    position:absolute;
+    right:-15px;
+    top:-15px;
+    cursor:pointer;
+    height:35px;
+    width:35px;
+}
+
+/* styling for elements inside overlay */
+.overlay_details {
+    position:absolute;
+    top:15px;
+    right:15px;
+    font-size:11px;
+    color:#fff;
+    width:150px;
+}
+
+.overlay_details h3 {
+    color:#aba;
+    font-size:15px;
+    margin:0 0 -10px 0;
+}
+
+/* end: the overlayed element */
+
+.global-notice {
+    background-color: #f6f6f6;
+    border: 1px solid #ddd;
+    padding: 0.5em 1em;
+}
+

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block body %}
+  <h1>{{ election.summary }} Results</h1>
+  <p>{{ election.description }}</p>
+  {% if election.url %}
+    <p><a href="{{ election.url }}">[More Information]</a></p>
+  {% endif %}
+  <table border="1" cellpadding="1">
+    {% for candidate in election.candidates|sort(attribute='vote_count',reverse=True) %}
+      <tr>
+        <td>
+          {% if election.candidates_are_fasusers %}
+            {{ usernamemap[candidate.id] }}
+          {% else %}
+            {{candidate.name}}
+          {% endif %}
+          {% if candidate.url %}
+            <small><a href="{{ candidate.url }}">[info]</a></small>
+          {% endif %}
+        </td>
+        <td>{{ candidate.vote_count }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

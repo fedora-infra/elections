@@ -1,42 +1,134 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		{% block head %}
-		<title>Fedora Elections{% if self.title() %} &mdash; {% block title %}{% endblock %}{% endif %}</title>
-		<link rel="stylesheet" href="{{ url_for("static", filename="style.css") }}">
-		{% for css in config.get('EXTRA_CSS', []) %}<link rel="stylesheet" href="{{ css }}">
-		{% endfor %}
-		{% endblock %}
-	</head>
-	<body>
-		<h1>Fedora Elections</h1>
-		{% if g.fas_user %}
-		<p>Hello, {{ g.fas_user.username }} &mdash; <a href="{{ url_for("auth_logout") }}">log out</a></p>
-		{% else %}
-		<p>You are not logged in &mdash; <a href="{{ url_for("auth_login") }}">log in</a></p>
-		{% endif %}
-		<nav>
-			<h2>Elections</h2>
-			<ul>
-				<li><a href="{{ url_for("index") }}">Open elections</a></li>
-				<li><a href="{{ url_for("archived_elections") }}">Archived elections</a></li>
-			</ul>
-			<br>
-			<h2>Administration</h2>
-			<ul>
-				<li><a href="{{ url_for("admin_view_elections") }}">My elections</a></li>
-				<li><a href="{{ url_for("admin_new_election") }}">Create new election</a></li>
-			</ul>
-		</nav>
-		{% with messages = get_flashed_messages() %}
-		{% if messages %}
-		<ul id="flashes">
-			{% for message in messages %}
-			<li>{{ message }}</li>
-			{% endfor %}
-		</ul>
-		{% endif %}
-		{% endwith %}
-		{% block body %}{% endblock %}
-	</body>
+  <head>
+    {% block head %}
+      <title>
+        Fedora Elections
+        {% if self.title() %}
+          &mdash; 
+          {% block title %}{% endblock %}
+        {% endif %}
+      </title>
+      <link rel="stylesheet" type="text/css" media="screen"
+            href="{{ url_for("static", filename="style.css") }}" />
+      <link rel="stylesheet" type="text/css" media="screen"
+            href="https://fedoraproject.org/static/css/fedora.css" />
+      {% for css in config.get('EXTRA_CSS', []) %}<link rel="stylesheet" href="{{ css }}">
+      {% endfor %}
+    {% endblock %}
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="head">
+        <h1><a href="https://admin.fedoraproject.org/en/index">Fedora</a></h1>
+      </div>
+
+      <div id="sidebar">
+        <div id="nav">
+          <h2>Navigation</h2>
+          <ul>
+            <li id="nav-home">
+              <a href="http://fedoraproject.org/en/index">Home</a>
+            </li>
+            <li id="nav-get">
+              <a href="http://fedoraproject.org/en/get-fedora">Get Fedora</a>
+            </li>
+            <li id="nav-join">
+              <a href="http://fedoraproject.org/en/join-fedora">Join Fedora</a>
+            </li>
+            <li id="nav-help">
+              <a href="http://fedoraproject.org/en/get-help">Get Help</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="content">
+        <ul class="toolbar" id="#main-toolbar">
+          {% if g.fas_user %}
+            <li>
+              Hello, {{ g.fas_user.username }} &mdash; 
+              <a href="{{ url_for("auth_logout") }}">log out</a>
+            </li>
+          {% else %}
+            <li>
+              You are not logged in &mdash;
+              <a href="{{ url_for("auth_login") }}">log in</a>
+            </li>
+          {% endif %}
+        </ul>
+        <h2>Elections</h2>
+        <ul>
+          <li>
+            <a href="{{ url_for("open_elections") }}">
+              Open elections
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for("archived_elections") }}">
+              Archived elections
+            </a>
+          </li>
+        </ul>
+        <br>
+        <h2>Administration</h2>
+        <ul>
+          <li>
+            <a href="{{ url_for("admin_view_elections") }}">
+              My elections
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for("admin_new_election") }}">
+              Create new election
+            </a>
+          </li>
+        </ul>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul id="flashes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        {% block body %}
+        {% endblock %}
+      </div>
+    </div>
+    <div id="bottom">
+      <div id="footer">
+        {% block footer %}
+          <p class="copy">
+            Copyright &copy; 2008 Red Hat, Inc. and others.  Please send any
+            comments or corrections to the
+            <a href="mailto:webmaster@fedoraproject.org">
+              websites team
+            </a>.
+          </p>
+          <p class="disclaimer">
+            The Fedora Project is maintained and driven by the community and
+            sponsored by Red Hat.  This is a community maintained site.  Red
+            Hat is not responsible for content.
+          </p>
+          <ul>
+            <li class="first">
+              <a href="/en/sponsors">Sponsors</a>
+            </li>
+            <li>
+              <a href="http://fedoraproject.org/wiki/Legal">
+                Legal
+              </a>
+            </li>
+            <li>
+              <a href="http://fedoraproject.org/wiki/Legal/TrademarkGuidelines">
+                Trademark Guidelines
+              </a>
+            </li>
+          </ul>
+        </div>
+      {% endblock %}
+    </div>
+  </body>
 </html>
