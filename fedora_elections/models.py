@@ -2,7 +2,6 @@ from fedora_elections import app, db
 
 from datetime import datetime
 
-
 class Election(db.Model):
     __tablename__ = 'elections'
 
@@ -62,6 +61,11 @@ class Candidate(db.Model):
     name = db.Column(db.Unicode(150), nullable=False)  # FAS username if
                                                        # candidates_are_fasusers
     url = db.Column(db.Unicode(250))
+
+    @property
+    def vote_count(self):
+        values = [v.value for v in self.votes]
+        return sum(values)
 
 
 class LegalVoter(db.Model):

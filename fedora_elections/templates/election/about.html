@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Election Information{% endblock %}
+{% block body %}
+  <h1>{{ election.summary }}</h1>
+  <p>{{ election.description }}</p>
+  {% if election.url %}
+    <p><a href="{{ election.url }}">[More Information]</a></p>
+  {% endif %}
+  {% if election.status == 'Ended' %}
+    <a href="/results/{{ election.alias }}">Show Results!</a>
+  {% endif %}
+  <table border="1" cellpadding="1">
+    {% for candidate in election.candidates %}
+      <tr>
+        <td>
+          {% if election.candidates_are_fasusers %}
+            {{ usernamemap[candidate.id] }}
+          {% else %}
+            {{ candidate.name }}
+          {% endif %}
+          {% if candidate.url %}
+            <small><a href="{{ candidate.url }}">[info]</a></small>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% if election.legal_voters.count() != 0 %}
+    <p>
+      To vote in this election you must be a member of any one of the following groups:
+    </p>
+    <ul>
+      {% for group in election.legal_voters %}
+        <li>{{group.group_name}}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p />
+  {% endif %}
+{% endblock %}

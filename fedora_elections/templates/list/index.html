@@ -1,26 +1,30 @@
 {% extends "base.html" %}
 {% block body %}
-<h2>Open elections</h2>
-<table>
-	<tr>
-		<th>Election</th>
-		<th>Start date (UTC)</th>
-		<th>End date (UTC)</th>
-		<th>Status</th>
-		<th></th>
-	</tr>
-	{% for election in elections %}
-	<tr>
-		<td>{{ election.summary }}</td>
-		<td>{{ election.start_date }}</td>
-		<td>{{ election.end_date }}</td>
-		<td>{{ election.status }}</td>
-		<td>
-			{% if election.status == "In progress" %}
-			<a href="{{ url_for('vote', election_alias=election.alias) }}">Vote now!</a>
-			{% endif %}
-		</td>
-	</tr>
-	{% endfor %}
-</table>
+  <h2>{{ title }}</h2>
+  <table>
+    <tr>
+      <th>Election</th>
+      <th>Start date (UTC)</th>
+      <th>End date (UTC)</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+    {% for election in elections %}
+      <tr>
+        <td>{{ election.summary }}</td>
+        <td>{{ election.start_date }}</td>
+        <td>{{ election.end_date }}</td>
+        <td>{{ election.status }}</td>
+        <td>
+          {% if election.status == "In progress" %}
+            {% if g.fas_user %}
+              <a href="{{ url_for('vote', election_alias=election.alias) }}">
+                Vote now!
+              </a>
+            {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
 {% endblock %}
