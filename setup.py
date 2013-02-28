@@ -6,7 +6,7 @@ import pkg_resources
 from setuptools import setup, find_packages
 
 setup( name = 'fedora-elections'
-     , version = '@VERSION@'
+     , version = '0.1'
      , author = 'Frank Chiulli'
      , author_email = 'fchiulli@fedoraproject.org'
      , packages = find_packages()
