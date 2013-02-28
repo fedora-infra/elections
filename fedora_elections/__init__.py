@@ -56,7 +56,8 @@ fas = FAS(app)
 fas2_url = app.config['FAS_BASE_URL']
 fas2_username = app.config['FAS_USERNAME']
 fas2_password = app.config['FAS_PASSWORD']
-fas2 = AccountSystem(fas2_url, username=fas2_username, password=fas2_password)
+fas2 = AccountSystem(fas2_url, username=fas2_username, password=fas2_password,
+                     insecure=True)
 
 
 # modular imports
