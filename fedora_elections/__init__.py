@@ -96,7 +96,9 @@ def election_admin_required(f):
 @app.route('/')
 def index():
     elections = models.Election.query.filter_by(frontpage=True).all()
+    num_elections = len(elections)
     return flask.render_template('list/index.html', elections=elections,
+                                 num_elections=num_elections,
                                  title="Elections")
 
 
