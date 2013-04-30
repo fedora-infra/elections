@@ -2,3 +2,7 @@ database.sqlite
 *.pyc
 *.pyo
 *.swp
+development.cfg
+fedora-elections.cfg
+fedora-elections.wsgi
+httpd-fedora-elections.conf
