@@ -1,3 +1,8 @@
+%{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
+
+%define modname fedora_elections
+%define eggname fedora_elections
+
 Name:           fedora-elections
 Version:        0.1
 Release:        1%{?dist}
@@ -75,20 +80,43 @@ CFLAGS="$RPM_OPT_FLAGS" %{__python} setup.py build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install -O1 --skip-build --install-data=%{_datadir} --root $RPM_BUILD_ROOT
+%{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/%{name}
+%{__install} -m 444 %{name}.cfg %{buildroot}%{_sysconfdir}/%{name}/%{name}.cfg
+
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/httpd/conf.d
-%{__mkdir_p} %{buildroot}%{_datadir}/%{name}
-%{__mkdir_p} %{buildroot}%{_datadir}/%{name}/static
-
-%{__install} -m 644 httpd-fedora-elections.conf \
+%{__install} -m 444 httpd-fedora-elections.conf \
     %{buildroot}%{_sysconfdir}/httpd/conf.d/httpd-fedora-elections.conf
-%{__install} -m 644 fedora_elections/static/* %{buildroot}%{_datadir}/%{name}/static
-%{__install} -m 644 %{name}.cfg.sample %{buildroot}%{_sysconfdir}/%{name}/%{name}.cfg
-%{__install} -m 644 createdb.py %{buildroot}%{_datadir}/%{name}/createdb.py
-%{__install} -m 644 %{name}.wsgi %{buildroot}%{_datadir}/%{name}/%{name}.wsgi
 
+%{__mkdir_p} %{buildroot}%{_datadir}/%{name}
+%{__install} -m 544 createdb %{buildroot}%{_datadir}/%{name}/createdb
+%{__install} -m 544 createdb.py %{buildroot}%{_datadir}/%{name}/createdb.py
+%{__install} -m 444 %{name}.wsgi %{buildroot}%{_datadir}/%{name}/%{name}.wsgi
+
+%{__mkdir_p} %{buildroot}%{_datadir}/%{name}/static
+%{__install} -m 444 fedora_elections/static/* %{buildroot}%{_datadir}/%{name}/static
+
+%{__mkdir_p} %{buildroot}%{_datadir}/%{name}/images
+%{__install} -m 444 fedora_elections/images/* %{buildroot}%{_datadir}/%{name}/images
+
+%{__mkdir_p} %{buildroot}%{_sharedstatedir}/%{name}
+
+%{__mkdir_p} %{buildroot}%{python_sitelib}/%{modname}/templates
+%{__mkdir_p} %{buildroot}%{python_sitelib}/%{modname}/templates/admin
+%{__mkdir_p} %{buildroot}%{python_sitelib}/%{modname}/templates/auth
+%{__mkdir_p} %{buildroot}%{python_sitelib}/%{modname}/templates/election
+%{__mkdir_p} %{buildroot}%{python_sitelib}/%{modname}/templates/list
+%{__install} -m 444 fedora_elections/templates/*.html \
+    %{buildroot}%{python_sitelib}/%{modname}/templates
+%{__install} -m 444 fedora_elections/templates/admin/* \
+    %{buildroot}%{python_sitelib}/%{modname}/templates/admin
+%{__install} -m 444 fedora_elections/templates/auth/* \
+    %{buildroot}%{python_sitelib}/%{modname}/templates/auth
+%{__install} -m 444 fedora_elections/templates/election/* \
+    %{buildroot}%{python_sitelib}/%{modname}/templates/election
+%{__install} -m 444 fedora_elections/templates/list/* \
+    %{buildroot}%{python_sitelib}/%{modname}/templates/list
 
 
 %clean
@@ -99,10 +127,42 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc
 %dir %{_sysconfdir}/%{name}
+%dir %{_sharedstatedir}/%{name}/
+%{_datadir}/%{name}/
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.cfg
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/httpd-%{name}.conf
-%{_datadir}/%{name}
-%{python_sitelib}/*
+%{python_sitelib}/%{modname}/
+%{python_sitelib}/%{eggname}-%{version}-py%{pyver}.egg-info/
+
+
+%post
+cd %{_sharedstatedir}/%{name}
+if [[ ! -f database.sqlite ]]
+then
+    #
+    # The database does not exist create one.
+    #
+    echo "  Creating a database."
+    %{_datadir}/%{name}/createdb
+fi
+
+
+%postun
+cd %{_sharedstatedir}/%{name}
+if [[ -f database.sqlite ]]
+then
+    #
+    # Remove the database.
+    #
+    echo "  Removing the database."
+    /bin/rm  database.sqlite
+fi
+
+cd ${_sharedstatedir}
+if [[ -d %{_sharedstatedir}/%{name} ]]
+then
+    /bin/rmdir  %{_sharedstatedir}/%{name}
+fi
 
 
 %changelog

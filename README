@@ -54,6 +54,7 @@ Configure the application
 
 This will create fedora-elections.wsgi and http-fedora-elections.conf.
 
+Modify fedora-elections.cfg to change FAS_PASSWORD to the correct password.
 
 Create a database
 -----------------

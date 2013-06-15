@@ -5,11 +5,11 @@ DEBUG = True
 
 # You will want to change this for your install
 SECRET_KEY = 'change me'
-SQLALCHEMY_DATABASE_URI = 'sqlite:///@DATADIR@/database.sqlite'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///@SHAREDSTDIR@/fedora-elections/database.sqlite'
 
-FAS_BASE_URL = 'https://fakefas.fedoraproject.org/accounts/'
+FAS_BASE_URL = 'https://admin.fedoraproject.org/accounts/'
 FAS_USERNAME = 'elections'
-FAS_PASSWORD ='el3ctMEn0w'
+FAS_PASSWORD = 'elections_fas_password'
 FAS_CHECK_CERT = False
 FAS_HTTPS_REQUIRED = False
 
