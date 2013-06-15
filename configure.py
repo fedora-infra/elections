@@ -35,23 +35,23 @@ parser.add_option('--install-conf', dest='confdir', action='store',
 parser.add_option('--install-data', dest='datadir', action='store',
                   default='/usr/share',
                   help='Where to install data files.')
-parser.add_option('--install-sbindir', dest='sbindir', action='store',
-                  default='/usr/sbin',
-                  help='Where to install executeable files.')
+parser.add_option('--shared-state', dest='sharedstdir', action='store',
+                  default='/var/lib',
+                  help='Where to install shared state files.')
 
 (options, args) = parser.parse_args()
 
-confdir = options.confdir
-datadir = options.datadir
-sbindir = options.sbindir
+confdir     = options.confdir
+datadir     = options.datadir
+sharedstdir = options.sharedstdir
 
-print "  confdir = %s" % confdir
-print "  datadir = %s" % datadir
-print "  sbindir = %s" % sbindir
+print "  confdir     = %s" % confdir
+print "  datadir     = %s" % datadir
+print "  sharedstdir = %s" % sharedstdir
 
 substs = {'@CONFDIR@':confdir,
           '@DATADIR@':datadir,
-          '@SBINDIR@':sbindir
+          '@SHAREDSTDIR@':sharedstdir
          }
 
 pattern = re.compile("\.in$")
