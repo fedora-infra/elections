@@ -127,7 +127,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc
 %dir %{_sysconfdir}/%{name}
-%dir %{_sharedstatedir}/%{name}/
+%dir %{_sharedstatedir}/%{name}
+%attr(744,apache,apache) %{_sharedstatedir}/%{name}
 %{_datadir}/%{name}/
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.cfg
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/httpd-%{name}.conf
@@ -144,6 +145,10 @@ then
     #
     echo "  Creating a database."
     %{_datadir}/%{name}/createdb
+    echo "  Changing permissions."
+    chmod 644 database.sqlite
+    echo "  Changing owner."
+    chown apache:apache database.sqlite
 fi
 
 
