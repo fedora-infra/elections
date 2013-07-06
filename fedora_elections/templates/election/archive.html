@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 {% block body %}
-
-  <h2>Past Elections</h2>
-
-  <table border="1" cellpadding="1">
-    <tr>
-      <th></th>
-      <th>Start Date (UTC)</th>
-      <th>End Date (UTC)</th>
-      <th></th>
-      <th></th>
-    </tr>
-    {% for election in elections %}
+  {% if num_elections > 0 %}
+    <h2>Past Elections</h2>
+    <table border="1" cellpadding="1">
       <tr>
-        <td>{{election.description}}</td>
-        <td>{{election.start_date}}</td>
-        <td>{{election.end_date}}</td>
-        <td>
-          <a href="about/{{ election.alias }}"">More information</a>
-        </td>
-        <td>
-          <a href="results/{{ election.alias }}">Results</a>
-        </td>
+        <th></th>
+        <th>Start Date (UTC)</th>
+        <th>End Date (UTC)</th>
+        <th></th>
+        <th></th>
       </tr>
-    {% endfor %}
-  </table>
+      {% for election in elections %}
+        <tr>
+          <td>{{election.description}}</td>
+          <td>{{election.start_date}}</td>
+          <td>{{election.end_date}}</td>
+          <td>
+            <a href="about/{{ election.alias }}"">More information</a>
+          </td>
+          <td>
+            <a href="results/{{ election.alias }}">Results</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
 {% endblock %}
