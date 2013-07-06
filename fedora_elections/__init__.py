@@ -135,7 +135,14 @@ def archived_elections():
         flask.flash('There are no archived elections.')
         return redirect.safe_redirect_back()
 
-    return flask.render_template('election/archive.html', elections=elections)
+    num_elections = len(elections)
+    if (num_elections == 0):
+        flask.flash('There are no open elections.')
+        return redirect.safe_redirect_back()
+
+    return flask.render_template('election/archive.html',
+                                 num_elections=num_elections,
+                                 elections=elections)
 
 
 @app.route('/open')
@@ -158,6 +165,7 @@ def open_elections():
         return redirect.safe_redirect_back()
 
     return flask.render_template('list/index.html', elections=elections,
+                                 num_elections=num_elections,
                                  title='Open Elections')
 
 
@@ -290,8 +298,15 @@ def auth_logout():
 @app.route('/admin/')
 @election_admin_required
 def admin_view_elections():
-    elections = models.Election.query.filter_by().all()
+    elections = models.Election.query.\
+                    filter_by(fas_user=flask.g.fas_user.username).all()
+    num_elections = len(elections)
+    if (num_elections == 0):
+        flask.flash('You do not have any elections.')
+        return redirect.safe_redirect_back()
+
     return flask.render_template('admin/all_elections.html',
+                                 num_elections=num_elections,
                                  elections=elections)
 
 
@@ -305,6 +320,7 @@ def admin_new_election():
         election.start_date = datetime.combine(election.start_date, time())
         election.end_date = datetime.combine(election.end_date,
                                              time(23, 59, 59))
+        election.fas_user = flask.g.fas_user.username
         db.session.add(election)
         admin = models.ElectionAdminGroup(election=election,
                                           group_name=app.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
