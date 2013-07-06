@@ -18,6 +18,7 @@ class Election(db.Model):
     voting_type = db.Column(db.Unicode(100), nullable=False, default=u'range')
     candidates_are_fasusers = db.Column(db.Boolean, nullable=False,
                                         default=False)
+    fas_user = db.Column(db.Unicode(50), nullable=False)
 
     @property
     def status(self):
