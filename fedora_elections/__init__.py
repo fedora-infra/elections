@@ -444,21 +444,28 @@ def election_results(election_alias):
         return redirect.safe_redirect_back()
 
     elif election.embargoed == 1:
-        if identity.in_group(config.get('admingroup', 'elections')):
-            pass
-        else :
-            match = 0
-            admingroups = models.ElectionAdminGroups.query.filter_by(
-                              election_id=election.id).all()
-            for group in admingroups:
-                if identity.in_group(group.group_name):
-                    match = 1
-
-            if match == 0:
+        if flask.g.fas_user is None:
                 flask.flash("We are sorry.  The results for this election" \
                             "cannot be viewed because they are currently" \
                             " embargoed pending formal announcement.")
                 return redirect.safe_redirect_back()
+        else:
+            if app.config['FEDORA_ELECTIONS_ADMIN_GROUP'] in \
+	       flask.g.fas_user.groups:
+                pass
+            else:
+                match = 0
+                admingroups = models.ElectionAdminGroup.query.filter_by(
+                              election_id=election.id).all()
+                for admingroup in admingroups:
+	            if admingroup.group_name in flask.g.fas_user.groups:
+                        match = 1
+
+                if match == 0:
+                    flask.flash("We are sorry.  The results for this election" \
+                                "cannot be viewed because they are currently" \
+                                " embargoed pending formal announcement.")
+                    return redirect.safe_redirect_back()
 
     usernamemap = {}
     if (election.candidates_are_fasusers):
