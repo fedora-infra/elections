@@ -85,6 +85,10 @@ class LegalVoter(db.Model):
 class Vote(db.Model):
     __tablename__ = 'votes'
 
+    __table_args__ = (db.UniqueConstraint('election_id', 'voter',
+                                          'candidate_id',
+                                          name='eid_voter_cid'), {} )
+
     id = db.Column(db.Integer, primary_key=True)
     election_id = db.Column(db.Integer, db.ForeignKey('elections.id'),
                             nullable=False)
