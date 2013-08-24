@@ -1,1 +1,0 @@
-FEDORA_ELECTIONS_CONFIG=/etc/fedora-elections/fedora-elections.cfg python createdb.py
