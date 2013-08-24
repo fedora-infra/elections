@@ -50,9 +50,11 @@ You can obtain the code from github:
 
 Configure the application
 -------------------------
-./configure.py  --install-conf=`pwd`  --install-data=`pwd`  --install-sbin=`pwd`
+cd fedora-elections
+../configure.py  --install-conf=${PWD%/*}  --install-data=${PWD%/*}  --shared-state=${PWD%/*}
 
-This will create fedora-elections.wsgi and http-fedora-elections.conf.
+This will create createdb, fedora-elections.cfg, fedora-elections.wsgi and
+http-fedora-elections.conf.
 
 Modify fedora-elections.cfg to change FAS_PASSWORD to the correct password.
 
