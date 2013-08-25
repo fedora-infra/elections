@@ -15,6 +15,10 @@ class ElectionForm(wtf.Form):
                                            'underscores.')),
     ])
     description = wtf.TextAreaField('Description', [wtf.validators.Required()])
+    voting_type = wtf.RadioField('Type',
+                                 choices=[('range', 'Range Voting'),
+                                          ('simple', 'Simple Voting')],
+                                 default='range')
     url = wtf.TextField('URL', [wtf.validators.Required(),
                                 wtf.validators.URL(),
                                 wtf.validators.Length(max=250)])

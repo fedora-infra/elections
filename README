@@ -50,7 +50,7 @@ You can obtain the code from github:
 
 Configure the application
 -------------------------
-cd fedora-elections
+cd fedora_elections
 ../configure.py  --install-conf=${PWD%/*}  --install-data=${PWD%/*}  --shared-state=${PWD%/*}
 
 This will create createdb, fedora-elections.cfg, fedora-elections.wsgi and

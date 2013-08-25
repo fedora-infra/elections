@@ -1,1 +1,0 @@
-FEDORA_ELECTIONS_CONFIG=@CONFDIR@/fedora-elections/fedora-elections.cfg python @DATADIR@/fedora-elections/createdb.py

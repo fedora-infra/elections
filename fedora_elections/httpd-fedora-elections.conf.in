@@ -1,5 +1,5 @@
-Alias /fedora-elections/images @DATADIR@/fedora-elections/images
-Alias /fedora-elections/static @DATADIR@/fedora-elections/static
+Alias /fedora-elections/images @DATADIR@/fedora_elections/images
+Alias /fedora-elections/static @DATADIR@/fedora_elections/static
 
 WSGIDaemonProcess fedora-elections user=apache group=apache maximum-requests=1000 display-name=fedora-elections  processes=2 threads=1
 WSGISocketPrefix run/wsgi
@@ -7,7 +7,7 @@ WSGIRestrictStdout On
 WSGIRestrictSignal Off
 WSGIPythonOptimize 1
 
-WSGIScriptAlias /fedora-elections @DATADIR@/fedora-elections/fedora-elections.wsgi
+WSGIScriptAlias /fedora-elections @DATADIR@/fedora_elections/fedora-elections.wsgi
 
 <Location /fedora-elections>
     WSGIProcessGroup fedora-elections
