@@ -11,7 +11,7 @@ import sys
 sys.stdout = sys.stderr
 
 ## Set the environment variable pointing to the configuration file
-os.environ['FEDORA_ELECTIONS_CONFIG'] = '@CONFDIR@/fedora-elections/fedora-elections.cfg'
+os.environ['FEDORA_ELECTIONS_CONFIG'] = '@CONFDIR@/fedora_elections/fedora-elections.cfg'
 
 ## The following is only needed if you did not install
 ## as a python module (for example if you run it from a git clone).

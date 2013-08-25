@@ -5,13 +5,13 @@ DEBUG = True
 
 # You will want to change this for your install
 SECRET_KEY = 'change me'
-SQLALCHEMY_DATABASE_URI = 'sqlite:///@SHAREDSTDIR@/fedora-elections/database.sqlite'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///@SHAREDSTDIR@/fedora_elections/database.sqlite'
 
 FAS_BASE_URL = 'https://admin.fedoraproject.org/accounts/'
 FAS_USERNAME = 'fcelections'
 FAS_PASSWORD = 'el3cTo$hozer'
 FAS_CHECK_CERT = False
-FAS_HTTPS_REQUIRED = False
+FAS_FLASK_COOKIE_REQUIRES_HTTPS = False
 
 FEDORA_ELECTIONS_ADMIN_GROUP = 'elections'
 # List of URLs for additional site-wide CSS

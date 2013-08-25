@@ -9,22 +9,31 @@
       {{ render_field(form.summary) }}
     </fieldset>
     <div class="help">
-      <p>This is the name of the election that users will first see.</p>
-      <p>Example: <kbd>Fedora Board, November 2010</kbd></p>
+      This is the name of the election that users will first see.</br>
+      Example: <kbd>Fedora Board, November 2010</kbd>
     </div>
     <fieldset>
       {{ render_field(form.alias) }}
     </fieldset>
     <div class="help">
-      <p>
-        A short, unique name that will be used for the election's URL.
-        Lowercase letters, numbers, hyphens and underscores only.
-      </p>
-      <p>Example: <kbd>boardf15</kbd></p>
+      A short, unique name that will be used for the election's URL.</br>
+      Lowercase letters, numbers, hyphens and underscores only.</br>
+      Example: <kbd>boardf15</kbd>
     </div>
     <fieldset>
       {{ render_field(form.description) }}
     </fieldset>
+    <fieldset>
+      <div class="row">
+        {{ form.voting_type.label }}
+        {% for subtype in form.voting_type %}
+          {{ subtype }} {{ subtype.label }}
+        {% endfor %}
+      </div>
+    </fieldset>
+    <div class="help">
+      Select the election type.
+    </div>
     <fieldset>
       {{ render_field(form.url) }}
     </fieldset>
@@ -33,26 +42,22 @@
       {{ render_field(form.end_date, " at 23:59:59 UTC") }}
     </fieldset>
     <div class="help">
-      <p>Enter dates in <kbd>YYYY-MM-DD</kbd> format.</p>
+      Enter dates in <kbd>YYYY-MM-DD</kbd> format.
     </div>
     <fieldset>
       {{ render_field(form.number_elected) }}
     </fieldset>
     <div class="help">
-      <p>
-        This determines the cutoff for how many candidates win the election.
-        For example, if you are electing four empty seats on a committee,
-        enter <kbd>4</kbd> here.
-      </p>
+      This determines the cutoff for how many candidates win the election.
+      For example, if you are electing four empty seats on a committee,
+      enter <kbd>4</kbd> here.
     </div>
     <fieldset>
       {{ render_field(form.candidates_are_fasusers) }}
     </fieldset>
     <div class="help">
-      <p>
-        Check this if every candidate in this election has a FAS user account.
-        This will automatically pull full names and wiki page URLs from FAS.
-      </p>
+      Check this if every candidate in this election has a FAS user account.
+      This will automatically pull full names and wiki page URLs from FAS.
     </div>
     <fieldset>
       {{ render_field(form.frontpage) }}
@@ -61,10 +66,8 @@
       {{ render_field(form.embargoed) }}
     </fieldset>
     <div class="help">
-      <p>
-        Embargo results when the election is finished. To unembargo them, edit
-        the election and uncheck this box.
-      </p>
+      Embargo results when the election is finished. To unembargo them, edit
+      the election and uncheck this box.
     </div>
 
     <br class="clear">
