@@ -186,7 +186,45 @@ def vote(election_alias):
     elif election.status == 'Ended':
         flask.flash('This election is closed.  You have been redirected to ' +
                     'the election results.')
-        return flask.redirect(flask.url_for('results', election.shortname))
+        return flask.redirect(flask.url_for('election_results',
+                                            election_alias=election.alias))
+
+    votes = models.Vote.query.filter_by(election_id=election.id,
+                                         voter=flask.g.fas_user.username).count()
+    if (votes != 0):
+        flask.flash('You have already voted in the election!')
+        return redirect.safe_redirect_back()
+
+    if (election.voting_type == 'range'):
+        return vote_range(election_alias)
+    elif (election.voting_type == 'simple'):
+        return vote_simple(election_alias)
+    else:
+        flask.flash('Unknown election voting type: %s' % election.voting_type)
+        return redirect.safe_redirect_back()
+
+
+@app.route('/vote_range/<election_alias>', methods=['GET', 'POST'])
+def vote_range(election_alias):
+    try:
+        election = models.Election.query.filter_by(alias=election_alias).one()
+    except NoResultFound:
+        flask.flash('The election, %s,  does not exist.' % election_alias)
+        return redirect.safe_redirect_back()
+
+    if election.status == 'Pending':
+        flask.flash('Voting has not yet started, sorry.')
+        return redirect.safe_redirect_back()
+
+    elif election.status == 'Ended':
+        flask.flash('This election is closed.  You have been redirected to ' +
+                    'the election results.')
+        return flask.redirect(flask.url_for('election_results',
+                                            election_alias=election.alias))
+
+    if (election.voting_type == 'simple'):
+        return flask.redirect(flask.url_for('vote_simple',
+                                            election_alias=election_alias))
 
     votes = models.Vote.query.filter_by(election_id=election.id,
                                          voter=flask.g.fas_user.username).count()
@@ -251,6 +289,79 @@ def vote(election_alias):
             if (next_action != 'vote'):
                 next_action = 'confirm'
 
+    usernamemap = {}
+    if (election.candidates_are_fasusers):
+        for candidate in election.candidates:
+            try:
+                usernamemap[candidate.id] = \
+                    fas2.person_by_username(candidate.name)['human_name']
+            except (KeyError, AuthError):
+                # User has their name set to private or user doesn't exist.
+                usernamemap[candidate.id] = candidate.name
+
+    return flask.render_template('election/vote_range.html', election=election,
+                                 num_candidates=num_candidates,
+                                 usernamemap=usernamemap,
+                                 voteinfo=uvotes, nextaction=next_action)
+
+@app.route('/vote_simple/<election_alias>', methods=['GET', 'POST'])
+def vote_simple(election_alias):
+    try:
+        election = models.Election.query.filter_by(alias=election_alias).one()
+    except NoResultFound:
+        flask.flash('The election, %s,  does not exist.' % election_alias)
+        return redirect.safe_redirect_back()
+
+    if election.status == 'Pending':
+        flask.flash('Voting has not yet started, sorry.')
+        return redirect.safe_redirect_back()
+
+    elif election.status == 'Ended':
+        flask.flash('This election is closed.  You have been redirected to ' +
+                    'the election results.')
+        return flask.redirect(flask.url_for('election_results',
+                                            election_alias=election_alias))
+
+    if (election.voting_type == 'range'):
+        return flask.redirect(flask.url_for('vote_range',
+                                            election_alias=election_alias))
+
+    votes = models.Vote.query.filter_by(election_id=election.id,
+                                         voter=flask.g.fas_user.username).count()
+    if (votes != 0):
+        flask.flash('You have already voted in the election!')
+        return redirect.safe_redirect_back()
+
+    num_candidates = election.candidates.count()
+    next_action =  'vote'
+    candidate_id = -1
+
+    if flask.request.method == 'POST':
+        next_action =  ''
+        form_values = flask.request.form.values()
+        if 'Submit' in form_values:
+            candidate_id = int(flask.request.form['candidate'])
+            new_vote = models.Vote(election_id=election.id,
+                                   voter=flask.g.fas_user.username,
+                                   timestamp=datetime.now(),
+                                   candidate_id=candidate_id,
+                                   value=1 )
+            db.session.add(new_vote)
+            db.session.commit()
+
+            flask.flash("Your vote has been recorded.  Thank you!")
+            return redirect.safe_redirect_back()
+
+        elif 'Preview' in form_values:
+            if ('candidate' in flask.request.form):
+                flask.flash("Please confirm your vote!")
+                candidate_id = int(flask.request.form['candidate'])
+            else:
+                flask.flash("Please vote for a candidate")
+                next_action = 'vote'
+
+        if (next_action != 'vote'):
+            next_action = 'confirm'
 
     usernamemap = {}
     if (election.candidates_are_fasusers):
@@ -262,11 +373,10 @@ def vote(election_alias):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
 
-    return flask.render_template('election/vote.html', election=election,
+    return flask.render_template('election/vote_simple.html', election=election,
                                  num_candidates=num_candidates,
                                  usernamemap=usernamemap,
-                                 voteinfo=uvotes, nextaction=next_action)
-
+                                 candidate_id=candidate_id, nextaction=next_action)
 
 ### AUTH VIEWS #############################################
 
@@ -310,7 +420,7 @@ def admin_view_elections():
                                  elections=elections)
 
 
-@app.route('/admin/new', methods=("GET", "POST"))
+@app.route('/admin/new', methods=('GET', 'POST'))
 @election_admin_required
 def admin_new_election():
     form = forms.ElectionForm()
@@ -344,7 +454,7 @@ def admin_view_election(election_alias):
     return flask.render_template('admin/view_election.html', election=election)
 
 
-@app.route('/admin/<election_alias>/edit', methods=("GET", "POST"))
+@app.route('/admin/<election_alias>/edit', methods=('GET', 'POST'))
 @election_admin_required
 def admin_edit_election(election_alias):
     election = models.Election.query.filter_by(alias=election_alias).first()
@@ -361,7 +471,7 @@ def admin_edit_election(election_alias):
                                  submit_text='Edit election')
 
 
-@app.route('/admin/<election_alias>/candidates/new', methods=("GET", "POST"))
+@app.route('/admin/<election_alias>/candidates/new', methods=('GET', 'POST'))
 @election_admin_required
 def admin_add_candidate(election_alias):
     election = models.Election.query.filter_by(alias=election_alias).first()
@@ -381,7 +491,7 @@ def admin_add_candidate(election_alias):
 
 
 @app.route('/admin/<election_alias>/candidates/<int:candidate_id>/edit',
-           methods=("GET", "POST"))
+           methods=('GET', 'POST'))
 @election_admin_required
 def admin_edit_candidate(election_alias, candidate_id):
     election = models.Election.query.filter_by(alias=election_alias).first()
@@ -402,7 +512,7 @@ def admin_edit_candidate(election_alias, candidate_id):
 
 
 @app.route('/admin/<election_alias>/candidates/<int:candidate_id>/delete',
-           methods=("GET", "POST"))
+           methods=('GET', 'POST'))
 @election_admin_required
 def admin_delete_candidate(election_alias, candidate_id):
     election = models.Election.query.filter_by(alias=election_alias).first()
