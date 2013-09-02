@@ -80,16 +80,16 @@
 
 <!-- Make this conditional on whether the user is logged in and can vote in the election -->
 {% if election.legal_voters.count() != 0 %}
-<p>
-  To vote in this election you must be a member of any one of the following groups:
-</p>
-<ul>
-  {% for group in election.legal_voters %}
-    <li>{{group.group_name}}</li>
-  {% endfor %}
-</ul>
+  <p>
+    To vote in this election you must be a member of any one of the following groups:
+  </p>
+  <ul>
+    {% for group in election.legal_voters %}
+      <li>{{group.group_name}}</li>
+    {% endfor %}
+  </ul>
 {% else %}
-<p />
+  <p />
 {% endif %}
 <div>
   <h2>Information on Range Voting</h2>
