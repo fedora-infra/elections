@@ -47,6 +47,8 @@ Get the source code
 You can obtain the code from github:
         https://github.com/fedora-infra/elections.git
 
+git clone https://github.com/fedora-infra/elections.git
+
 
 Configure the application
 -------------------------
