@@ -4,7 +4,7 @@
 %define eggname fedora_elections
 
 Name:           fedora-elections
-Version:        0.1
+Version:        0.2
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -70,7 +70,8 @@ fedora-elections is the Fedora Elections application.
 
 %prep
 %setup -q
-./configure.py
+cd fedora_elections
+../configure.py
 
 
 %build
@@ -83,24 +84,27 @@ rm -rf $RPM_BUILD_ROOT
 %{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/%{name}
-%{__install} -m 444 %{name}.cfg %{buildroot}%{_sysconfdir}/%{name}/%{name}.cfg
+%{__install} -m 444 fedora_elections/%{name}.cfg \
+    %{buildroot}%{_sysconfdir}/%{name}/%{name}.cfg
 
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/httpd/conf.d
-%{__install} -m 444 httpd-fedora-elections.conf \
+%{__install} -m 444 fedora_elections/httpd-fedora-elections.conf \
     %{buildroot}%{_sysconfdir}/httpd/conf.d/httpd-fedora-elections.conf
 
-%{__mkdir_p} %{buildroot}%{_datadir}/%{name}
-%{__install} -m 544 createdb %{buildroot}%{_datadir}/%{name}/createdb
-%{__install} -m 544 createdb.py %{buildroot}%{_datadir}/%{name}/createdb.py
-%{__install} -m 444 %{name}.wsgi %{buildroot}%{_datadir}/%{name}/%{name}.wsgi
+%{__mkdir_p} %{buildroot}%{_datadir}/%{modname}
+%{__install} -m 544 fedora_elections/createdb %{buildroot}%{_datadir}/%{modname}/createdb
+%{__install} -m 544 fedora_elections/createdb.py \
+    %{buildroot}%{_datadir}/%{modname}/createdb.py
+%{__install} -m 444 fedora_elections/%{name}.wsgi \
+    %{buildroot}%{_datadir}/%{modname}/%{name}.wsgi
 
-%{__mkdir_p} %{buildroot}%{_datadir}/%{name}/static
-%{__install} -m 444 fedora_elections/static/* %{buildroot}%{_datadir}/%{name}/static
+%{__mkdir_p} %{buildroot}%{_datadir}/%{modname}/static
+%{__install} -m 444 fedora_elections/static/* %{buildroot}%{_datadir}/%{modname}/static
 
-%{__mkdir_p} %{buildroot}%{_datadir}/%{name}/images
-%{__install} -m 444 fedora_elections/images/* %{buildroot}%{_datadir}/%{name}/images
+%{__mkdir_p} %{buildroot}%{_datadir}/%{modname}/images
+%{__install} -m 444 fedora_elections/images/* %{buildroot}%{_datadir}/%{modname}/images
 
-%{__mkdir_p} %{buildroot}%{_sharedstatedir}/%{name}
+%{__mkdir_p} %{buildroot}%{_sharedstatedir}/%{modname}
 
 %{__mkdir_p} %{buildroot}%{python_sitelib}/%{modname}/templates
 %{__mkdir_p} %{buildroot}%{python_sitelib}/%{modname}/templates/admin
@@ -127,9 +131,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc
 %dir %{_sysconfdir}/%{name}
-%dir %{_sharedstatedir}/%{name}
-%attr(744,apache,apache) %{_sharedstatedir}/%{name}
-%{_datadir}/%{name}/
+%attr(744,apache,apache) %{_sharedstatedir}/%{modname}
+%{_datadir}/%{modname}/
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.cfg
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/httpd-%{name}.conf
 %{python_sitelib}/%{modname}/
@@ -137,14 +140,14 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %post
-cd %{_sharedstatedir}/%{name}
+cd %{_sharedstatedir}/%{modname}
 if [[ ! -f database.sqlite ]]
 then
     #
     # The database does not exist create one.
     #
     echo "  Creating a database."
-    %{_datadir}/%{name}/createdb
+    %{_datadir}/%{modname}/createdb
     echo "  Changing permissions."
     chmod 644 database.sqlite
     echo "  Changing owner."
@@ -153,7 +156,7 @@ fi
 
 
 %postun
-cd %{_sharedstatedir}/%{name}
+cd %{_sharedstatedir}/%{modname}
 if [[ -f database.sqlite ]]
 then
     #
@@ -164,12 +167,15 @@ then
 fi
 
 cd ${_sharedstatedir}
-if [[ -d %{_sharedstatedir}/%{name} ]]
+if [[ -d %{_sharedstatedir}/%{modname} ]]
 then
-    /bin/rmdir  %{_sharedstatedir}/%{name}
+    /bin/rmdir  %{_sharedstatedir}/%{modname}
 fi
 
 
 %changelog
+* Tue Sep 02 2013 Frank Chiulli <fchiulli@fedoraproject.org> - 0.2
+- Simple voting
+
 * Sat May 04 2013 Frank Chiulli <fchiulli@fedoraproject.org> - 0.1
 - Creation
