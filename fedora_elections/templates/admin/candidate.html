@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import render_field_in_row %}
+
 {% block title %}{{ submit_text }}{% endblock %}
+
+{%block tag %}admin{% endblock %}
+
 {% block body %}
   <h2>{{ submit_text }}</h2>
 
