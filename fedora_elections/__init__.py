@@ -183,6 +183,7 @@ def open_elections():
 ### ELECTION VIEWS #############################################
 
 @APP.route('/vote/<election_alias>', methods=['GET', 'POST'])
+@login_required
 def vote(election_alias):
     election = get_valid_election(election_alias)
 
@@ -207,6 +208,7 @@ def vote(election_alias):
 
 
 @APP.route('/vote_range/<election_alias>', methods=['GET', 'POST'])
+@login_required
 def vote_range(election_alias):
     election = get_valid_election(election_alias)
 
@@ -214,8 +216,8 @@ def vote_range(election_alias):
         return election
 
     if (election.voting_type == 'simple'):
-        return flask.redirect(flask.url_for('vote_simple',
-                                            election_alias=election_alias))
+        return flask.redirect(flask.url_for(
+            'vote_simple', election_alias=election_alias))
 
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
@@ -302,6 +304,7 @@ def vote_range(election_alias):
         nextaction=next_action)
 
 @APP.route('/vote_simple/<election_alias>', methods=['GET', 'POST'])
+@login_required
 def vote_simple(election_alias):
     election = get_valid_election(election_alias)
 
@@ -309,8 +312,8 @@ def vote_simple(election_alias):
         return election
 
     if (election.voting_type == 'range'):
-        return flask.redirect(flask.url_for('vote_range',
-                                            election_alias=election_alias))
+        return flask.redirect(flask.url_for(
+            'vote_range', election_alias=election_alias))
 
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
@@ -583,7 +586,7 @@ def election_results(election_alias):
         return redirect.safe_redirect_back()
 
     elif election.embargoed == 1:
-        if flask.g.fas_user is None:
+        if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
                 flask.flash("We are sorry.  The results for this election"
                             "cannot be viewed because they are currently"
                             " embargoed pending formal announcement.")
