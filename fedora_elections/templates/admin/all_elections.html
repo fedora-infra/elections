@@ -15,10 +15,15 @@
   {% if elections %}
   <table>
     <tr>
-      <th>Election</th>
-      <th>Start date (UTC)</th>
-      <th>End date (UTC)</th>
-      <th>Status</th>
+      <td>
+        <a href="{{ url_for('admin_view_election',
+                            election_alias=election.alias) }}">
+          {{ election.summary }}
+        </a>
+      </td>
+      <td>{{ election.start_date }}</td>
+      <td>{{ election.end_date }}</td>
+      <td>{{ election.status }}</td>
     </tr>
     {% for election in elections %}
       <tr>
