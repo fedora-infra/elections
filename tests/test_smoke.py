@@ -14,26 +14,37 @@ from nose import tools, with_setup
 from base import BaseRequestTests, anon_urls, authed_view_urls, \
         admin_view_urls, admin_modify_urls, url_subs
 
-from fedora_elections import db, models
-from fedora_elections import fas
+import fedora_elections
+import fedora_elections.models
 
 class TestSmoke(BaseRequestTests):
     '''Basic test that we don't get 500s'''
 
     def setUp(self):
         super(TestSmoke, self).setUp()
-        fas.login = Mock(return_value=True)
+        fedora_elections.SESSION = self.session
+
+        fedora_elections.FAS.login = Mock(return_value=True)
         # Add an election
-        election = models.Election(summary='Test Election 1',
-                alias='test1', description='lorem ipsum of course',
+        election = fedora_elections.models.Election(
+                summary='Test Election 1',
+                alias='test1',
+                description='lorem ipsum of course',
                 url='http://fedorahosted.org/elections',
                 start_date=datetime.datetime.utcnow(),
-                end_date=datetime.datetime.utcnow()+datetime.timedelta(hours=1))
-        db.session.add(election)
+                end_date=datetime.datetime.utcnow()+datetime.timedelta(hours=1),
+                fas_user='fchiulli',
+        )
+        self.session.add(election)
+
         # Add candidate to election
-        candidate = models.Candidate(election=election, name='Mr Testy', url='http://fedoraproject.org')
-        db.session.add(candidate)
-        db.session.commit()
+        candidate = fedora_elections.models.Candidate(
+            election=election,
+            name='Mr Testy',
+            url='http://fedoraproject.org')
+        self.session.add(candidate)
+
+        self.session.commit()
 
         self.url_subs = copy(url_subs)
         self.url_subs['election_alias'] = 'test1'
@@ -64,10 +75,13 @@ class TestSmoke(BaseRequestTests):
         self.check_status_code(*args, **kwargs)
 
     def test_all_url_subs(self):
-        '''Testing that the testsuite is going to substitute all variables in the url.'''
+        '''Testing that the testsuite is going to substitute all variables
+        in the url
+        '''
         for i in self.url_subs.values():
             if i is None:
-                raise Exception('Smoke test must be updated for new url variable present in base.py')
+                raise Exception('Smoke test must be updated for new url '
+                                'variable present in base.py')
 
     def test_anon_view(self):
         for url in anon_urls:
