@@ -42,6 +42,19 @@
 {% block body %}
   <h2>{{ title }}</h2>
 
+  {% if tag == 'index' %}
+  <p>
+    The <a href='https://fedoraproject.org'>Fedora project</a> is a community
+    driven project. It has a number of steering commities whose responsabilities
+    is to drive the project forward.
+  </p>
+  <p>
+    These committies are elected among volunteers of the community and by
+    the community members. The present application is meant to held these
+    elections.
+  </p>
+  {% endif %}
+
   {% if cur_elections %}
   {{ render_elections(cur_elections, 'Current elections') }}
   {% endif %}
