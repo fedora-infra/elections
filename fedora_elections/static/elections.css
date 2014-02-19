@@ -200,3 +200,7 @@ a:visited.large_button {
 .cell a {
     color: #193C6E;
 }
+
+body#index h3 {
+    padding-top: 1em;
+}
