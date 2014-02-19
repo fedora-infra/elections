@@ -441,10 +441,6 @@ def admin_view_elections():
     elections = models.Election.search(
         SESSION, fas_user=flask.g.fas_user.username)
 
-    if not elections:
-        flask.flash('You do not have any elections.')
-        return redirect.safe_redirect_back()
-
     return flask.render_template(
         'admin/all_elections.html',
         elections=elections)
