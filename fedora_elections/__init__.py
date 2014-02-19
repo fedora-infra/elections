@@ -110,7 +110,7 @@ def get_valid_election(election_alias, ended=False):
         return flask.redirect(flask.url_for(
             'election_results', election_alias=election.alias))
 
-    elif not ended and election.status == 'In progress':
+    elif ended and election.status == 'In progress':
         flask.flash(
             'Sorry but this election is in progress, you may not see its '
             'results already.')
