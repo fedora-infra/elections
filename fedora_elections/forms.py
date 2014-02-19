@@ -54,8 +54,6 @@ class ElectionForm(wtf.Form):
     candidates_are_fasusers = wtforms.BooleanField(
         'Candidates are FAS users?')
 
-    frontpage = wtforms.BooleanField('Show on front page?')
-
     embargoed = wtforms.BooleanField('Embargo results?', default=True)
 
     def __init__(form, election_id=None, *args, **kwargs):
