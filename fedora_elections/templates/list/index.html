@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
   <h2>{{ title }}</h2>
+  {% if elections %}
   <table>
     <tr>
       <th>Election</th>
@@ -31,4 +32,7 @@
       </tr>
     {% endfor %}
   </table>
+  {% else %}
+  <p> No elections </p>
+  {% endif %}
 {% endblock %}
