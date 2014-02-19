@@ -4,5 +4,5 @@ flask
 kitchen
 python-fedora
 Flask-FAS
-Flask-sqlalchemy
 Flask-wtf
+
