@@ -1,13 +1,15 @@
 {% extends "base.html" %}
-{% from "_formhelpers.html" import render_field %}
+{% from "_formhelpers.html" import render_field_in_row %}
 {% block title %}{{ submit_text }}{% endblock %}
 {% block body %}
   <h2>{{ submit_text }}</h2>
 
   <form action="" method="post">
     <fieldset>
-      {{ render_field(form.name) }}
-      {{ render_field(form.url) }}
+        <table>
+        {{ render_field_in_row(form.name) }}
+        {{ render_field_in_row(form.url) }}
+        </table>
     </fieldset>
 
     <br class="clear">
