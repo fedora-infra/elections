@@ -1,134 +1,96 @@
 <!DOCTYPE html>
-<html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    {% block head %}
-      <title>
-        Fedora Elections
-        {% if self.title() %}
-          &mdash;
-          {% block title %}{% endblock %}
-        {% endif %}
-      </title>
-      <link rel="stylesheet" type="text/css" media="screen"
-            href="{{ url_for("static", filename="style.css") }}" />
-      <link rel="stylesheet" type="text/css" media="screen"
-            href="https://fedoraproject.org/static/css/fedora.css" />
-      {% for css in config.get('EXTRA_CSS', []) %}<link rel="stylesheet" href="{{ css }}">
-      {% endfor %}
-    {% endblock %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>{% block title %}Fedora supplementary wallpapers{% endblock %}</title>
+    {%block head %}{% endblock %}
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon"
+        href="//fedoraproject.org/static/images/favicon.ico"/>
+    <link rel='stylesheet' type='text/css'
+        href="{{ url_for('static', filename='jquery-ui-1.9.2.custom.css') }}"/>
+    <link rel="stylesheet" type="text/css" media="screen"
+        href="{{ url_for('static', filename='koji.css') }}"/>
+    <link rel="stylesheet" type="text/css" media="screen"
+        href="{{ url_for('static', filename='elections.css') }}"/>
+    <link rel='stylesheet' type='text/css'
+         href='//fonts.googleapis.com/css?family=Comfortaa'/>
+
   </head>
-  <body>
-    <div id="wrapper">
-      <div id="head">
-        <h1><a href="https://admin.fedoraproject.org/en/index">Fedora</a></h1>
-      </div>
+  <body id="{%block tag %}{% endblock %}">
 
-      <div id="sidebar">
-        <div id="nav">
-          <h2>Navigation</h2>
+    <div id="wrap">
+      <div id="innerwrap">
+
+        <!-- HEADER -->
+        <div id="header">
+          <img src="{{ url_for('static', filename='elections-logo.png') }}"
+            alt="Elections Logo" id="kojiLogo"/>
+        </div><!-- end header -->
+
+        <!-- MAIN NAVIGATION -->
+        <div id="mainNav">
+          <h4 class="hide">Main Site Links:</h4>
           <ul>
-            <li id="nav-home">
-              <a href="http://fedoraproject.org/en/index">Home</a>
-            </li>
-            <li id="nav-get">
-              <a href="http://fedoraproject.org/en/get-fedora">Get Fedora</a>
-            </li>
-            <li id="nav-join">
-              <a href="http://fedoraproject.org/en/join-fedora">Join Fedora</a>
-            </li>
-            <li id="nav-help">
-              <a href="http://fedoraproject.org/en/get-help">Get Help</a>
-            </li>
+            <li id="indexTab"><a href="{{url_for('.index')}}">Home</a></li>
+            <li id="openTab"><a href="{{url_for('.open_elections')}}">Open</a></li>
+            <li id="archivesTab"><a href="{{url_for('.archived_elections')}}">Archives</a></li>
+            {% if is_admin %}
+            <li id="adminTab"><a href="{{url_for('.admin_view_elections')}}">Admin</a></li>
+            {% endif %}
           </ul>
-        </div>
-      </div>
+        </div><!-- end mainNav -->
 
-      <div id="content">
-        <ul class="toolbar" id="#main-toolbar">
+        <span id="loginInfo">
           {% if g.fas_user %}
-            <li>
-              Hello, {{ g.fas_user.username }} &mdash;
-              <a href="{{ url_for('auth_logout') }}">log out</a>
-            </li>
+            <span class="text">logged in as </span>
+            {{ g.fas_user.username }} |
+            <a href="{{ url_for('.auth_logout') }}">log out</a>
           {% else %}
-            <li>
-              You are not logged in &mdash;
-              <a href="{{ url_for('auth_login') }}">log in</a>
-            </li>
+            <a href="{{ url_for('.auth_login') }}">login</a>
           {% endif %}
-        </ul>
-        <h2>Elections</h2>
-        <ul>
-          <li>
-            <a href="{{ url_for('open_elections') }}">
-              Open elections
-            </a>
-          </li>
-          <li>
-            <a href="{{ url_for('archived_elections') }}">
-              Archived elections
-            </a>
-          </li>
-        </ul>
-        <br>
-        <h2>Administration</h2>
-        <ul>
-          <li>
-            <a href="{{ url_for('admin_view_elections') }}">
-              My elections
-            </a>
-          </li>
-          <li>
-            <a href="{{ url_for('admin_new_election') }}">
-              Create new election
-            </a>
-          </li>
-        </ul>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <ul id="flashes">
-              {% for message in messages %}
-                <li>{{ message }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
-        {% block body %}
-        {% endblock %}
+        </span>
+
+        <div id="content">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if category, messages %}
+                <ul id="flashes">
+                    {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message |safe}}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+
+            {% block body %}{% endblock %}
+
+        </div>
+
+        {% if options is defined %}
+        <div id="options">
+            <div id="options_title">
+                <h3>Options</h3>
+            </div>
+            <div id="delimiter"></div>
+            <div id="options_content">
+                {% block options %}{% endblock %}
+            </div>
+        </div>
+        {% endif %}
+
+        <p id="footer">
+          Copyright &copy; 2013-2014 Red Hat
+          <a href="//github.com/fedora-infra/elections/"
+          target="_blank">elections</a>
+        -- version: {{ version }}
+        </p>
+
       </div>
     </div>
-    <div id="bottom">
-      <div id="footer">
-        {% block footer %}
-          <p class="copy">
-            Copyright &copy; 2014 Red Hat, Inc. and others.  Please send any
-            comments or corrections to the
-            <a href="mailto:webmaster@fedoraproject.org">
-              websites team
-            </a>.
-          </p>
-          <p class="disclaimer">
-            The Fedora Project is maintained and driven by the community and
-            sponsored by Red Hat.  This is a community maintained site.  Red
-            Hat is not responsible for content.
-          </p>
-          <ul>
-            <li class="first">
-              <a href="/en/sponsors">Sponsors</a>
-            </li>
-            <li>
-              <a href="http://fedoraproject.org/wiki/Legal">
-                Legal
-              </a>
-            </li>
-            <li>
-              <a href="http://fedoraproject.org/wiki/Legal/TrademarkGuidelines">
-                Trademark Guidelines
-              </a>
-            </li>
-          </ul>
-        </div>
-      {% endblock %}
-    </div>
+
+    {% block jscripts %}
+    {% endblock %}
+
   </body>
 </html>
