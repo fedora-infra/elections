@@ -1,7 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Election administration{% endblock %}
+
 {% block body %}
   <h2>Election administration</h2>
+
+  <ul>
+    <li>
+      <a href="{{ url_for('admin_new_election') }}">
+        Create new election
+      </a>
+    </li>
+  </ul>
+
+  {% if elections %}
   <table>
     <tr>
       <th>Election</th>
@@ -23,4 +34,7 @@
       </tr>
     {% endfor %}
   </table>
+  {% else %}
+  <p>No elections present in the database</p>
+  {% endif %}
 {%endblock %}
