@@ -10,4 +10,13 @@
   {% endif %}
 </div>
 {% endmacro %}
-{# vim: set ts=2 sw=2 sta et: #}
+
+{% macro render_field_in_row(field, after="") %}
+<tr>
+    <td>{{ field.label }}</td>
+    <td>{{ field(**kwargs)|safe }}</td>
+{% if after %} <td>{{ after }}</td>{% endif %}
+{% if field.errors %}{% for error in field.errors
+%}<td class="error">{{ error }}</td>{% endfor %}{% endif %}
+</tr>
+{% endmacro %}
