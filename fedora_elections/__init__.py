@@ -131,6 +131,17 @@ def get_valid_election(election_alias, ended=False):
 
     return election
 
+@APP.context_processor
+def inject_variables():
+    ''' Inject a set of variable that we want for every pages (every
+    template).
+    '''
+    user = None
+    if hasattr(flask.g, 'fas_user'):
+        user = flask.g.fas_user
+    return dict(is_admin=is_elections_admin(user),
+                version=__version__)
+
 
 ### LIST VIEWS #############################################
 
