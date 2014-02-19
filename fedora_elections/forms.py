@@ -90,12 +90,5 @@ class CandidateForm(wtf.Form):
     url = wtforms.TextField('URL', [wtforms.validators.Length(max=250)])
 
 
-class LoginForm(wtf.Form):
-    username = wtforms.TextField(
-        'Username', [wtforms.validators.Required()])
-    password = wtforms.PasswordField(
-        'Password', [wtforms.validators.Required()])
-
-
 class ConfirmationForm(wtf.Form):
     pass
