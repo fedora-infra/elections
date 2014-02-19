@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{%block tag %}{{tag}}{% endblock %}
+
 {% block body %}
   <h2>{{ title }}</h2>
   {% if elections %}
