@@ -392,7 +392,7 @@ def auth_login():
     if 'next' in flask.request.args:
         next_url = flask.request.args['next']
 
-    if not next_url or next_url == flask.url_for('.login'):
+    if not next_url or next_url == flask.url_for('.auth_login'):
         next_url = flask.url_for('.index')
 
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
