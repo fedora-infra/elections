@@ -273,4 +273,7 @@ class Vote(BASE):
             cls.voter == user
         )
 
-        return query.all()
+        if count:
+            return query.count()
+        else:
+            return query.all()
