@@ -3,6 +3,5 @@
 flask
 kitchen
 python-fedora
-Flask-FAS
 Flask-wtf
 
