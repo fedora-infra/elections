@@ -63,9 +63,21 @@ from fedora_elections import forms
 from fedora_elections import redirect
 
 
-def remove_csrf(form_data):
-    return dict([(k, v) for k, v in form_data.items() if k != 'csrf'])
+def is_elections_admin(user):
+    ''' Is the user an elections admin.
+    '''
+    if not user:
+        return False
+    if not user.cla_done or len(user.groups) < 1:
+        return False
 
+    admins = APP.config['FEDORA_ELECTIONS_ADMIN_GROUP']
+    if isinstance(admins, basestring):  # pragma: no cover
+        admins = set([admins])
+    else:
+        admins = set(admins)
+
+    return len(set(user.groups).intersection(admins)) > 0
 
 def login_required(f):
     @wraps(f)
@@ -83,8 +95,7 @@ def election_admin_required(f):
         if not hasattr(flask.g, 'fas_user') or flask.g.fas_user is None:
             return flask.redirect(flask.url_for(
                 'auth_login', next=flask.request.url))
-        if APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'] not in \
-           flask.g.fas_user.groups:
+        if not is_elections_admin(flask.g.fas_user):
             flask.abort(403)
         return f(*args, **kwargs)
     return decorated_function
