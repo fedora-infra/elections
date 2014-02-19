@@ -111,28 +111,60 @@ body#admin table {
     padding: 0.6ex;
 }
 
-#legend {
-    margin-top: 4em;
-    font-size: 85%;
+
+.vthot
+{
+  border: 1px solid #DDDDDD;
+  padding: 1.5ex;
+  margin: 1ex 0;
+  color: #FFFFFF;
+  background: #9C0000;
 }
 
-#legend td {
-    padding-left: 0.5em;
+.vtwarm
+{
+  border: 1px solid #DDDDDD;
+ padding: 1.5ex;
+  margin: 1ex 0;
+  color: #000000;
+  background: #FFA300;
 }
 
-#legend td img {
-    padding-right: 0.5em;
+.vtmedwarm
+{
+  border: 1px solid #DDDDDD;
+  padding: 1.5ex;
+  margin: 1ex 0;
+  color: #000000;
+  background: #93FF63;
 }
 
-#legend th {
-    min-width: 0px;
-    padding-left: 0.5em;
+.vtmedcool
+{
+  border: 1px solid #DDDDDD;
+  padding: 1.5ex;
+  margin: 1ex 0;
+  color: #000000;
+  background: #00DAFE;
 }
 
-#pending th {
-    text-align: left;
+.vtcool
+{
+  border: 1px solid #DDDDDD;
+  padding: 1.5ex;
+  margin: 1ex 0;
+  color: #000000;
+  background: #0033FF;
 }
 
+.vtcold
+{
+  border: 1px solid #DDDDDD;
+  padding: 1.5ex;
+  margin: 1ex 0;
+  color: #FFFFFF;
+  background: #000083;
+}
 .italic {
     font-style: italic;
 }
