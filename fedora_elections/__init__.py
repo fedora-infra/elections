@@ -153,6 +153,7 @@ def index():
         'list/index.html',
         elections=elections,
         num_elections=num_elections,
+        tag='index',
         title="Elections")
 
 
@@ -208,6 +209,7 @@ def open_elections():
     return flask.render_template(
         'list/index.html',
         elections=elections,
+        tag='open',
         title='Open Elections')
 
 
