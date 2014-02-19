@@ -90,7 +90,7 @@ def election_admin_required(f):
     return decorated_function
 
 
-def get_valid_election(election_alias):
+def get_valid_election(election_alias, ended=False):
     """ Return the election if it is valid (no pending, not ended).
     """
     election = models.Election.get(SESSION, alias=election_alias)
@@ -103,12 +103,19 @@ def get_valid_election(election_alias):
         flask.flash('Voting has not yet started, sorry.')
         return redirect.safe_redirect_back()
 
-    elif election.status == 'Ended':
+    elif not ended and election.status == 'Ended':
         flask.flash(
             'This election is closed.  You have been redirected to the '
             'election results.')
         return flask.redirect(flask.url_for(
             'election_results', election_alias=election.alias))
+
+    elif not ended and election.status == 'In progress':
+        flask.flash(
+            'Sorry but this election is in progress, you may not see its '
+            'results already.')
+        return redirect.safe_redirect_back()
+
     return election
 
 
@@ -574,23 +581,17 @@ def admin_delete_candidate(election_alias, candidate_id):
 
 @APP.route('/results/<election_alias>')
 def election_results(election_alias):
-    election = get_valid_election(election_alias)
+    election = get_valid_election(election_alias, ended=True)
 
     if not isinstance(election, models.Election):
         return election
 
-    if election.status == 'In progress':
-        flask.flash(
-            'Sorry but this election is in progress, you may not see its '
-            'results already.')
-        return redirect.safe_redirect_back()
-
     elif election.embargoed == 1:
         if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
-                flask.flash("We are sorry.  The results for this election"
-                            "cannot be viewed because they are currently"
-                            " embargoed pending formal announcement.")
-                return redirect.safe_redirect_back()
+            flask.flash("We are sorry.  The results for this election"
+                        "cannot be viewed because they are currently"
+                        " embargoed pending formal announcement.")
+            return redirect.safe_redirect_back()
         else:
             if APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'] in \
                     flask.g.fas_user.groups:
@@ -620,5 +621,8 @@ def election_results(election_alias):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
 
-    return flask.render_template('election/results.html', election=election,
-                                 usernamemap=usernamemap)
+    return flask.render_template(
+        'election/results.html',
+        election=election,
+        usernamemap=usernamemap)
+
