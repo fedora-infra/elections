@@ -41,5 +41,9 @@
   <a href="{{ url_for('admin_add_candidate',
                       election_alias=election.alias) }}">
     Add a candidate
+  </a> -
+  <a href="{{ url_for('admin_add_multi_candidate',
+                      election_alias=election.alias) }}">
+    Add a multiple candidates
   </a>
 {% endblock %}
