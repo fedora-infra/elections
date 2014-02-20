@@ -81,6 +81,7 @@ def is_elections_admin(user):
 
     return len(set(user.groups).intersection(admins)) > 0
 
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -130,6 +131,7 @@ def get_valid_election(election_alias, ended=False):
         return redirect.safe_redirect_back()
 
     return election
+
 
 @APP.context_processor
 def inject_variables():
@@ -556,6 +558,48 @@ def admin_add_candidate(election_alias):
         'admin/candidate.html',
         form=form,
         submit_text='Add candidate')
+
+
+@APP.route('/admin/<election_alias>/candidates/new/multi', methods=('GET', 'POST'))
+@election_admin_required
+def admin_add_multi_candidate(election_alias):
+    election = models.Election.get(SESSION, alias=election_alias)
+    if not election:
+        flask.abort(404)
+
+    form = forms.MultiCandidateForm()
+    if form.validate_on_submit():
+
+        candidates_name = []
+        for entry in form.candidate.data.strip().split("|"):
+            candidate = entry.split("!")
+            #No url
+            if len(candidate) == 1:
+                cand = models.Candidate(
+                    election=election,
+                    name=candidate[0])
+                SESSION.add(cand)
+                candidates_name.append(cand.name)
+            # With url
+            elif len(candidate) == 2:
+                cand = models.Candidate(
+                    election=election,
+                    name=candidate[0],
+                    url=candidate[1])
+                SESSION.add(cand)
+                candidates_name.append(cand.name)
+            else:
+                flask.flash("There was an issue!")
+
+        SESSION.commit()
+        flask.flash('Added candidates: "%s"' % ', '.join(candidates_name))
+        return flask.redirect(flask.url_for(
+            'admin_view_election', election_alias=election.alias))
+
+    return flask.render_template(
+        'admin/candidate_multi.html',
+        form=form,
+        submit_text='Add candidates')
 
 
 @APP.route('/admin/<election_alias>/candidates/<int:candidate_id>/edit',
