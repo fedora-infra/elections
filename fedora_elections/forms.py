@@ -88,5 +88,10 @@ class CandidateForm(wtf.Form):
     url = wtforms.TextField('URL', [wtforms.validators.Length(max=250)])
 
 
+class MultiCandidateForm(wtf.Form):
+    candidate = wtforms.TextField(
+        'Candidates', [wtforms.validators.Required()])
+
+
 class ConfirmationForm(wtf.Form):
     pass
