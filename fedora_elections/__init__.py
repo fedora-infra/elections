@@ -238,10 +238,10 @@ def vote_range(election_alias):
     uvotes = {}
     for candidate in election.candidates:
         uvotes[candidate.id] = ""
-    next_action =  'vote'
+    next_action = 'vote'
 
     if flask.request.method == 'POST':
-        next_action =  ''
+        next_action = ''
         form_values = flask.request.form.values()
         if 'Submit' in form_values:
             for candidate in election.candidates:
@@ -310,6 +310,7 @@ def vote_range(election_alias):
         voteinfo=uvotes,
         nextaction=next_action)
 
+
 @APP.route('/vote_simple/<election_alias>', methods=['GET', 'POST'])
 @login_required
 def vote_simple(election_alias):
@@ -330,11 +331,11 @@ def vote_simple(election_alias):
         return redirect.safe_redirect_back()
 
     num_candidates = election.candidates.count()
-    next_action =  'vote'
+    next_action = 'vote'
     candidate_id = -1
 
     if flask.request.method == 'POST':
-        next_action =  ''
+        next_action = ''
         form_values = flask.request.form.values()
         if 'Submit' in form_values:
             candidate_id = int(flask.request.form['candidate'])
@@ -372,10 +373,12 @@ def vote_simple(election_alias):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
 
-    return flask.render_template('election/vote_simple.html', election=election,
-                                 num_candidates=num_candidates,
-                                 usernamemap=usernamemap,
-                                 candidate_id=candidate_id, nextaction=next_action)
+    return flask.render_template(
+        'election/vote_simple.html', election=election,
+        num_candidates=num_candidates,
+        usernamemap=usernamemap,
+        candidate_id=candidate_id, nextaction=next_action)
+
 
 ### AUTH VIEWS #############################################
 
@@ -437,7 +440,7 @@ def admin_new_election():
             frontpage=form.frontpage.data,
             voting_type=form.voting_type.data,
             candidates_are_fasusers=form.candidates_are_fasusers.data,
-            fas_user = flask.g.fas_user.username,
+            fas_user=flask.g.fas_user.username,
         )
 
         # Fix start_date and end_date to use datetime
@@ -625,4 +628,3 @@ def election_results(election_alias):
         'election/results.html',
         election=election,
         usernamemap=usernamemap)
-
