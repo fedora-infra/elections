@@ -74,9 +74,8 @@ def create_session(db_url, debug=False, pool_recycle=3600):
     :return a Session that can be used to query the database.
 
     """
-    engine = sa.create_engine(db_url,
-                                      echo=debug,
-                                      pool_recycle=pool_recycle)
+    engine = sa.create_engine(
+        db_url, echo=debug, pool_recycle=pool_recycle)
     scopedsession = scoped_session(sessionmaker(bind=engine))
     return scopedsession
 
@@ -188,7 +187,6 @@ class ElectionAdminGroup(BASE):
     role_required = sa.Column(sa.Enum(u'user', u'sponsor', u'administrator'),
                               nullable=False)
 
-
     @classmethod
     def by_election_id(cls, session, election_id):
         """ Return all the ElectionAdminGroup having a specific election_id.
@@ -200,7 +198,6 @@ class ElectionAdminGroup(BASE):
         ).all()
 
 
-
 class Candidate(BASE):
     __tablename__ = 'candidates'
 
@@ -209,8 +206,8 @@ class Candidate(BASE):
                             nullable=False)
     election = relationship(
         'Election', backref=backref('candidates', lazy='dynamic'))
-    name = sa.Column(sa.Unicode(150), nullable=False)  # FAS username if
-                                                       # candidates_are_fasusers
+    # FAS username if candidates_are_fasusers
+    name = sa.Column(sa.Unicode(150), nullable=False)
     url = sa.Column(sa.Unicode(250))
 
     @property
@@ -244,7 +241,7 @@ class Vote(BASE):
 
     __table_args__ = (sa.UniqueConstraint('election_id', 'voter',
                                           'candidate_id',
-                                          name='eid_voter_cid'), {} )
+                                          name='eid_voter_cid'), {})
 
     id = sa.Column(sa.Integer, primary_key=True)
     election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),

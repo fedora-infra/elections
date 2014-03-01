@@ -17,9 +17,9 @@ class ElectionForm(wtf.Form):
             wtforms.validators.Length(max=100),
             wtforms.validators.Regexp(
                 '[a-z0-9_-]+',
-              message=('Alias may only contain lower case letters, numbers, '
-                       'hyphens and underscores.')),
-    ])
+                message=('Alias may only contain lower case letters, numbers, '
+                         'hyphens and underscores.')),
+        ])
 
     description = wtforms.TextAreaField(
         'Description', [
@@ -27,9 +27,9 @@ class ElectionForm(wtf.Form):
 
     voting_type = wtforms.RadioField(
         'Type',
-         choices=[('range', 'Range Voting'),
-                  ('simple', 'Simple Voting')],
-         default='range')
+        choices=[('range', 'Range Voting'),
+                 ('simple', 'Simple Voting')],
+        default='range')
 
     url = wtforms.TextField(
         'URL', [
@@ -46,7 +46,7 @@ class ElectionForm(wtf.Form):
             wtforms.validators.Required()])
 
     number_elected = wtforms.IntegerField(
-        'Number elected',[
+        'Number elected', [
             wtforms.validators.Required(),
             wtforms.validators.NumberRange(min=1)],
         default=1)

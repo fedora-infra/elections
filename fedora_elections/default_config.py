@@ -9,7 +9,7 @@ SECRET_KEY = 'change me'
 
 FAS_BASE_URL = 'https://fakefas.fedoraproject.org/accounts/'
 FAS_USERNAME = 'elections'
-FAS_PASSWORD ='el3ctMEn0w'
+FAS_PASSWORD = 'el3ctMEn0w'
 FAS_CHECK_CERT = False
 FAS_HTTPS_REQUIRED = False
 
