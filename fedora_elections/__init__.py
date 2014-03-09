@@ -374,10 +374,12 @@ def vote_simple(election_alias):
                 usernamemap[candidate.id] = candidate.name
 
     return flask.render_template(
-        'election/vote_simple.html', election=election,
+        'election/vote_simple.html',
+        election=election,
         num_candidates=num_candidates,
         usernamemap=usernamemap,
-        candidate_id=candidate_id, nextaction=next_action)
+        candidate_id=candidate_id,
+        nextaction=next_action)
 
 
 ### AUTH VIEWS #############################################
@@ -393,7 +395,9 @@ def auth_login():
             return redirect.safe_redirect_back()
         else:
             flask.flash('Incorrect username or password')
-    return flask.render_template('auth/login.html', form=form)
+    return flask.render_template(
+        'auth/login.html',
+        form=form)
 
 
 @APP.route('/logout')
