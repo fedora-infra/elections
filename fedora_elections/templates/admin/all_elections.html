@@ -1,28 +1,26 @@
 {% extends "base.html" %}
 {% block title %}Election administration{% endblock %}
 {% block body %}
-  {% if num_elections > 0 %}
-    <h2>Election administration</h2>
-    <table>
+  <h2>Election administration</h2>
+  <table>
+    <tr>
+      <th>Election</th>
+      <th>Start date (UTC)</th>
+      <th>End date (UTC)</th>
+      <th>Status</th>
+    </tr>
+    {% for election in elections %}
       <tr>
-        <th>Election</th>
-        <th>Start date (UTC)</th>
-        <th>End date (UTC)</th>
-        <th>Status</th>
+        <td>
+          <a href="{{ url_for('admin_view_election',
+                              election_alias=election.alias) }}">
+            {{ election.summary }}
+          </a>
+        </td>
+        <td>{{ election.start_date }}</td>
+        <td>{{ election.end_date }}</td>
+        <td>{{ election.status }}</td>
       </tr>
-      {% for election in elections %}
-        <tr>
-          <td>
-            <a href="{{ url_for('admin_view_election',
-                                election_alias=election.alias) }}">
-              {{ election.summary }}
-            </a>
-          </td>
-          <td>{{ election.start_date }}</td>
-          <td>{{ election.end_date }}</td>
-          <td>{{ election.status }}</td>
-        </tr>
-      {% endfor %}
-    </table>
-  {% endif %}
+    {% endfor %}
+  </table>
 {%endblock %}

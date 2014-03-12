@@ -1,6 +1,7 @@
 from flask.ext import wtf
 import wtforms
 
+from fedora_elections import SESSION
 from fedora_elections.models import Election
 
 
@@ -16,9 +17,9 @@ class ElectionForm(wtf.Form):
             wtforms.validators.Length(max=100),
             wtforms.validators.Regexp(
                 '[a-z0-9_-]+',
-              message=('Alias may only contain lower case letters, numbers, '
-                       'hyphens and underscores.')),
-    ])
+                message=('Alias may only contain lower case letters, numbers, '
+                         'hyphens and underscores.')),
+        ])
 
     description = wtforms.TextAreaField(
         'Description', [
@@ -26,9 +27,9 @@ class ElectionForm(wtf.Form):
 
     voting_type = wtforms.RadioField(
         'Type',
-         choices=[('range', 'Range Voting'),
-                  ('simple', 'Simple Voting')],
-         default='range')
+        choices=[('range', 'Range Voting'),
+                 ('simple', 'Simple Voting')],
+        default='range')
 
     url = wtforms.TextField(
         'URL', [
@@ -45,7 +46,7 @@ class ElectionForm(wtf.Form):
             wtforms.validators.Required()])
 
     number_elected = wtforms.IntegerField(
-        'Number elected',[
+        'Number elected', [
             wtforms.validators.Required(),
             wtforms.validators.NumberRange(min=1)],
         default=1)
@@ -62,7 +63,7 @@ class ElectionForm(wtf.Form):
         form._election_id = election_id
 
     def validate_summary(form, field):
-        check = Election.query.filter_by(summary=form.summary.data).all()
+        check = Election.search(SESSION, summary=form.summary.data)
         if check:
             if not (form._election_id and form._election_id == check[0].id):
                 raise wtforms.ValidationError(
@@ -72,7 +73,7 @@ class ElectionForm(wtf.Form):
         if form.alias.data == 'new':
             raise wtforms.ValidationError(flask.Markup(
                 'The alias cannot be <code>new</code>.'))
-        check = Election.query.filter_by(alias=form.alias.data).all()
+        check = Election.search(SESSION, alias=form.alias.data)
         if check:
             if not (form._election_id and form._election_id == check[0].id):
                 raise wtforms.ValidationError(
