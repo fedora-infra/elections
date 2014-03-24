@@ -25,7 +25,7 @@
 #
 
 import flask
-from flask.ext.fas import FAS
+from flask.ext.fas_openid import FAS
 
 from fedora.client import AuthError, AppError
 from fedora.client.fas2 import AccountSystem
@@ -70,9 +70,9 @@ def remove_csrf(form_data):
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if flask.g.fas_user is None:
-            return flask.redirect(flask.url_for('auth_login',
-                                                next=flask.request.url))
+        if not hasattr(flask.g, 'fas_user') or flask.g.fas_user is None:
+            return flask.redirect(flask.url_for(
+                'auth_login', next=flask.request.url))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -80,9 +80,9 @@ def login_required(f):
 def election_admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if flask.g.fas_user is None:
-            return flask.redirect(flask.url_for('auth_login',
-                                                next=flask.request.url))
+        if not hasattr(flask.g, 'fas_user') or flask.g.fas_user is None:
+            return flask.redirect(flask.url_for(
+                'auth_login', next=flask.request.url))
         if APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'] not in \
            flask.g.fas_user.groups:
             flask.abort(403)
@@ -388,24 +388,24 @@ def vote_simple(election_alias):
 def auth_login():
     if flask.g.fas_user:
         return redirect.safe_redirect_back()
-    form = forms.LoginForm()
-    if form.validate_on_submit():
-        if FAS.login(form.username.data, form.password.data):
-            flask.flash('Welcome, %s' % flask.g.fas_user.username)
-            return redirect.safe_redirect_back()
-        else:
-            flask.flash('Incorrect username or password')
-    return flask.render_template(
-        'auth/login.html',
-        form=form)
+    next_url = None
+    if 'next' in flask.request.args:
+        next_url = flask.request.args['next']
+
+    if not next_url or next_url == flask.url_for('.auth_login'):
+        next_url = flask.url_for('.index')
+
+    if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
+        return flask.redirect(next_url)
+    else:
+        return FAS.login(return_url=next_url)
 
 
 @APP.route('/logout')
 def auth_logout():
-    if not flask.g.fas_user:
-        return redirect.safe_redirect_back()
-    fas.logout()
-    flask.flash('You have been logged out')
+    if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
+        FAS.logout()
+        flask.flash('You have been logged out')
     return redirect.safe_redirect_back()
 
 

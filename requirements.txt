@@ -3,6 +3,7 @@
 flask
 kitchen
 python-fedora
-Flask-FAS
 Flask-wtf
-
+python-openid
+python-openid-cla
+python-openid-teams
