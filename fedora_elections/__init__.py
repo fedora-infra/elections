@@ -24,6 +24,8 @@
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
 
+__version__ = '0.2.0'
+
 import flask
 from flask.ext.fas_openid import FAS
 
@@ -63,9 +65,21 @@ from fedora_elections import forms
 from fedora_elections import redirect
 
 
-def remove_csrf(form_data):
-    return dict([(k, v) for k, v in form_data.items() if k != 'csrf'])
+def is_elections_admin(user):
+    ''' Is the user an elections admin.
+    '''
+    if not user:
+        return False
+    if not user.cla_done or len(user.groups) < 1:
+        return False
 
+    admins = APP.config['FEDORA_ELECTIONS_ADMIN_GROUP']
+    if isinstance(admins, basestring):  # pragma: no cover
+        admins = set([admins])
+    else:
+        admins = set(admins)
+
+    return len(set(user.groups).intersection(admins)) > 0
 
 def login_required(f):
     @wraps(f)
@@ -83,8 +97,7 @@ def election_admin_required(f):
         if not hasattr(flask.g, 'fas_user') or flask.g.fas_user is None:
             return flask.redirect(flask.url_for(
                 'auth_login', next=flask.request.url))
-        if APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'] not in \
-           flask.g.fas_user.groups:
+        if not is_elections_admin(flask.g.fas_user):
             flask.abort(403)
         return f(*args, **kwargs)
     return decorated_function
@@ -117,6 +130,17 @@ def get_valid_election(election_alias, ended=False):
         return redirect.safe_redirect_back()
 
     return election
+
+@APP.context_processor
+def inject_variables():
+    ''' Inject a set of variable that we want for every pages (every
+    template).
+    '''
+    user = None
+    if hasattr(flask.g, 'fas_user'):
+        user = flask.g.fas_user
+    return dict(is_admin=is_elections_admin(user),
+                version=__version__)
 
 
 ### LIST VIEWS #############################################
@@ -416,10 +440,6 @@ def auth_logout():
 def admin_view_elections():
     elections = models.Election.search(
         SESSION, fas_user=flask.g.fas_user.username)
-
-    if not elections:
-        flask.flash('You do not have any elections.')
-        return redirect.safe_redirect_back()
 
     return flask.render_template(
         'admin/all_elections.html',

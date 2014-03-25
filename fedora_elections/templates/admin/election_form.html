@@ -1,12 +1,24 @@
 {% extends "base.html" %}
-{% from "_formhelpers.html" import render_field %}
+{% from "_formhelpers.html" import render_field_in_row %}
 {% block title %}{{ submit_text }}{% endblock %}
 {% block body %}
   <h2>{{ self.title() }}</h2>
 
   <form action="" method="post">
     <fieldset>
-      {{ render_field(form.summary) }}
+      <table>
+        {{ render_field_in_row(form.summary) }}
+        {{ render_field_in_row(form.alias) }}
+        {{ render_field_in_row(form.description) }}
+        {{ render_field_in_row(form.voting_type) }}
+        {{ render_field_in_row(form.url) }}
+        {{ render_field_in_row(form.start_date, " at 00:00:00 UTC") }}
+        {{ render_field_in_row(form.end_date, " at 23:59:59 UTC") }}
+        {{ render_field_in_row(form.number_elected) }}
+        {{ render_field_in_row(form.candidates_are_fasusers) }}
+        {{ render_field_in_row(form.frontpage) }}
+        {{ render_field_in_row(form.embargoed) }}
+      </table>
     </fieldset>
     <div class="help">
       This is the name of the election that users will first see.</br>
@@ -71,10 +83,26 @@
     </div>
 
     <br class="clear">
-    {% block election_form_extra %}{% endblock %}
     <p class="buttons">
       <input type="submit" class="submit positive" value="Save Changes">
     </p>
     {{ form.csrf_token }}
   </form>
+{% endblock %}
+
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-1.10.2.min.js') }}"> </script>
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-ui-1.9.2.custom.min.js') }}"> </script>
+
+<script type="text/javascript">
+    $(function(){
+        $('#start_date').datepicker({
+            dateFormat: "yy-mm-dd",
+        });
+        $('#end_date').datepicker({
+            dateFormat: "yy-mm-dd",
+        });
+    });
+</script>
 {% endblock %}
