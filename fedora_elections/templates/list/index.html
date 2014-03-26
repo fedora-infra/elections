@@ -1,7 +1,11 @@
 {% extends "base.html" %}
-{% block body %}
-  <h2>{{ title }}</h2>
-  {% if elections %}
+
+{%block tag %}{{tag}}{% endblock %}
+
+{% macro render_elections(election_list, title) -%}
+
+  <h3>{{title}}</h3>
+
   <table>
     <tr>
       <th>Election</th>
@@ -10,7 +14,7 @@
       <th>Status</th>
       <th></th>
     </tr>
-    {% for election in elections %}
+    {% for election in election_list %}
       <tr>
         <td>{{ election.summary }}</td>
         <td>{{ election.start_date }}</td>
@@ -32,7 +36,35 @@
       </tr>
     {% endfor %}
   </table>
-  {% else %}
-  <p> No elections </p>
+
+{% endmacro %}
+
+{% block body %}
+  <h2>{{ title }}</h2>
+
+  {% if tag == 'index' %}
+  <p>
+    The <a href='https://fedoraproject.org'>Fedora project</a> is a community
+    driven project. It has a number of steering commities whose responsabilities
+    is to drive the project forward.
+  </p>
+  <p>
+    These committies are elected among volunteers of the community and by
+    the community members. The present application is meant to held these
+    elections.
+  </p>
   {% endif %}
+
+  {% if cur_elections %}
+  {{ render_elections(cur_elections, 'Current elections') }}
+  {% endif %}
+
+  {% if next_elections %}
+  {{ render_elections(next_elections, 'Next %s elections' % (next_elections|length)) }}
+  {% endif %}
+
+  {% if prev_elections %}
+  {{ render_elections(prev_elections, 'Last %s elections' % (prev_elections|length)) }}
+  {% endif %}
+
 {% endblock %}

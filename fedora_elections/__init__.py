@@ -147,12 +147,18 @@ def inject_variables():
 
 @APP.route('/')
 def index():
-    elections = models.Election.search(SESSION, frontpage=True)
-    num_elections = len(elections)
+    now = datetime.utcnow()
+
+    prev_elections = models.Election.get_older_election(SESSION, now)[:5]
+    cur_elections = models.Election.get_open_election(SESSION, now)
+    next_elections = models.Election.get_next_election(SESSION, now)[:3]
+
     return flask.render_template(
         'list/index.html',
-        elections=elections,
-        num_elections=num_elections,
+        prev_elections=prev_elections,
+        cur_elections=cur_elections,
+        next_elections=next_elections,
+        tag='index',
         title="Elections")
 
 
@@ -180,7 +186,7 @@ def about_election(election_alias):
         usernamemap=usernamemap)
 
 
-@APP.route('/archive')
+@APP.route('/archives')
 def archived_elections():
     now = datetime.utcnow()
 
@@ -207,7 +213,8 @@ def open_elections():
 
     return flask.render_template(
         'list/index.html',
-        elections=elections,
+        next_elections=elections,
+        tag='open',
         title='Open Elections')
 
 
@@ -461,7 +468,7 @@ def admin_new_election():
             end_date=form.end_date.data,
             number_elected=form.number_elected.data,
             embargoed=form.embargoed.data,
-            frontpage=form.frontpage.data,
+            frontpage=True,
             voting_type=form.voting_type.data,
             candidates_are_fasusers=form.candidates_are_fasusers.data,
             fas_user=flask.g.fas_user.username,

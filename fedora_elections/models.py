@@ -161,13 +161,30 @@ class Election(BASE):
 
     @classmethod
     def get_open_election(cls, session, limit):
-        """ Return all the election which end_date if greater or equal to
+        """ Return all the election which start_date is lower and the
+        end_date if greater or equal to the provided limit.
+        """
+        query = session.query(
+            cls
+        ).filter(
+            cls.start_date < limit
+        ).filter(
+            cls.end_date >= limit
+        ).order_by(
+            cls.start_date
+        )
+
+        return query.all()
+
+    @classmethod
+    def get_next_election(cls, session, limit):
+        """ Return all the future elections whose start_date is greater than
         the provided limit.
         """
         query = session.query(
             cls
         ).filter(
-            cls.end_date >= limit
+            cls.start_date > limit
         ).order_by(
             cls.start_date
         )
