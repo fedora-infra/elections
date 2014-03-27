@@ -6,6 +6,10 @@
     <p><a href="{{ election.url }}">[More Information]</a></p>
   {% endif %}
   <table border="1" cellpadding="1">
+      <tr>
+          <th>Candidate</th>
+          <th title="Number of votes received">Votes</th>
+      </tr>
     {% for candidate in election.candidates|sort(attribute='vote_count',reverse=True) %}
       <tr>
         <td>
@@ -22,4 +26,36 @@
       </tr>
     {% endfor %}
   </table>
+
+  <section class="stats">
+      <h3>Some statistics about this election</h3>
+      <table>
+          <tr>
+              <th>Number of voters</th>
+              <td>{{ stats['n_voters'] }}</td>
+          </tr>
+          <tr>
+              <th title="Number of votes registered, there may be more than one vote per voters">Number of votes</th>
+              <td>{{ stats['n_votes'] }}</td>
+          </tr>
+          <tr>
+              <th title="Maximum number of votes possible">Maximum of votes</th>
+              <td>{{ stats['n_voters'] * stats['n_candidates'] }}</td>
+          </tr>
+          {% if stats['candidate_voters'] %}
+          <tr>
+              <th></th>
+              <th>Number of voters per candidate</th>
+              <th>Average votes per candidate</th>
+          </tr>
+          {% for candidate in election.candidates|sort(attribute='vote_count',reverse=True) %}
+          <tr>
+              <th>{{ candidate.name }}</th>
+              <td>{{ stats['candidate_voters'][candidate.name] }}</td>
+              <td>{{ candidate.vote_count / stats['candidate_voters'][candidate.name] }}</td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+      </table>
+  </section>
 {% endblock %}
