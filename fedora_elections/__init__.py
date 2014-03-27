@@ -177,7 +177,7 @@ def about_election(election_alias):
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
-                    fas2.person_by_username(candidate.name)['human_name']
+                    FAS2.person_by_username(candidate.name)['human_name']
             except (KeyError, AuthError):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
@@ -330,7 +330,7 @@ def vote_range(election_alias):
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
-                    fas2.person_by_username(candidate.name)['human_name']
+                    FAS2.person_by_username(candidate.name)['human_name']
             except (KeyError, AuthError):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
@@ -401,7 +401,7 @@ def vote_simple(election_alias):
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
-                    fas2.person_by_username(candidate.name)['human_name']
+                    FAS2.person_by_username(candidate.name)['human_name']
             except (KeyError, AuthError):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
@@ -697,7 +697,7 @@ def election_results(election_alias):
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
-                    fas2.person_by_username(candidate.name)['human_name']
+                    FAS2.person_by_username(candidate.name)['human_name']
             except (KeyError, AuthError):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
