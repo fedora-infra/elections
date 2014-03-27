@@ -702,7 +702,11 @@ def election_results(election_alias):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
 
+    stats = models.Vote.get_election_stats(SESSION, election.id)
+
     return flask.render_template(
         'election/results.html',
         election=election,
-        usernamemap=usernamemap)
+        usernamemap=usernamemap,
+        stats=stats,
+    )
