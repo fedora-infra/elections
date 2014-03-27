@@ -65,7 +65,7 @@ from fedora_elections import forms
 from fedora_elections import redirect
 
 
-def is_elections_admin(user):
+def is_admin(user):
     ''' Is the user an elections admin.
     '''
     if not user:
@@ -98,7 +98,7 @@ def election_admin_required(f):
         if not hasattr(flask.g, 'fas_user') or flask.g.fas_user is None:
             return flask.redirect(flask.url_for(
                 'auth_login', next=flask.request.url))
-        if not is_elections_admin(flask.g.fas_user):
+        if not is_admin(flask.g.fas_user):
             flask.abort(403)
         return f(*args, **kwargs)
     return decorated_function
@@ -141,7 +141,7 @@ def inject_variables():
     user = None
     if hasattr(flask.g, 'fas_user'):
         user = flask.g.fas_user
-    return dict(is_admin=is_elections_admin(user),
+    return dict(is_admin=is_admin(user),
                 version=__version__)
 
 
@@ -671,8 +671,7 @@ def election_results(election_alias):
                         "embargoed pending formal announcement.")
             return redirect.safe_redirect_back()
         else:
-            if APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'] in \
-                    flask.g.fas_user.groups:
+            if is_admin(flask.g.fas_user):
                 flask.flash("The results for this election are currently "
                             "embargoed pending formal announcement.",
                             "error")
