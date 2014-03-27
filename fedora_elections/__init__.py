@@ -54,7 +54,7 @@ FAS2 = AccountSystem(
     APP.config['FAS_BASE_URL'],
     username=APP.config['FAS_USERNAME'],
     password=APP.config['FAS_PASSWORD'],
-    insecure=APP.config['FAS_CHECK_CERT']
+    insecure= not APP.config['FAS_CHECK_CERT']
 )
 
 
