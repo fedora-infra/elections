@@ -101,10 +101,10 @@ class Election(BASE):
     @property
     def status(self):
         now = datetime.utcnow()
-        if now < self.start_date:
+        if now.date() < self.start_date.date():
             return 'Pending'
         else:
-            if now < self.end_date:
+            if now.date() <= self.end_date.date():
                 return 'In progress'
             else:
                 if self.embargoed:
