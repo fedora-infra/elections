@@ -82,6 +82,24 @@ def is_admin(user):
     return len(set(user.groups).intersection(admins)) > 0
 
 
+def is_election_admin(user, election_id):
+    ''' Check if the provided user is in one of the admin group of the
+    specified election.
+    '''
+    if not user:
+        return False
+    if not user.cla_done or len(user.groups) < 1:
+        return False
+
+    admingroups = [
+        group.group_name
+        for group in models.ElectionAdminGroup.by_election_id(
+            SESSION, election_id=election_id)
+        ]
+
+    return len(set(user.groups).intersection(set(admingroups))) > 0
+
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -671,25 +689,18 @@ def election_results(election_alias):
                         "embargoed pending formal announcement.")
             return redirect.safe_redirect_back()
         else:
-            if is_admin(flask.g.fas_user):
+            if is_admin(flask.g.fas_user) \
+                    or is_election_admin(flask.g.fas_user, election.id):
                 flask.flash("The results for this election are currently "
                             "embargoed pending formal announcement.",
                             "error")
                 pass
             else:
-                match = 0
-                admingroups = models.ElectionAdminGroup.by_election_id(
-                    SESSION, election_id=election.id)
-                for admingroup in admingroups:
-                    if admingroup.group_name in flask.g.fas_user.groups:
-                        match = 1
-
-                if match == 0:
-                    flask.flash(
-                        "We are sorry.  The results for this election"
-                        "cannot be viewed because they are currently "
-                        "embargoed pending formal announcement.")
-                    return redirect.safe_redirect_back()
+                flask.flash(
+                    "We are sorry.  The results for this election"
+                    "cannot be viewed because they are currently "
+                    "embargoed pending formal announcement.")
+                return redirect.safe_redirect_back()
 
     usernamemap = {}
     if (election.candidates_are_fasusers):
