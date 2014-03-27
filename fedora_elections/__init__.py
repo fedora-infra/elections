@@ -664,15 +664,18 @@ def election_results(election_alias):
     if not isinstance(election, models.Election):
         return election
 
-    elif election.embargoed == 1:
+    elif election.embargoed:
         if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
             flask.flash("We are sorry.  The results for this election"
-                        "cannot be viewed because they are currently"
-                        " embargoed pending formal announcement.")
+                        "cannot be viewed because they are currently "
+                        "embargoed pending formal announcement.")
             return redirect.safe_redirect_back()
         else:
             if APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'] in \
                     flask.g.fas_user.groups:
+                flask.flash("The results for this election are currently "
+                            "embargoed pending formal announcement.",
+                            "error")
                 pass
             else:
                 match = 0
@@ -685,8 +688,8 @@ def election_results(election_alias):
                 if match == 0:
                     flask.flash(
                         "We are sorry.  The results for this election"
-                        "cannot be viewed because they are currently"
-                        " embargoed pending formal announcement.")
+                        "cannot be viewed because they are currently "
+                        "embargoed pending formal announcement.")
                     return redirect.safe_redirect_back()
 
     usernamemap = {}
