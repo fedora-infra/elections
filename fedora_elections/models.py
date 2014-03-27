@@ -291,3 +291,51 @@ class Vote(BASE):
             return query.count()
         else:
             return query.all()
+
+    @classmethod
+    def get_election_stats(cls, session, election_id):
+        """ Return a dictionnary containing some statistics about the
+        specified elections.
+        (Number of voters, number of votes per candidates, total number
+        of votes)
+        """
+
+        stats = {}
+
+        n_voters = session.query(
+            sa.func.distinct(cls.voter)
+        ).filter(
+            cls.election_id == election_id
+        ).count()
+        stats['n_voters'] = n_voters
+
+        n_votes = session.query(
+            cls
+        ).filter(
+            cls.election_id == election_id
+        ).count()
+        stats['n_votes'] = n_votes
+
+        election = session.query(
+            Election
+        ).filter(
+            Election.id == election_id
+        ).first()
+
+        candidate_voters = {}
+        cnt = 0
+        for cand in election.candidates:
+            cnt += 1
+            n_voters = session.query(
+                sa.func.distinct(cls.voter)
+            ).filter(
+                cls.election_id == election_id
+            ).filter(
+                cls.candidate_id == cand.id
+            ).count()
+            candidate_voters[cand.name] = n_voters
+
+        stats['candidate_voters'] = candidate_voters
+        stats['n_candidates'] = cnt
+
+        return stats
