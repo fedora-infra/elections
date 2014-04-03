@@ -2,6 +2,7 @@ database.sqlite
 *.pyc
 *.pyo
 *.swp
+*.egg-info
 createdb
 development.cfg
 fedora-elections.cfg
