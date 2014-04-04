@@ -12,6 +12,3 @@ FAS_USERNAME = ''
 FAS_PASSWORD = ''
 FAS_CHECK_CERT = False
 
-FEDORA_ELECTIONS_ADMIN_GROUP = 'elections'
-# List of URLs for additional site-wide CSS
-EXTRA_CSS = []
