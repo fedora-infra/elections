@@ -3,6 +3,9 @@ database.sqlite
 *.pyo
 *.swp
 *.egg-info
+build/
+dist/
+
 createdb
 development.cfg
 fedora-elections.cfg
