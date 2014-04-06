@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field_in_row %}
+
+{% block title %}{{ submit_text }}{% endblock %}
+
+{%block tag %}admin{% endblock %}
+
+{% block body %}
+  <h2>{{ submit_text }}</h2>
+
+  <p>
+    The string below needs to be formatted as:
+    "Name1!URL1 [optional]|Name2!URL2 [optional]|Name3!URL3 [optional]"
+  </p>
+
+  <form action="" method="post">
+    <fieldset>
+      <table>
+      {{ render_field_in_row(form.candidate) }}
+      </table>
+    </fieldset>
+
+    <br class="clear">
+    <p class="buttons">
+      <input type="submit" class="submit positive" value="{{ submit_text }}">
+    </p>
+    {{ form.csrf_token }}
+  </form>
+{% endblock %}
