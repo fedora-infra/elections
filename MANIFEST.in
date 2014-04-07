@@ -1,5 +1,4 @@
 include AUTHORS COPYING README requirements.txt
-include fedora_electiosn.spec
 include createdb.py
 recursive-include fedora_elections *
 recursive-include files *
