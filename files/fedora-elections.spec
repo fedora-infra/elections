@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        0.2
+Version:        2.0
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -95,12 +95,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Thu Apr 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.2-2
+* Thu Apr 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2-2
 - Clean up the spec with the changes made on the setup.py
 - Remove instanciated a sqlite database
 
-* Tue Sep 02 2013 Frank Chiulli <fchiulli@fedoraproject.org> - 0.2-1
+* Tue Sep 02 2013 Frank Chiulli <fchiulli@fedoraproject.org> - 2-1
 - Simple voting
 
-* Sat May 04 2013 Frank Chiulli <fchiulli@fedoraproject.org> - 0.1-1
+* Sat May 04 2013 Frank Chiulli <fchiulli@fedoraproject.org> - 2-0
 - Creation
