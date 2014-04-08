@@ -65,7 +65,7 @@ install -m 644 files/fedora-elections.conf \
 
 # Install configuration file
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/fedora-elections
-install -m 644 files/fedora-elections.cfg.sample \
+install -m 644 files/fedora-elections.cfg \
   $RPM_BUILD_ROOT/%{_sysconfdir}/fedora-elections/fedora-elections.cfg
 
 # Install WSGI file
