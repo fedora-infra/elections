@@ -54,7 +54,7 @@ FAS2 = AccountSystem(
     APP.config['FAS_BASE_URL'],
     username=APP.config['FAS_USERNAME'],
     password=APP.config['FAS_PASSWORD'],
-    insecure=APP.config['FAS_CHECK_CERT']
+    insecure= not APP.config['FAS_CHECK_CERT']
 )
 
 
@@ -65,7 +65,7 @@ from fedora_elections import forms
 from fedora_elections import redirect
 
 
-def is_elections_admin(user):
+def is_admin(user):
     ''' Is the user an elections admin.
     '''
     if not user:
@@ -80,6 +80,24 @@ def is_elections_admin(user):
         admins = set(admins)
 
     return len(set(user.groups).intersection(admins)) > 0
+
+
+def is_election_admin(user, election_id):
+    ''' Check if the provided user is in one of the admin group of the
+    specified election.
+    '''
+    if not user:
+        return False
+    if not user.cla_done or len(user.groups) < 1:
+        return False
+
+    admingroups = [
+        group.group_name
+        for group in models.ElectionAdminGroup.by_election_id(
+            SESSION, election_id=election_id)
+        ]
+
+    return len(set(user.groups).intersection(set(admingroups))) > 0
 
 
 def login_required(f):
@@ -98,7 +116,7 @@ def election_admin_required(f):
         if not hasattr(flask.g, 'fas_user') or flask.g.fas_user is None:
             return flask.redirect(flask.url_for(
                 'auth_login', next=flask.request.url))
-        if not is_elections_admin(flask.g.fas_user):
+        if not is_admin(flask.g.fas_user):
             flask.abort(403)
         return f(*args, **kwargs)
     return decorated_function
@@ -141,7 +159,7 @@ def inject_variables():
     user = None
     if hasattr(flask.g, 'fas_user'):
         user = flask.g.fas_user
-    return dict(is_admin=is_elections_admin(user),
+    return dict(is_admin=is_admin(user),
                 version=__version__)
 
 
@@ -177,7 +195,7 @@ def about_election(election_alias):
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
-                    fas2.person_by_username(candidate.name)['human_name']
+                    FAS2.person_by_username(candidate.name)['human_name']
             except (KeyError, AuthError):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
@@ -330,7 +348,7 @@ def vote_range(election_alias):
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
-                    fas2.person_by_username(candidate.name)['human_name']
+                    FAS2.person_by_username(candidate.name)['human_name']
             except (KeyError, AuthError):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
@@ -401,7 +419,7 @@ def vote_simple(election_alias):
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
-                    fas2.person_by_username(candidate.name)['human_name']
+                    FAS2.person_by_username(candidate.name)['human_name']
             except (KeyError, AuthError):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
@@ -664,42 +682,41 @@ def election_results(election_alias):
     if not isinstance(election, models.Election):
         return election
 
-    elif election.embargoed == 1:
+    elif election.embargoed:
         if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
             flask.flash("We are sorry.  The results for this election"
-                        "cannot be viewed because they are currently"
-                        " embargoed pending formal announcement.")
+                        "cannot be viewed because they are currently "
+                        "embargoed pending formal announcement.")
             return redirect.safe_redirect_back()
         else:
-            if APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'] in \
-                    flask.g.fas_user.groups:
+            if is_admin(flask.g.fas_user) \
+                    or is_election_admin(flask.g.fas_user, election.id):
+                flask.flash("The results for this election are currently "
+                            "embargoed pending formal announcement.",
+                            "error")
                 pass
             else:
-                match = 0
-                admingroups = models.ElectionAdminGroup.by_election_id(
-                    SESSION, election_id=election.id)
-                for admingroup in admingroups:
-                    if admingroup.group_name in flask.g.fas_user.groups:
-                        match = 1
-
-                if match == 0:
-                    flask.flash(
-                        "We are sorry.  The results for this election"
-                        "cannot be viewed because they are currently"
-                        " embargoed pending formal announcement.")
-                    return redirect.safe_redirect_back()
+                flask.flash(
+                    "We are sorry.  The results for this election"
+                    "cannot be viewed because they are currently "
+                    "embargoed pending formal announcement.")
+                return redirect.safe_redirect_back()
 
     usernamemap = {}
     if (election.candidates_are_fasusers):
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
-                    fas2.person_by_username(candidate.name)['human_name']
+                    FAS2.person_by_username(candidate.name)['human_name']
             except (KeyError, AuthError):
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.id] = candidate.name
 
+    stats = models.Vote.get_election_stats(SESSION, election.id)
+
     return flask.render_template(
         'election/results.html',
         election=election,
-        usernamemap=usernamemap)
+        usernamemap=usernamemap,
+        stats=stats,
+    )

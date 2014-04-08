@@ -1,1 +1,0 @@
-FEDORA_ELECTIONS_CONFIG=../development.cfg python runserver.py
