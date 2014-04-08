@@ -91,6 +91,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %{python_sitelib}/%{modname}/
 %{python_sitelib}/%{modname}*.egg-info/
+%{_datadir}/%{name}
 
 
 %changelog
