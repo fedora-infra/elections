@@ -54,7 +54,7 @@ FAS2 = AccountSystem(
     APP.config['FAS_BASE_URL'],
     username=APP.config['FAS_USERNAME'],
     password=APP.config['FAS_PASSWORD'],
-    insecure= not APP.config['FAS_CHECK_CERT']
+    insecure=not APP.config['FAS_CHECK_CERT']
 )
 
 
@@ -578,7 +578,8 @@ def admin_add_candidate(election_alias):
         submit_text='Add candidate')
 
 
-@APP.route('/admin/<election_alias>/candidates/new/multi', methods=('GET', 'POST'))
+@APP.route('/admin/<election_alias>/candidates/new/multi',
+           methods=('GET', 'POST'))
 @election_admin_required
 def admin_add_multi_candidate(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
