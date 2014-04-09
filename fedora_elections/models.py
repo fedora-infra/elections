@@ -84,7 +84,7 @@ class Election(BASE):
     __tablename__ = 'elections'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    summary = sa.Column(sa.Unicode(150), unique=True, nullable=False)
+    shortdesc = sa.Column(sa.Unicode(150), unique=True, nullable=False)
     alias = sa.Column(sa.Unicode(100), unique=True, nullable=False)
     description = sa.Column(sa.UnicodeText, nullable=False)
     url = sa.Column(sa.Unicode(250), nullable=False)
@@ -117,7 +117,7 @@ class Election(BASE):
         return datetime.now() >= self.start_date
 
     @classmethod
-    def search(cls, session, frontpage=None, alias=None, summary=None,
+    def search(cls, session, frontpage=None, alias=None, shortdesc=None,
                fas_user=None):
         """ Search the election and filter based on the arguments passed.
         """
@@ -129,8 +129,8 @@ class Election(BASE):
         if alias is not None:
             query = query.filter(cls.alias == alias)
 
-        if summary is not None:
-            query = query.filter(cls.summary == summary)
+        if shortdesc is not None:
+            query = query.filter(cls.shortdesc == shortdesc)
 
         if fas_user is not None:
             query = query.filter(cls.fas_user == fas_user)
