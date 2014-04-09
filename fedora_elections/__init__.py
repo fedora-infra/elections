@@ -488,7 +488,6 @@ def admin_new_election():
             end_date=form.end_date.data,
             number_elected=form.number_elected.data,
             embargoed=form.embargoed.data,
-            frontpage=True,
             voting_type=form.voting_type.data,
             candidates_are_fasusers=form.candidates_are_fasusers.data,
             fas_user=flask.g.fas_user.username,

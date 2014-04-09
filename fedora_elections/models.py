@@ -92,7 +92,6 @@ class Election(BASE):
     end_date = sa.Column(sa.DateTime, nullable=False)
     number_elected = sa.Column(sa.Integer, nullable=False, default=1)
     embargoed = sa.Column(sa.Boolean, nullable=False, default=True)
-    frontpage = sa.Column(sa.Boolean, nullable=False, default=False)
     voting_type = sa.Column(sa.Unicode(100), nullable=False, default=u'range')
     candidates_are_fasusers = sa.Column(sa.Boolean, nullable=False,
                                         default=False)
@@ -117,14 +116,11 @@ class Election(BASE):
         return datetime.now() >= self.start_date
 
     @classmethod
-    def search(cls, session, frontpage=None, alias=None, shortdesc=None,
+    def search(cls, session, alias=None, shortdesc=None,
                fas_user=None):
         """ Search the election and filter based on the arguments passed.
         """
         query = session.query(cls)
-
-        if frontpage is not None:
-            query = query.filter(cls.frontpage == frontpage)
 
         if alias is not None:
             query = query.filter(cls.alias == alias)
