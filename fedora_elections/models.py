@@ -309,6 +309,8 @@ class Vote(BASE):
             cls
         ).filter(
             cls.election_id == election_id
+        ).filter(
+                cls.value > 0
         ).count()
         stats['n_votes'] = n_votes
 
@@ -328,6 +330,8 @@ class Vote(BASE):
                 cls.election_id == election_id
             ).filter(
                 cls.candidate_id == cand.id
+            ).filter(
+                cls.value > 0
             ).count()
             candidate_voters[cand.name] = n_voters
 
