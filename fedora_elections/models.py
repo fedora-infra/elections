@@ -131,6 +131,8 @@ class Election(BASE):
         if fas_user is not None:
             query = query.filter(cls.fas_user == fas_user)
 
+        query = query.order_by(sa.desc(cls.start_date))
+
         return query.all()
 
     @classmethod
