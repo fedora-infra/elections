@@ -486,7 +486,7 @@ def admin_new_election():
             url=form.url.data,
             start_date=form.start_date.data,
             end_date=form.end_date.data,
-            number_elected=form.number_elected.data,
+            seats_elected=form.seats_elected.data,
             embargoed=form.embargoed.data,
             voting_type=form.voting_type.data,
             candidates_are_fasusers=form.candidates_are_fasusers.data,

@@ -90,7 +90,7 @@ class Election(BASE):
     url = sa.Column(sa.Unicode(250), nullable=False)
     start_date = sa.Column(sa.DateTime, nullable=False)
     end_date = sa.Column(sa.DateTime, nullable=False)
-    number_elected = sa.Column(sa.Integer, nullable=False, default=1)
+    seats_elected = sa.Column(sa.Integer, nullable=False, default=1)
     embargoed = sa.Column(sa.Boolean, nullable=False, default=True)
     voting_type = sa.Column(sa.Unicode(100), nullable=False, default=u'range')
     candidates_are_fasusers = sa.Column(sa.Boolean, nullable=False,
