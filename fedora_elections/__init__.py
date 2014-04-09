@@ -481,8 +481,7 @@ def auth_logout():
 @APP.route('/admin/')
 @election_admin_required
 def admin_view_elections():
-    elections = models.Election.search(
-        SESSION, fas_user=flask.g.fas_user.username)
+    elections = models.Election.search(SESSION)
 
     return flask.render_template(
         'admin/all_elections.html',
