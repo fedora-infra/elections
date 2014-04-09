@@ -91,7 +91,7 @@ class Election(BASE):
     start_date = sa.Column(sa.DateTime, nullable=False)
     end_date = sa.Column(sa.DateTime, nullable=False)
     seats_elected = sa.Column(sa.Integer, nullable=False, default=1)
-    embargoed = sa.Column(sa.Boolean, nullable=False, default=True)
+    embargoed = sa.Column(sa.Integer, nullable=False, default=0)
     voting_type = sa.Column(sa.Unicode(100), nullable=False, default=u'range')
     candidates_are_fasusers = sa.Column(sa.Boolean, nullable=False,
                                         default=False)
