@@ -77,6 +77,9 @@ install -m 644 files/fedora-elections.wsgi \
 install -m 644 createdb.py \
   $RPM_BUILD_ROOT/%{_datadir}/fedora-elections/fedora-elections_createdb.py
 
+install -m 644 files/update_1_to_2.sql \
+  $RPM_BUILD_ROOT/%{_datadir}/fedora-elections/update_1_to_2.sql
+
 
 
 %clean
