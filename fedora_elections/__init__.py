@@ -26,6 +26,8 @@
 
 __version__ = '2.0'
 
+import os
+
 import flask
 from flask.ext.fas_openid import FAS
 
@@ -42,8 +44,7 @@ from urlparse import urlparse, urljoin
 
 APP = flask.Flask(__name__)
 APP.config.from_object('fedora_elections.default_config')
-if APP.config.get('FEDORA_ELECTIONS_CONFIG') \
-        and os.path.exists(APP.config['FEDORA_ELECTIONS_CONFIG']):
+if 'FEDORA_ELECTIONS_CONFIG' in os.environ:
     APP.config.from_envvar('FEDORA_ELECTIONS_CONFIG')
 
 # set up FAS
