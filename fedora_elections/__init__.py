@@ -502,7 +502,7 @@ def admin_new_election():
         admin = models.ElectionAdminGroup(
             election=election,
             group_name=APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
-            role_required=u'user')
+        )
         SESSION.add(admin)
 
         SESSION.commit()
