@@ -487,7 +487,7 @@ def admin_new_election():
             start_date=form.start_date.data,
             end_date=form.end_date.data,
             seats_elected=form.seats_elected.data,
-            embargoed=form.embargoed.data,
+            embargoed=int(form.embargoed.data),
             voting_type=form.voting_type.data,
             candidates_are_fasusers=form.candidates_are_fasusers.data,
             fas_user=flask.g.fas_user.username,
@@ -538,6 +538,7 @@ def admin_edit_election(election_alias):
 
     form = forms.ElectionForm(election.id, obj=election)
     if form.validate_on_submit():
+        form.embargoed.data = int(form.embargoed.data)
         form.populate_obj(election)
         SESSION.commit()
         flask.flash('Election "%s" saved' % election.alias)
