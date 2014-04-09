@@ -150,7 +150,7 @@ class Election(BASE):
         ).filter(
             cls.end_date < limit
         ).order_by(
-            cls.start_date
+            sa.desc(cls.start_date)
         )
 
         return query.all()
@@ -167,7 +167,7 @@ class Election(BASE):
         ).filter(
             cls.end_date >= limit
         ).order_by(
-            cls.start_date
+            sa.desc(cls.start_date)
         )
 
         return query.all()
@@ -182,7 +182,7 @@ class Election(BASE):
         ).filter(
             cls.start_date > limit
         ).order_by(
-            cls.start_date
+            sa.desc(cls.start_date)
         )
 
         return query.all()
