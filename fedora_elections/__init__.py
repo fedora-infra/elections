@@ -24,7 +24,7 @@
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
 
-__version__ = '0.2.0'
+__version__ = '2.0'
 
 import flask
 from flask.ext.fas_openid import FAS
