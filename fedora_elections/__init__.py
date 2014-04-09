@@ -543,8 +543,14 @@ def admin_new_election():
 
         SESSION.commit()
 
+        fedmsgshim.publish(
+            topic="election.new",
+            msg=dict(
+                agent=flask.g.fas_user.username,
+                election=election.api_repr(version=1),
+            )
+        )
         flask.flash('Election "%s" added' % election.alias)
-        fedmsgshim.publish(topic="election.new", msg=election)
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
     return flask.render_template(
@@ -577,6 +583,13 @@ def admin_edit_election(election_alias):
         form.embargoed.data = int(form.embargoed.data)
         form.populate_obj(election)
         SESSION.commit()
+        fedmsgshim.publish(
+            topic="election.edit",
+            msg=dict(
+                agent=flask.g.fas_user.username,
+                election=election.api_repr(version=1),
+            )
+        )
         flask.flash('Election "%s" saved' % election.alias)
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
