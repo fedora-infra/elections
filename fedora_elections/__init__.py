@@ -610,7 +610,7 @@ def admin_add_multi_candidate(election_alias):
                 flask.flash("There was an issue!")
 
         SESSION.commit()
-        flask.flash('Added candidates: "%s"' % ', '.join(candidates_name))
+        flask.flash('Added %s candidates' % len(candidates_name))
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
