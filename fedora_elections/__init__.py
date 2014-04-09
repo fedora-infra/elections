@@ -462,6 +462,7 @@ def auth_login():
 def auth_logout():
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         FAS.logout()
+        flask.g.fas_user = None
         flask.flash('You have been logged out')
     return redirect.safe_redirect_back()
 
