@@ -45,7 +45,7 @@ class ElectionForm(wtf.Form):
         'End date<span class="error">*</span>', [
             wtforms.validators.Required()])
 
-    number_elected = wtforms.IntegerField(
+    seats_elected = wtforms.IntegerField(
         'Number elected<span class="error">*</span>', [
             wtforms.validators.Required(),
             wtforms.validators.NumberRange(min=1)],
