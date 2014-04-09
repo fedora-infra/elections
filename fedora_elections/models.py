@@ -189,7 +189,7 @@ class Election(BASE):
 
 
 class ElectionAdminGroup(BASE):
-    __tablename__ = 'electionadmingroups'
+    __tablename__ = 'electionadmins'
 
     id = sa.Column(sa.Integer, primary_key=True)
     election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),
