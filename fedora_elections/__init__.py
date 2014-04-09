@@ -28,19 +28,18 @@ __version__ = '2.0'
 
 import os
 
-import flask
-from flask.ext.fas_openid import FAS
-
-from fedora.client import AuthError, AppError
-from fedora.client.fas2 import AccountSystem
-
-from sqlalchemy.orm.exc import NoResultFound
-
-import fedmsgshim
-
 from datetime import datetime, time
 from functools import wraps
 from urlparse import urlparse, urljoin
+
+import flask
+
+from fedora.client import AuthError, AppError
+from fedora.client.fas2 import AccountSystem
+from flask.ext.fas_openid import FAS
+from sqlalchemy.orm.exc import NoResultFound
+
+import fedmsgshim
 
 APP = flask.Flask(__name__)
 APP.config.from_object('fedora_elections.default_config')
