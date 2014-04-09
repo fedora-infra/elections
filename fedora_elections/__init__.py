@@ -246,9 +246,18 @@ def open_elections():
         flask.flash('There are no open elections.')
         return redirect.safe_redirect_back()
 
+    voted = []
+    if is_authenticated():
+        for elec in elections:
+            votes = models.Vote.of_user_on_election(
+                SESSION, flask.g.fas_user.username, elec.id, count=True)
+            if votes > 0:
+                voted.append(elec)
+
     return flask.render_template(
         'list/index.html',
         next_elections=elections,
+        voted=voted,
         tag='open',
         title='Open Elections')
 
