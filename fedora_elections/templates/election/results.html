@@ -52,7 +52,11 @@
           <tr>
               <th>{{ candidate.name }}</th>
               <td>{{ stats['candidate_voters'][candidate.name] }}</td>
+              {% if stats['candidate_voters'][candidate.name] %}
               <td>{{ candidate.vote_count / stats['candidate_voters'][candidate.name] }}</td>
+              {% else %}
+              <td> - </td>
+              {% endif %}
           </tr>
           {% endfor %}
           {% endif %}
