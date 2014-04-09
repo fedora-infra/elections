@@ -3,7 +3,7 @@
 {%block tag %}admin{% endblock %}
 
 {% block body %}
-  <h2>{{ election.summary }}</h2>
+  <h2>{{ election.shortdesc }}</h2>
   <p>{{ election.description }}</p>
   <p>
     <a href="{{ url_for('admin_edit_election', election_alias=election.alias) }}">

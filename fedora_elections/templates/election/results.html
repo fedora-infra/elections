@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
-  <h1>{{ election.summary }} Results</h1>
+  <h1>{{ election.shortdesc }} Results</h1>
   <p>{{ election.description }}</p>
   {% if election.url %}
     <p><a href="{{ election.url }}">[More Information]</a></p>

@@ -480,7 +480,7 @@ def admin_new_election():
     if form.validate_on_submit():
 
         election = models.Election(
-            summary=form.summary.data,
+            shortdesc=form.shortdesc.data,
             alias=form.alias.data,
             description=form.description.data,
             url=form.url.data,
@@ -508,7 +508,7 @@ def admin_new_election():
 
         SESSION.commit()
 
-        flask.flash('Election "%s" added' % election.summary)
+        flask.flash('Election "%s" added' % election.alias)
         fedmsgshim.publish(topic="election.new", msg=election)
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
@@ -541,7 +541,7 @@ def admin_edit_election(election_alias):
     if form.validate_on_submit():
         form.populate_obj(election)
         SESSION.commit()
-        flask.flash('Election "%s" saved' % election.summary)
+        flask.flash('Election "%s" saved' % election.alias)
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 

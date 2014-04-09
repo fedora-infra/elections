@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Election Information{% endblock %}
 {% block body %}
-  <h1>{{ election.summary }}</h1>
+  <h1>{{ election.shortdesc }}</h1>
   <p>{{ election.description }}</p>
   {% if election.url %}
     <p><a href="{{ election.url }}">[More Information]</a></p>
