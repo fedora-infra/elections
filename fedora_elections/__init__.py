@@ -179,11 +179,20 @@ def index():
     cur_elections = models.Election.get_open_election(SESSION, now)
     next_elections = models.Election.get_next_election(SESSION, now)[:3]
 
+    voted = []
+    if is_authenticated():
+        for elec in cur_elections:
+            votes = models.Vote.of_user_on_election(
+                SESSION, flask.g.fas_user.username, elec.id, count=True)
+            if votes > 0:
+                voted.append(elec)
+
     return flask.render_template(
         'list/index.html',
         prev_elections=prev_elections,
         cur_elections=cur_elections,
         next_elections=next_elections,
+        voted=voted,
         tag='index',
         title="Elections")
 
