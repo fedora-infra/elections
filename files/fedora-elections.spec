@@ -98,9 +98,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Thu Apr 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2-2
+* Wed Apr 09 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0-1
 - Clean up the spec with the changes made on the setup.py
 - Remove instanciated a sqlite database
+- Install the sql upgrade script from elections v1 to elections v2
 
 * Tue Sep 02 2013 Frank Chiulli <fchiulli@fedoraproject.org> - 2-1
 - Simple voting
