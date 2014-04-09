@@ -97,6 +97,19 @@ class Election(BASE):
                                         default=False)
     fas_user = sa.Column(sa.Unicode(50), nullable=False)
 
+    def to_json(self):
+        ''' Return a json representation of this object. '''
+        return dict(
+            shortdesc=self.shortdesc,
+            alias=self.alias,
+            description=self.description,
+            url=self.url,
+            start_date=self.start_date,
+            end_date=self.end_date,
+            embargoed=self.embargoed,
+            voting_type=self.voting_type,
+        )
+
     @property
     def status(self):
         now = datetime.utcnow()
