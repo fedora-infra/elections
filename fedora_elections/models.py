@@ -197,8 +197,6 @@ class ElectionAdminGroup(BASE):
     election = relationship(
         'Election', backref=backref('admin_groups', lazy='dynamic'))
     group_name = sa.Column(sa.Unicode(150), nullable=False)
-    role_required = sa.Column(sa.Enum(u'user', u'sponsor', u'administrator'),
-                              nullable=False)
 
     @classmethod
     def by_election_id(cls, session, election_id):
