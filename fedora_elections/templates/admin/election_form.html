@@ -11,14 +11,14 @@
   <form action="" method="post">
     <fieldset>
       <table>
-        {{ render_field_in_row(form.summary) }}
         {{ render_field_in_row(form.alias) }}
+        {{ render_field_in_row(form.shortdesc) }}
         {{ render_field_in_row(form.description) }}
         {{ render_field_in_row(form.voting_type) }}
         {{ render_field_in_row(form.url) }}
         {{ render_field_in_row(form.start_date, " at 00:00:00 UTC") }}
         {{ render_field_in_row(form.end_date, " at 23:59:59 UTC") }}
-        {{ render_field_in_row(form.number_elected) }}
+        {{ render_field_in_row(form.seats_elected) }}
         {{ render_field_in_row(form.candidates_are_fasusers) }}
         {{ render_field_in_row(form.embargoed) }}
       </table>

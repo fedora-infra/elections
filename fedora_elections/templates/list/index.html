@@ -16,13 +16,13 @@
     </tr>
     {% for election in election_list %}
       <tr>
-        <td>{{ election.summary }}</td>
+        <td>{{ election.shortdesc }}</td>
         <td>{{ election.start_date }}</td>
         <td>{{ election.end_date }}</td>
         <td>{{ election.status }}</td>
         <td>
           {% if election.status == "In progress" %}
-            {% if g.fas_user %}
+            {% if election not in voted %}
               {% if election.voting_type == 'range' %}
                 <a href="{{ url_for('vote_range', election_alias=election.alias) }}">
               {% elif election.voting_type == 'simple' %}

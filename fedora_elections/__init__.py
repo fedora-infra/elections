@@ -26,24 +26,24 @@
 
 __version__ = '2.0'
 
-import flask
-from flask.ext.fas_openid import FAS
-
-from fedora.client import AuthError, AppError
-from fedora.client.fas2 import AccountSystem
-
-from sqlalchemy.orm.exc import NoResultFound
-
-import fedmsgshim
+import os
 
 from datetime import datetime, time
 from functools import wraps
 from urlparse import urlparse, urljoin
 
+import flask
+
+from fedora.client import AuthError, AppError
+from fedora.client.fas2 import AccountSystem
+from flask.ext.fas_openid import FAS
+from sqlalchemy.orm.exc import NoResultFound
+
+import fedmsgshim
+
 APP = flask.Flask(__name__)
 APP.config.from_object('fedora_elections.default_config')
-if APP.config.get('FEDORA_ELECTIONS_CONFIG') \
-        and os.path.exists(APP.config['FEDORA_ELECTIONS_CONFIG']):
+if 'FEDORA_ELECTIONS_CONFIG' in os.environ:
     APP.config.from_envvar('FEDORA_ELECTIONS_CONFIG')
 
 # set up FAS
@@ -54,7 +54,7 @@ FAS2 = AccountSystem(
     APP.config['FAS_BASE_URL'],
     username=APP.config['FAS_USERNAME'],
     password=APP.config['FAS_PASSWORD'],
-    insecure= not APP.config['FAS_CHECK_CERT']
+    insecure=not APP.config['FAS_CHECK_CERT']
 )
 
 
@@ -63,6 +63,12 @@ from fedora_elections import models
 SESSION = models.create_session(APP.config['DB_URL'])
 from fedora_elections import forms
 from fedora_elections import redirect
+
+
+def is_authenticated():
+    ''' Return a boolean specifying if the user is authenticated or not.
+    '''
+    return hasattr(flask.g, 'fas_user') and not flask.g.fas_user is None
 
 
 def is_admin(user):
@@ -103,7 +109,7 @@ def is_election_admin(user, election_id):
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not hasattr(flask.g, 'fas_user') or flask.g.fas_user is None:
+        if not is_authenticated():
             return flask.redirect(flask.url_for(
                 'auth_login', next=flask.request.url))
         return f(*args, **kwargs)
@@ -113,7 +119,7 @@ def login_required(f):
 def election_admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not hasattr(flask.g, 'fas_user') or flask.g.fas_user is None:
+        if not is_authenticated():
             return flask.redirect(flask.url_for(
                 'auth_login', next=flask.request.url))
         if not is_admin(flask.g.fas_user):
@@ -173,11 +179,20 @@ def index():
     cur_elections = models.Election.get_open_election(SESSION, now)
     next_elections = models.Election.get_next_election(SESSION, now)[:3]
 
+    voted = []
+    if is_authenticated():
+        for elec in cur_elections:
+            votes = models.Vote.of_user_on_election(
+                SESSION, flask.g.fas_user.username, elec.id, count=True)
+            if votes > 0:
+                voted.append(elec)
+
     return flask.render_template(
         'list/index.html',
         prev_elections=prev_elections,
         cur_elections=cur_elections,
         next_elections=next_elections,
+        voted=voted,
         tag='index',
         title="Elections")
 
@@ -231,9 +246,18 @@ def open_elections():
         flask.flash('There are no open elections.')
         return redirect.safe_redirect_back()
 
+    voted = []
+    if is_authenticated():
+        for elec in elections:
+            votes = models.Vote.of_user_on_election(
+                SESSION, flask.g.fas_user.username, elec.id, count=True)
+            if votes > 0:
+                voted.append(elec)
+
     return flask.render_template(
         'list/index.html',
         next_elections=elections,
+        voted=voted,
         tag='open',
         title='Open Elections')
 
@@ -456,6 +480,7 @@ def auth_login():
 def auth_logout():
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         FAS.logout()
+        flask.g.fas_user = None
         flask.flash('You have been logged out')
     return redirect.safe_redirect_back()
 
@@ -465,8 +490,7 @@ def auth_logout():
 @APP.route('/admin/')
 @election_admin_required
 def admin_view_elections():
-    elections = models.Election.search(
-        SESSION, fas_user=flask.g.fas_user.username)
+    elections = models.Election.search(SESSION)
 
     return flask.render_template(
         'admin/all_elections.html',
@@ -480,15 +504,14 @@ def admin_new_election():
     if form.validate_on_submit():
 
         election = models.Election(
-            summary=form.summary.data,
+            shortdesc=form.shortdesc.data,
             alias=form.alias.data,
             description=form.description.data,
             url=form.url.data,
             start_date=form.start_date.data,
             end_date=form.end_date.data,
-            number_elected=form.number_elected.data,
-            embargoed=form.embargoed.data,
-            frontpage=True,
+            seats_elected=form.seats_elected.data,
+            embargoed=int(form.embargoed.data),
             voting_type=form.voting_type.data,
             candidates_are_fasusers=form.candidates_are_fasusers.data,
             fas_user=flask.g.fas_user.username,
@@ -503,12 +526,12 @@ def admin_new_election():
         admin = models.ElectionAdminGroup(
             election=election,
             group_name=APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
-            role_required=u'user')
+        )
         SESSION.add(admin)
 
         SESSION.commit()
 
-        flask.flash('Election "%s" added' % election.summary)
+        flask.flash('Election "%s" added' % election.alias)
         fedmsgshim.publish(topic="election.new", msg=election)
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
@@ -539,9 +562,10 @@ def admin_edit_election(election_alias):
 
     form = forms.ElectionForm(election.id, obj=election)
     if form.validate_on_submit():
+        form.embargoed.data = int(form.embargoed.data)
         form.populate_obj(election)
         SESSION.commit()
-        flask.flash('Election "%s" saved' % election.summary)
+        flask.flash('Election "%s" saved' % election.alias)
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
@@ -578,7 +602,8 @@ def admin_add_candidate(election_alias):
         submit_text='Add candidate')
 
 
-@APP.route('/admin/<election_alias>/candidates/new/multi', methods=('GET', 'POST'))
+@APP.route('/admin/<election_alias>/candidates/new/multi',
+           methods=('GET', 'POST'))
 @election_admin_required
 def admin_add_multi_candidate(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
@@ -610,7 +635,7 @@ def admin_add_multi_candidate(election_alias):
                 flask.flash("There was an issue!")
 
         SESSION.commit()
-        flask.flash('Added candidates: "%s"' % ', '.join(candidates_name))
+        flask.flash('Added %s candidates' % len(candidates_name))
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 

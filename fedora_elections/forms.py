@@ -6,7 +6,7 @@ from fedora_elections.models import Election
 
 
 class ElectionForm(wtf.Form):
-    summary = wtforms.TextField(
+    shortdesc = wtforms.TextField(
         'Summary<span class="error">*</span>', [
             wtforms.validators.Required(),
             wtforms.validators.Length(max=150)])
@@ -45,7 +45,7 @@ class ElectionForm(wtf.Form):
         'End date<span class="error">*</span>', [
             wtforms.validators.Required()])
 
-    number_elected = wtforms.IntegerField(
+    seats_elected = wtforms.IntegerField(
         'Number elected<span class="error">*</span>', [
             wtforms.validators.Required(),
             wtforms.validators.NumberRange(min=1)],
@@ -61,7 +61,7 @@ class ElectionForm(wtf.Form):
         form._election_id = election_id
 
     def validate_summary(form, field):
-        check = Election.search(SESSION, summary=form.summary.data)
+        check = Election.search(SESSION, shortdesc=form.shortdesc.data)
         if check:
             if not (form._election_id and form._election_id == check[0].id):
                 raise wtforms.ValidationError(

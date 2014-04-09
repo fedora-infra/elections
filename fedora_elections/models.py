@@ -84,15 +84,14 @@ class Election(BASE):
     __tablename__ = 'elections'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    summary = sa.Column(sa.Unicode(150), unique=True, nullable=False)
+    shortdesc = sa.Column(sa.Unicode(150), unique=True, nullable=False)
     alias = sa.Column(sa.Unicode(100), unique=True, nullable=False)
     description = sa.Column(sa.UnicodeText, nullable=False)
     url = sa.Column(sa.Unicode(250), nullable=False)
     start_date = sa.Column(sa.DateTime, nullable=False)
     end_date = sa.Column(sa.DateTime, nullable=False)
-    number_elected = sa.Column(sa.Integer, nullable=False, default=1)
-    embargoed = sa.Column(sa.Boolean, nullable=False, default=True)
-    frontpage = sa.Column(sa.Boolean, nullable=False, default=False)
+    seats_elected = sa.Column(sa.Integer, nullable=False, default=1)
+    embargoed = sa.Column(sa.Integer, nullable=False, default=0)
     voting_type = sa.Column(sa.Unicode(100), nullable=False, default=u'range')
     candidates_are_fasusers = sa.Column(sa.Boolean, nullable=False,
                                         default=False)
@@ -117,23 +116,22 @@ class Election(BASE):
         return datetime.now() >= self.start_date
 
     @classmethod
-    def search(cls, session, frontpage=None, alias=None, summary=None,
+    def search(cls, session, alias=None, shortdesc=None,
                fas_user=None):
         """ Search the election and filter based on the arguments passed.
         """
         query = session.query(cls)
 
-        if frontpage is not None:
-            query = query.filter(cls.frontpage == frontpage)
-
         if alias is not None:
             query = query.filter(cls.alias == alias)
 
-        if summary is not None:
-            query = query.filter(cls.summary == summary)
+        if shortdesc is not None:
+            query = query.filter(cls.shortdesc == shortdesc)
 
         if fas_user is not None:
             query = query.filter(cls.fas_user == fas_user)
+
+        query = query.order_by(sa.desc(cls.start_date))
 
         return query.all()
 
@@ -154,7 +152,7 @@ class Election(BASE):
         ).filter(
             cls.end_date < limit
         ).order_by(
-            cls.start_date
+            sa.desc(cls.start_date)
         )
 
         return query.all()
@@ -171,7 +169,7 @@ class Election(BASE):
         ).filter(
             cls.end_date >= limit
         ).order_by(
-            cls.start_date
+            sa.desc(cls.start_date)
         )
 
         return query.all()
@@ -186,14 +184,14 @@ class Election(BASE):
         ).filter(
             cls.start_date > limit
         ).order_by(
-            cls.start_date
+            sa.desc(cls.start_date)
         )
 
         return query.all()
 
 
 class ElectionAdminGroup(BASE):
-    __tablename__ = 'electionadmingroups'
+    __tablename__ = 'electionadmins'
 
     id = sa.Column(sa.Integer, primary_key=True)
     election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),
@@ -201,8 +199,6 @@ class ElectionAdminGroup(BASE):
     election = relationship(
         'Election', backref=backref('admin_groups', lazy='dynamic'))
     group_name = sa.Column(sa.Unicode(150), nullable=False)
-    role_required = sa.Column(sa.Enum(u'user', u'sponsor', u'administrator'),
-                              nullable=False)
 
     @classmethod
     def by_election_id(cls, session, election_id):
@@ -313,6 +309,8 @@ class Vote(BASE):
             cls
         ).filter(
             cls.election_id == election_id
+        ).filter(
+                cls.value > 0
         ).count()
         stats['n_votes'] = n_votes
 
@@ -332,6 +330,8 @@ class Vote(BASE):
                 cls.election_id == election_id
             ).filter(
                 cls.candidate_id == cand.id
+            ).filter(
+                cls.value > 0
             ).count()
             candidate_voters[cand.name] = n_voters
 
