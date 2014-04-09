@@ -65,6 +65,12 @@ from fedora_elections import forms
 from fedora_elections import redirect
 
 
+def is_authenticated():
+    ''' Return a boolean specifying if the user is authenticated or not.
+    '''
+    return hasattr(flask.g, 'fas_user') and not flask.g.fas_user is None
+
+
 def is_admin(user):
     ''' Is the user an elections admin.
     '''
@@ -103,7 +109,7 @@ def is_election_admin(user, election_id):
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not hasattr(flask.g, 'fas_user') or flask.g.fas_user is None:
+        if not is_authenticated():
             return flask.redirect(flask.url_for(
                 'auth_login', next=flask.request.url))
         return f(*args, **kwargs)
@@ -113,7 +119,7 @@ def login_required(f):
 def election_admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not hasattr(flask.g, 'fas_user') or flask.g.fas_user is None:
+        if not is_authenticated():
             return flask.redirect(flask.url_for(
                 'auth_login', next=flask.request.url))
         if not is_admin(flask.g.fas_user):
