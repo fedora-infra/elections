@@ -236,6 +236,13 @@ class Candidate(BASE):
     name = sa.Column(sa.Unicode(150), nullable=False)
     url = sa.Column(sa.Unicode(250))
 
+    def to_json(self):
+        ''' Return a json representation of this object. '''
+        return dict(
+            name=self.name,
+            url=self.url,
+        )
+
     @property
     def vote_count(self):
         values = [v.value for v in self.votes]
