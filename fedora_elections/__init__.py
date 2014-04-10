@@ -606,6 +606,14 @@ def admin_add_candidate(election_alias):
         SESSION.add(candidate)
         SESSION.commit()
         flask.flash('Candidate "%s" saved' % candidate.name)
+        fedmsgshim.publish(
+            topic="candidate.new",
+            msg=dict(
+                agent=flask.g.fas_user.username,
+                election=candidate.election.to_json(),
+                candidate=candidate.to_json(),
+            )
+        )
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
@@ -646,6 +654,14 @@ def admin_add_multi_candidate(election_alias):
                 candidates_name.append(cand.name)
             else:
                 flask.flash("There was an issue!")
+            fedmsgshim.publish(
+                topic="candidate.new",
+                msg=dict(
+                    agent=flask.g.fas_user.username,
+                    election=cand.election.to_json(),
+                    candidate=cand.to_json(),
+                )
+            )
 
         SESSION.commit()
         flask.flash('Added %s candidates' % len(candidates_name))
@@ -676,6 +692,14 @@ def admin_edit_candidate(election_alias, candidate_id):
         form.populate_obj(candidate)
         SESSION.commit()
         flask.flash('Candidate "%s" saved' % candidate.name)
+        fedmsgshim.publish(
+            topic="candidate.edit",
+            msg=dict(
+                agent=flask.g.fas_user.username,
+                election=candidate.election.to_json(),
+                candidate=candidate.to_json(),
+            )
+        )
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
@@ -704,6 +728,14 @@ def admin_delete_candidate(election_alias, candidate_id):
         SESSION.delete(candidate)
         SESSION.commit()
         flask.flash('Candidate "%s" deleted' % candidate_name)
+        fedmsgshim.publish(
+            topic="candidate.delete",
+            msg=dict(
+                agent=flask.g.fas_user.username,
+                election=candidate.election.to_json(),
+                candidate=candidate.to_json(),
+            )
+        )
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
