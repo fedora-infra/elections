@@ -535,7 +535,7 @@ def admin_new_election():
             topic="election.new",
             msg=dict(
                 agent=flask.g.fas_user.username,
-                election=election.api_repr(version=1),
+                election=election.to_json(),
             )
         )
         flask.flash('Election "%s" added' % election.alias)
@@ -575,7 +575,7 @@ def admin_edit_election(election_alias):
             topic="election.edit",
             msg=dict(
                 agent=flask.g.fas_user.username,
-                election=election.api_repr(version=1),
+                election=election.to_json(),
             )
         )
         flask.flash('Election "%s" saved' % election.alias)
