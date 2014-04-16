@@ -33,9 +33,10 @@ from sqlalchemy.orm.exc import NoResultFound
 from fedora_elections import fedmsgshim
 from fedora_elections import forms
 from fedora_elections import models
-from fedora_elections import APP, SESSION, is_authenticated, is_admin, \
-                             is_election_admin, is_safe_url, \
-                             safe_redirect_back
+from fedora_elections import (
+    APP, SESSION, is_authenticated, is_admin, is_election_admin,
+    is_safe_url, safe_redirect_back
+)
 
 
 def election_admin_required(f):
