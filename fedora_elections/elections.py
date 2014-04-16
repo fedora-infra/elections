@@ -173,7 +173,7 @@ def vote_range(election_alias):
                         uvotes[candidate.id] = vote
                     else:
                         flask.flash("Invalid data2.")
-                        uvotes[c.id] = 0
+                        uvotes[candidate.id] = 0
                         next_action = 'vote'
                 except ValueError:
                     flask.flash("Invalid data")
