@@ -33,8 +33,10 @@ from sqlalchemy.orm.exc import NoResultFound
 from fedora_elections import fedmsgshim
 from fedora_elections import forms
 from fedora_elections import models
-from fedora_elections import APP, SESSION, is_authenticated, is_admin,\
-                             is_safe_url, safe_redirect_back
+from fedora_elections import (
+    APP, SESSION, is_authenticated, is_admin, is_safe_url,
+    safe_redirect_back,
+)
 
 
 def login_required(f):
@@ -74,7 +76,6 @@ def get_valid_election(election_alias, ended=False):
         return safe_redirect_back()
 
     return election
-
 
 
 @APP.route('/vote/<election_alias>', methods=['GET', 'POST'])

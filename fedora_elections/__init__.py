@@ -67,7 +67,7 @@ from fedora_elections import forms
 def is_authenticated():
     ''' Return a boolean specifying if the user is authenticated or not.
     '''
-    return hasattr(flask.g, 'fas_user') and not flask.g.fas_user is None
+    return hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None
 
 
 def is_admin(user):
