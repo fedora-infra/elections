@@ -132,6 +132,38 @@ class Votetests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
+        # Election 5
+
+        obj = models.Vote(  # id:1
+            election_id=5,
+            voter='toshio',
+            candidate_id=4,
+            value='1',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = models.Vote(  # id:2
+            election_id=5,
+            voter='toshio',
+            candidate_id=5,
+            value='1',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = models.Vote(  # id:4
+            election_id=5,
+            voter='kevin',
+            candidate_id=6,
+            value='1',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
     def test_vote_count_with_votes(self):
         """ Test the Candidate.vote_count function with votes in. """
         self.test_init_vote()
