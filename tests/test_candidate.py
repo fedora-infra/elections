@@ -50,6 +50,8 @@ class Candidatetests(Modeltests):
         elections.session = self.session
         elections.test_init_election()
 
+        ## Election #1
+
         obj = models.Candidate(  # id:1
             election_id=1,
             name='Toshio',
@@ -70,6 +72,35 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:3
             election_id=1,
+            name='Ralph',
+            url='https://fedoraproject.org/wiki/User:Ralph',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        ## Election #5
+
+        obj = models.Candidate(  # id:4
+            election_id=5,
+            name='Toshio',
+            url='https://fedoraproject.org/wiki/User:Toshio',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = models.Candidate(  # id:5
+            election_id=5,
+            name='Kevin',
+            url='https://fedoraproject.org/wiki/User:Kevin',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = models.Candidate(  # id:6
+            election_id=5,
             name='Ralph',
             url='https://fedoraproject.org/wiki/User:Ralph',
         )
