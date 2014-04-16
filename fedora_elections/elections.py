@@ -55,7 +55,7 @@ def get_valid_election(election_alias, ended=False):
     election = models.Election.get(SESSION, alias=election_alias)
 
     if not election:
-        flask.flash('The election, %s,  does not exist.' % election_alias)
+        flask.flash('The election, %s, does not exist.' % election_alias)
         return safe_redirect_back()
 
     if election.status == 'Pending':
