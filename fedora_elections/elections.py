@@ -176,9 +176,10 @@ def vote_range(election_alias):
                         uvotes[candidate.id] = 0
                         next_action = 'vote'
                 except ValueError:
+                    next_action = 'vote'
                     flask.flash("Invalid data")
 
-            if (next_action != 'vote'):
+            if next_action != 'vote':
                 next_action = 'confirm'
 
     usernamemap = {}
