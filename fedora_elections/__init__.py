@@ -106,6 +106,7 @@ def is_election_admin(user, election_id):
 
 
 def is_safe_url(target):
+    ''' Check is a url is safe to use or not. '''
     ref_url = urlparse(flask.request.host_url)
     test_url = urlparse(urljoin(flask.request.host_url, target))
     return test_url.scheme in ('http', 'https') and \
@@ -113,6 +114,7 @@ def is_safe_url(target):
 
 
 def safe_redirect_back(next=None, fallback=('index', {})):
+    ''' Safely redirect the user to its previous page. '''
     targets = []
     if next:
         targets.append(next)
