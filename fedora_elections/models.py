@@ -3,6 +3,7 @@
 
 import sqlalchemy as sa
 from sqlalchemy import create_engine
+from sqlalchemy import func as safunc
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.declarative import declarative_base
@@ -282,7 +283,7 @@ class Vote(BASE):
     election = relationship(
         'Election', backref=backref('votes', lazy='dynamic'))
     voter = sa.Column(sa.Unicode(150), nullable=False)
-    timestamp = sa.Column(sa.DateTime, nullable=False)
+    timestamp = sa.Column(sa.DateTime, nullable=False, default=safunc.now())
     candidate_id = sa.Column(sa.Integer, sa.ForeignKey('candidates.id'),
                              nullable=False)
     candidate = relationship(
