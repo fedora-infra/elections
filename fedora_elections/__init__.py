@@ -127,10 +127,10 @@ def is_safe_url(target):
 def safe_redirect_back(next=None, fallback=('index', {})):
     ''' Safely redirect the user to its previous page. '''
     targets = []
-    if next:
+    if next:  # pragma: no cover
         targets.append(next)
     if 'next' in flask.request.args and \
-       flask.request.args['next']:
+       flask.request.args['next']:  # pragma: no cover
         targets.append(flask.request.args['next'])
     targets.append(flask.url_for(fallback[0], **fallback[1]))
     for target in targets:
@@ -187,7 +187,7 @@ def about_election(election_alias):
         return safe_redirect_back()
 
     usernamemap = {}
-    if (election.candidates_are_fasusers):
+    if (election.candidates_are_fasusers):  # pragma: no cover
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
