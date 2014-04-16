@@ -62,7 +62,6 @@ FAS2 = AccountSystem(
 from fedora_elections import models
 SESSION = models.create_session(APP.config['DB_URL'])
 from fedora_elections import forms
-from fedora_elections import redirect
 
 
 def is_authenticated():
