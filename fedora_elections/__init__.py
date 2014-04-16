@@ -199,7 +199,7 @@ def index():
                 voted.append(elec)
 
     return flask.render_template(
-        'list/index.html',
+        'index.html',
         prev_elections=prev_elections,
         cur_elections=cur_elections,
         next_elections=next_elections,
@@ -227,7 +227,7 @@ def about_election(election_alias):
                 usernamemap[candidate.id] = candidate.name
 
     return flask.render_template(
-        'election/about.html',
+        'about.html',
         election=election,
         usernamemap=usernamemap)
 
@@ -243,7 +243,7 @@ def archived_elections():
         return redirect.safe_redirect_back()
 
     return flask.render_template(
-        'election/archive.html',
+        'archive.html',
         elections=elections)
 
 
@@ -266,7 +266,7 @@ def open_elections():
                 voted.append(elec)
 
     return flask.render_template(
-        'list/index.html',
+        'index.html',
         next_elections=elections,
         voted=voted,
         tag='open',
@@ -389,7 +389,7 @@ def vote_range(election_alias):
                 usernamemap[candidate.id] = candidate.name
 
     return flask.render_template(
-        'election/vote_range.html',
+        'vote_range.html',
         election=election,
         num_candidates=num_candidates,
         usernamemap=usernamemap,
@@ -460,7 +460,7 @@ def vote_simple(election_alias):
                 usernamemap[candidate.id] = candidate.name
 
     return flask.render_template(
-        'election/vote_simple.html',
+        'vote_simple.html',
         election=election,
         num_candidates=num_candidates,
         usernamemap=usernamemap,
@@ -797,7 +797,7 @@ def election_results(election_alias):
     stats = models.Vote.get_election_stats(SESSION, election.id)
 
     return flask.render_template(
-        'election/results.html',
+        'results.html',
         election=election,
         usernamemap=usernamemap,
         stats=stats,
