@@ -100,18 +100,51 @@ class Votetests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
+        # Election 3
+
+        obj = models.Vote(  # id:1
+            election_id=3,
+            voter='toshio',
+            candidate_id=1,
+            value='3',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = models.Vote(  # id:2
+            election_id=3,
+            voter='toshio',
+            candidate_id=2,
+            value='3',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = models.Vote(  # id:4
+            election_id=3,
+            voter='toshio',
+            candidate_id=3,
+            value='3',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
     def test_vote_count_with_votes(self):
         """ Test the Candidate.vote_count function with votes in. """
         self.test_init_vote()
 
         obj = models.Candidate.get(self.session, 2)
-        self.assertEqual(obj.vote_count, 5)
-
-        obj = models.Candidate.by_id(self.session, 3)
-        self.assertEqual(obj.vote_count, 4)
+        self.assertEqual(obj.vote_count, 8)
 
         obj = models.Candidate.get(self.session, 1)
-        self.assertEqual(obj.vote_count, 3)
+        self.assertEqual(obj.vote_count, 6)
+
+        obj = models.Candidate.by_id(self.session, 3)
+        self.assertEqual(obj.vote_count, 7)
+
 
     def test_of_user_on_election(self):
         """ Test the Vote.of_user_on_election function. """
