@@ -105,8 +105,8 @@ class Election(BASE):
             alias=self.alias,
             description=self.description,
             url=self.url,
-            start_date=self.start_date,
-            end_date=self.end_date,
+            start_date=self.start_date.strftime('%Y-%m-%d %H:%M'),
+            end_date=self.end_date.strftime('%Y-%m-%d %H:%M'),
             embargoed=self.embargoed,
             voting_type=self.voting_type,
         )
