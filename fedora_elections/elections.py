@@ -97,7 +97,7 @@ def vote(election_alias):
         return vote_range(election_alias)
     elif election.voting_type == 'simple':
         return vote_simple(election_alias)
-    else:
+    else:  # pragma: no cover
         flask.flash(
             'Unknown election voting type: %s' % election.voting_type)
         return safe_redirect_back()
