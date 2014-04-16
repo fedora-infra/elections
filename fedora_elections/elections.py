@@ -286,9 +286,11 @@ def election_results(election_alias):
         else:
             if is_admin(flask.g.fas_user) \
                     or is_election_admin(flask.g.fas_user, election.id):
+                flask.flash("You are only seeing this page because you are "
+                            "an admin.", "warning")
                 flask.flash("The results for this election are currently "
                             "embargoed pending formal announcement.",
-                            "error")
+                            "warning")
                 pass
             else:
                 flask.flash(
