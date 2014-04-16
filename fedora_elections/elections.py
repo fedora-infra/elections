@@ -280,7 +280,7 @@ def election_results(election_alias):
 
     elif election.embargoed:
         if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
-            flask.flash("We are sorry.  The results for this election"
+            flask.flash("We are sorry.  The results for this election "
                         "cannot be viewed because they are currently "
                         "embargoed pending formal announcement.")
             return safe_redirect_back()
@@ -295,7 +295,7 @@ def election_results(election_alias):
                 pass
             else:
                 flask.flash(
-                    "We are sorry.  The results for this election"
+                    "We are sorry.  The results for this election "
                     "cannot be viewed because they are currently "
                     "embargoed pending formal announcement.")
                 return safe_redirect_back()
