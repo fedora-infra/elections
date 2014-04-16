@@ -244,8 +244,12 @@ def vote_simple(election_alias):
 
         elif 'Preview' in form_values:
             if ('candidate' in flask.request.form):
-                flask.flash("Please confirm your vote!")
-                candidate_id = int(flask.request.form['candidate'])
+                try:
+                    candidate_id = int(flask.request.form['candidate'])
+                    flask.flash("Please confirm your vote!")
+                except ValueError:
+                    next_action = 'vote'
+                    flask.flash("Invalid data")
             else:
                 flask.flash("Please vote for a candidate")
                 next_action = 'vote'
