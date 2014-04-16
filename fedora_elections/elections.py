@@ -108,7 +108,7 @@ def vote(election_alias):
 def vote_range(election_alias):
     election = get_valid_election(election_alias)
 
-    if not isinstance(election, models.Election):
+    if not isinstance(election, models.Election):  # pragma: no cover
         return election
 
     if (election.voting_type == 'simple'):
@@ -205,7 +205,7 @@ def vote_range(election_alias):
 def vote_simple(election_alias):
     election = get_valid_election(election_alias)
 
-    if not isinstance(election, models.Election):
+    if not isinstance(election, models.Election):  # pragma: no cover
         return election
 
     if (election.voting_type == 'range'):
