@@ -43,7 +43,7 @@ import fedmsgshim
 
 APP = flask.Flask(__name__)
 APP.config.from_object('fedora_elections.default_config')
-if 'FEDORA_ELECTIONS_CONFIG' in os.environ:
+if 'FEDORA_ELECTIONS_CONFIG' in os.environ:  # pragma: no cover
     APP.config.from_envvar('FEDORA_ELECTIONS_CONFIG')
 
 # set up FAS
