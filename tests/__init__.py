@@ -24,6 +24,7 @@
 __requires__ = ['SQLAlchemy >= 0.7']
 import pkg_resources
 
+import logging
 import unittest
 import sys
 import os
@@ -40,6 +41,7 @@ from sqlalchemy.orm import scoped_session
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
+import fedora_elections
 from fedora_elections import models
 
 
@@ -100,6 +102,29 @@ class Modeltests(unittest.TestCase):
             else:
                 db_name = DB_PATH.rsplit('/', 1)[1]
                 requests.get('%s/clean/%s' % (FAITOUT_URL, db_name))
+
+
+class ModelFlasktests(Modeltests):
+    """ Model flask application tests. """
+
+    def setup_db(self):
+        """ Add a calendar and some meetings so that we can play with
+        something. """
+        from test_vote import Votetests
+        votes = Votetests('test_init_vote')
+        votes.session = self.session
+        votes.test_init_vote()
+
+    def setUp(self):
+        """ Set up the environnment, ran before every tests. """
+        super(ModelFlasktests, self).setUp()
+
+        fedora_elections.APP.config['TESTING'] = True
+        fedora_elections.APP.debug = True
+        fedora_elections.APP.logger.handlers = []
+        fedora_elections.APP.logger.setLevel(logging.CRITICAL)
+        fedora_elections.SESSION = self.session
+        self.app = fedora_elections.APP.test_client()
 
 
 class FakeGroup(object):
