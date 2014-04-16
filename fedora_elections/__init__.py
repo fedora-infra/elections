@@ -234,8 +234,6 @@ def open_elections():
 
 @APP.route('/login', methods=('GET', 'POST'))
 def auth_login():
-    if flask.g.fas_user:
-        return safe_redirect_back()
     next_url = None
     if 'next' in flask.request.args:
         next_url = flask.request.args['next']
@@ -244,7 +242,7 @@ def auth_login():
         next_url = flask.url_for('.index')
 
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
-        return flask.redirect(next_url)
+        return safe_redirect_back(next_url)
     else:
         return FAS.login(return_url=next_url)
 
