@@ -40,7 +40,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     engine = create_engine(db_url, echo=debug)
     BASE.metadata.create_all(engine)
     #engine.execute(collection_package_create_view(driver=engine.driver))
-    if db_url.startswith('sqlite:'):
+    if db_url.startswith('sqlite:'):  # pragma: no cover
         ## Ignore the warning about con_record
         # pylint: disable=W0613
         def _fk_pragma_on_connect(dbapi_con, con_record):
