@@ -79,10 +79,10 @@ class Candidatetests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        ## Election #5
+        ## Election #3
 
         obj = models.Candidate(  # id:4
-            election_id=5,
+            election_id=3,
             name='Toshio',
             url='https://fedoraproject.org/wiki/User:Toshio',
         )
@@ -91,7 +91,7 @@ class Candidatetests(Modeltests):
         self.assertNotEqual(obj, None)
 
         obj = models.Candidate(  # id:5
-            election_id=5,
+            election_id=3,
             name='Kevin',
             url='https://fedoraproject.org/wiki/User:Kevin',
         )
@@ -100,6 +100,35 @@ class Candidatetests(Modeltests):
         self.assertNotEqual(obj, None)
 
         obj = models.Candidate(  # id:6
+            election_id=3,
+            name='Ralph',
+            url='https://fedoraproject.org/wiki/User:Ralph',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        ## Election #5
+
+        obj = models.Candidate(  # id:7
+            election_id=5,
+            name='Toshio',
+            url='https://fedoraproject.org/wiki/User:Toshio',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = models.Candidate(  # id:8
+            election_id=5,
+            name='Kevin',
+            url='https://fedoraproject.org/wiki/User:Kevin',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = models.Candidate(  # id:9
             election_id=5,
             name='Ralph',
             url='https://fedoraproject.org/wiki/User:Ralph',
