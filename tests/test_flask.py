@@ -23,7 +23,6 @@
 __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
-import logging
 import unittest
 import sys
 import os
@@ -37,31 +36,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 import fedora_elections
-from tests import Modeltests, TODAY, FakeUser, user_set
+from tests import ModelFlasktests, FakeUser, user_set
 
 
 # pylint: disable=R0904
-class Flasktests(Modeltests):
+class Flasktests(ModelFlasktests):
     """ Flask application tests. """
-
-    def __setup_db(self):
-        """ Add a calendar and some meetings so that we can play with
-        something. """
-        from test_vote import Votetests
-        votes = Votetests('test_init_vote')
-        votes.session = self.session
-        votes.test_init_vote()
-
-    def setUp(self):
-        """ Set up the environnment, ran before every tests. """
-        super(Flasktests, self).setUp()
-
-        fedora_elections.APP.config['TESTING'] = True
-        fedora_elections.APP.debug = True
-        fedora_elections.APP.logger.handlers = []
-        fedora_elections.APP.logger.setLevel(logging.CRITICAL)
-        fedora_elections.SESSION = self.session
-        self.app = fedora_elections.APP.test_client()
 
     def test_index_empty(self):
         """ Test the index function. """
@@ -83,7 +63,7 @@ class Flasktests(Modeltests):
 
     def test_index_filled(self):
         """ Test the index function. """
-        self.__setup_db()
+        self.setup_db()
         output = self.app.get('/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<title>Fedora elections</title>' in output.data)
@@ -164,7 +144,7 @@ class Flasktests(Modeltests):
             output = self.app.get('/login?next=http://localhost/')
             self.assertEqual(output.status_code, 200)
 
-        self.__setup_db()
+        self.setup_db()
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
             output = self.app.get('/login', follow_redirects=True)
@@ -194,7 +174,7 @@ class Flasktests(Modeltests):
 
     def test_about_election(self):
         """ Test the about_election function. """
-        self.__setup_db()
+        self.setup_db()
 
         output = self.app.get('/about/blah')
         self.assertEqual(output.status_code, 302)
@@ -237,7 +217,7 @@ class Flasktests(Modeltests):
         self.assertTrue('<title>Fedora elections</title>' in output.data)
         self.assertTrue('<h2>Elections</h2>' in output.data)
 
-        self.__setup_db()
+        self.setup_db()
 
         output = self.app.get('/archives')
         self.assertEqual(output.status_code, 200)
@@ -264,7 +244,7 @@ class Flasktests(Modeltests):
         self.assertTrue('<title>Fedora elections</title>' in output.data)
         self.assertTrue('<h2>Elections</h2>' in output.data)
 
-        self.__setup_db()
+        self.setup_db()
 
         output = self.app.get('/open')
         self.assertEqual(output.status_code, 200)
