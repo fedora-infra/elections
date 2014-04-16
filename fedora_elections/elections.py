@@ -62,7 +62,7 @@ def get_valid_election(election_alias, ended=False):
         flask.flash('Voting has not yet started, sorry.')
         return safe_redirect_back()
 
-    elif not ended and election.status == 'Ended':
+    elif not ended and election.status in ('Ended', 'Embargoed'):
         flask.flash(
             'This election is closed.  You have been redirected to the '
             'election results.')
