@@ -1,5 +1,8 @@
-from flask.ext import wtf
+# -*- coding: utf-8 -*-
+
+import flask
 import wtforms
+from flask.ext import wtf
 
 from fedora_elections import SESSION
 from fedora_elections.models import Election
@@ -60,7 +63,7 @@ class ElectionForm(wtf.Form):
         super(ElectionForm, form).__init__(*args, **kwargs)
         form._election_id = election_id
 
-    def validate_summary(form, field):
+    def validate_shortdesc(form, field):
         check = Election.search(SESSION, shortdesc=form.shortdesc.data)
         if check:
             if not (form._election_id and form._election_id == check[0].id):
