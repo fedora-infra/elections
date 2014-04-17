@@ -64,7 +64,6 @@ class FlaskAdmintests(ModelFlasktests):
             username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get('/admin/')
-            #print output.data
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<h2>Election administration</h2>' in output.data)
 
@@ -89,6 +88,8 @@ class FlaskAdmintests(ModelFlasktests):
 
     def test_admin_new_election(self):
         """ Test the admin_new_election function. """
+        self.setup_db()
+
         user = FakeUser(
             fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
             username='toshio')
@@ -150,6 +151,112 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<td class="error">This field is required.</td>'
                 in output.data)
+
+            # Invalid alias
+            data = {
+                'alias': 'new',
+                'shortdesc': 'new election shortdesc',
+                'description': 'new election description',
+                'voting_type': 'simple',
+                'url': 'https://fedoraproject.org',
+                'start_date': TODAY + timedelta(days=2),
+                'end_date': TODAY + timedelta(days=4),
+                'seats_elected': 2,
+                'candidates_are_fasusers': False,
+                'embargoed': True,
+                'csrf_token': csrf_token,
+            }
+
+
+            output = self.app.post('/admin/new', data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<h2>Create election</h2>' in output.data)
+            self.assertTrue(
+                'input id="shortdesc" name="shortdesc" type="text"'
+                in output.data)
+            self.assertTrue(
+                '<td class="error">The alias cannot be <code>new</code>.</td>'
+                in output.data)
+
+            # Invalid: end_date earlier than start_date
+            data = {
+                'alias': 'new_election',
+                'shortdesc': 'new election shortdesc',
+                'description': 'new election description',
+                'voting_type': 'simple',
+                'url': 'https://fedoraproject.org',
+                'start_date': TODAY + timedelta(days=6),
+                'end_date': TODAY + timedelta(days=4),
+                'seats_elected': 2,
+                'candidates_are_fasusers': False,
+                'embargoed': True,
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/admin/new', data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<h2>Create election</h2>' in output.data)
+            self.assertTrue(
+                'input id="shortdesc" name="shortdesc" type="text"'
+                in output.data)
+            self.assertTrue(
+                '<td class="error">End date must be later than start date.</td>'
+                in output.data)
+
+            # Invalid: alias already taken
+            data = {
+                'alias': 'test_election',
+                'shortdesc': 'new election shortdesc',
+                'description': 'new election description',
+                'voting_type': 'simple',
+                'url': 'https://fedoraproject.org',
+                'start_date': TODAY + timedelta(days=6),
+                'end_date': TODAY + timedelta(days=4),
+                'seats_elected': 2,
+                'candidates_are_fasusers': False,
+                'embargoed': True,
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/admin/new', data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<h2>Create election</h2>' in output.data)
+            self.assertTrue(
+                'input id="shortdesc" name="shortdesc" type="text"'
+                in output.data)
+            self.assertTrue(
+                '<td class="error">There is already another election with '
+                'this alias.</td>' in output.data)
+
+
+            # Invalid: shortdesc already taken
+            data = {
+                'alias': 'new_election',
+                'shortdesc': 'test election shortdesc',
+                'description': 'new election description',
+                'voting_type': 'simple',
+                'url': 'https://fedoraproject.org',
+                'start_date': TODAY + timedelta(days=6),
+                'end_date': TODAY + timedelta(days=4),
+                'seats_elected': 2,
+                'candidates_are_fasusers': False,
+                'embargoed': True,
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/admin/new', data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<h2>Create election</h2>' in output.data)
+            self.assertTrue(
+                'input id="shortdesc" name="shortdesc" type="text"'
+                in output.data)
+            self.assertTrue(
+                '<td class="error">There is already another election with '
+                'this summary.</td>' in output.data)
 
             # All good
             data = {
