@@ -228,7 +228,17 @@ def vote_simple(election_alias):
         next_action = ''
         form_values = flask.request.form.values()
         if 'Submit' in form_values:
-            candidate_id = int(flask.request.form['candidate'])
+            try:
+                candidates_id = [cand.id for cand in election.candidates]
+                candidate_id = int(flask.request.form['candidate'])
+            except ValueError:
+                flask.flash("Invalid Ballot!", "error")
+                return safe_redirect_back()
+            if candidate_id not in candidates_id:
+                flask.flash("Invalid vote, this candidate is not listed for "
+                            "this election", "error")
+                return safe_redirect_back()
+
             new_vote = models.Vote(
                 election_id=election.id,
                 voter=flask.g.fas_user.username,
