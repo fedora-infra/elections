@@ -101,6 +101,7 @@ class FlaskAdmintests(ModelFlasktests):
                 'input id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
 
+            # No csrf provided
             data = {
                 'alias': 'new_election',
                 'shortdesc': 'new election shortdesc',
@@ -125,6 +126,7 @@ class FlaskAdmintests(ModelFlasktests):
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
+            # Description missing
             data = {
                 'alias': 'new_election',
                 'shortdesc': 'new election shortdesc',
@@ -149,6 +151,7 @@ class FlaskAdmintests(ModelFlasktests):
                 '<td class="error">This field is required.</td>'
                 in output.data)
 
+            # All good
             data = {
                 'alias': 'new_election',
                 'shortdesc': 'new election shortdesc',
