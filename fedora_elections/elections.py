@@ -316,7 +316,7 @@ def election_results(election_alias):
                 return safe_redirect_back()
 
     usernamemap = {}
-    if (election.candidates_are_fasusers):
+    if (election.candidates_are_fasusers):  # pragma: no cover
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
