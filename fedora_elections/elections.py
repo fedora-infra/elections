@@ -290,7 +290,7 @@ def vote_simple(election_alias):
 def election_results(election_alias):
     election = get_valid_election(election_alias, ended=True)
 
-    if not isinstance(election, models.Election):
+    if not isinstance(election, models.Election):  # pragma: no cover
         return election
 
     elif election.embargoed:
