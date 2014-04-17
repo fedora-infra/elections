@@ -42,6 +42,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 import fedora_elections
+import fedora_elections.elections
+import fedora_elections.admin
 from fedora_elections import models
 
 
@@ -120,10 +122,16 @@ class ModelFlasktests(Modeltests):
         super(ModelFlasktests, self).setUp()
 
         fedora_elections.APP.config['TESTING'] = True
+        fedora_elections.APP.config[
+            'FEDORA_ELECTIONS_ADMIN_GROUP'] = 'elections'
         fedora_elections.APP.debug = True
         fedora_elections.APP.logger.handlers = []
         fedora_elections.APP.logger.setLevel(logging.CRITICAL)
         fedora_elections.SESSION = self.session
+
+        fedora_elections.elections.SESSION = self.session
+        fedora_elections.admin.SESSION = self.session
+
         self.app = fedora_elections.APP.test_client()
 
 
