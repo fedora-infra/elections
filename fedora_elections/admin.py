@@ -28,7 +28,7 @@ from datetime import datetime, time
 from functools import wraps
 
 import flask
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import SQLAlchemyError
 
 from fedora_elections import fedmsgshim
 from fedora_elections import forms
@@ -291,17 +291,26 @@ def admin_delete_candidate(election_alias, candidate_id):
     form = forms.ConfirmationForm()
     if form.validate_on_submit():
         candidate_name = candidate.name
-        SESSION.delete(candidate)
-        SESSION.commit()
-        flask.flash('Candidate "%s" deleted' % candidate_name)
-        fedmsgshim.publish(
-            topic="candidate.delete",
-            msg=dict(
-                agent=flask.g.fas_user.username,
-                election=candidate.election.to_json(),
-                candidate=candidate.to_json(),
+        try:
+            SESSION.delete(candidate)
+            SESSION.commit()
+            flask.flash('Candidate "%s" deleted' % candidate_name)
+            fedmsgshim.publish(
+                topic="candidate.delete",
+                msg=dict(
+                    agent=flask.g.fas_user.username,
+                    election=candidate.election.to_json(),
+                    candidate=candidate.to_json(),
+                )
             )
-        )
+        except SQLAlchemyError, err:
+            SESSION.rollback()
+            APP.logger.debug('Could not delete candidate')
+            APP.logger.exception(err)
+            flask.flash(
+                'Could not delete this candidate. Is it already part of an '
+                'election?', 'error'
+            )
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
