@@ -268,7 +268,7 @@ def vote_simple(election_alias):
             next_action = 'confirm'
 
     usernamemap = {}
-    if (election.candidates_are_fasusers):
+    if (election.candidates_are_fasusers):  # pragma: no cover
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
