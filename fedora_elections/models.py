@@ -208,11 +208,14 @@ class ElectionAdminGroup(BASE):
     __tablename__ = 'electionadmins'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),
-                            nullable=False)
+    election_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey('elections.id', ondelete='CASCADE', onupdate='CASCADE'),
+        nullable=False)
+    group_name = sa.Column(sa.Unicode(150), nullable=False)
+
     election = relationship(
         'Election', backref=backref('admin_groups', lazy='dynamic'))
-    group_name = sa.Column(sa.Unicode(150), nullable=False)
 
     @classmethod
     def by_election_id(cls, session, election_id):
@@ -229,13 +232,16 @@ class Candidate(BASE):
     __tablename__ = 'candidates'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),
-                            nullable=False)
-    election = relationship(
-        'Election', backref=backref('candidates', lazy='dynamic'))
+    election_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey('elections.id',  ondelete='RESTRICT', onupdate='CASCADE'),
+        nullable=False)
     # FAS username if candidates_are_fasusers
     name = sa.Column(sa.Unicode(150), nullable=False)
     url = sa.Column(sa.Unicode(250))
+
+    election = relationship(
+        'Election', backref=backref('candidates', lazy='dynamic'))
 
     def to_json(self):
         ''' Return a json representation of this object. '''
@@ -261,13 +267,16 @@ class LegalVoter(BASE):
     __tablename__ = 'legalvoters'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),
-                            nullable=False)
+    election_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey('elections.id', ondelete='RESTRICT', onupdate='CASCADE'),
+        nullable=False)
+    group_name = sa.Column(sa.Unicode(150), nullable=False)
+
     election = relationship(
         'Election', backref=backref('legal_voters', lazy='dynamic'))
     # special names:
     #     "cla + one" = cla_done + 1 non-cla group
-    group_name = sa.Column(sa.Unicode(150), nullable=False)
 
 
 class Vote(BASE):
@@ -280,15 +289,18 @@ class Vote(BASE):
     id = sa.Column(sa.Integer, primary_key=True)
     election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),
                             nullable=False)
-    election = relationship(
-        'Election', backref=backref('votes', lazy='dynamic'))
     voter = sa.Column(sa.Unicode(150), nullable=False)
     timestamp = sa.Column(sa.DateTime, nullable=False, default=safunc.now())
-    candidate_id = sa.Column(sa.Integer, sa.ForeignKey('candidates.id'),
-                             nullable=False)
+    candidate_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey('candidates.id', ondelete='RESTRICT', onupdate='CASCADE'),
+        nullable=False)
+    value = sa.Column(sa.Integer, nullable=False)
+
+    election = relationship(
+        'Election', backref=backref('votes', lazy='dynamic'))
     candidate = relationship(
         'Candidate', backref=backref('votes', lazy='dynamic'))
-    value = sa.Column(sa.Integer, nullable=False)
 
     @classmethod
     def of_user_on_election(cls, session, user, election_id, count=False):
