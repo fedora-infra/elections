@@ -28,7 +28,6 @@ from datetime import datetime, time
 from functools import wraps
 
 import flask
-from sqlalchemy.orm.exc import NoResultFound
 
 from fedora_elections import fedmsgshim
 from fedora_elections import forms
