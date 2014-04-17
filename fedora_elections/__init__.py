@@ -37,7 +37,6 @@ import flask
 from fedora.client import AuthError, AppError
 from fedora.client.fas2 import AccountSystem
 from flask.ext.fas_openid import FAS
-from sqlalchemy.orm.exc import NoResultFound
 
 import fedmsgshim
 
