@@ -20,7 +20,7 @@ setup(
     packages=['fedora_elections'],
     include_package_data=True,
     install_requires=[
-        'Flask', 'SQLAlchemy>=0.7', 'python-fedora', 'python-kitchen',
+        'Flask', 'SQLAlchemy>=0.7', 'python-fedora', 'kitchen',
         'python-openid', 'python-openid-teams', 'python-openid-cla',
         'Flask-wtf', 'wtforms',
     ],
