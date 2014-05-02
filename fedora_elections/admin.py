@@ -205,7 +205,7 @@ def admin_add_multi_candidate(election_alias):
         candidates_name = []
         for entry in form.candidate.data.strip().split("|"):
             candidate = entry.split("!")
-            #No url
+            # No url
             if len(candidate) == 1:
                 cand = models.Candidate(
                     election=election,
