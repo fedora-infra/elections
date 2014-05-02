@@ -149,7 +149,7 @@ def inject_variables():
                 version=__version__)
 
 
-### LIST VIEWS #############################################
+# LIST VIEWS #############################################
 
 @APP.route('/')
 def index():
