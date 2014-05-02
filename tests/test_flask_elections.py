@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
  (c) 2014 - Copyright Pierre-Yves Chibon
@@ -148,7 +148,7 @@ class FlaskElectionstests(ModelFlasktests):
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
-                '/vote_range/test_election5')#, follow_redirects=True)
+                '/vote_range/test_election5')
             self.assertTrue(
                 'be redirected automatically to target URL: '
                 '<a href="/vote_simple/test_election5">' in output.data)
@@ -421,7 +421,8 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_simple/test_election5', data=data, follow_redirects=True)
+                '/vote_simple/test_election5', data=data,
+                follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">Invalid vote, this candidate is not '
@@ -434,7 +435,8 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_simple/test_election5', data=data, follow_redirects=True)
+                '/vote_simple/test_election5', data=data,
+                follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">Invalid vote, this candidate is not '
@@ -447,7 +449,8 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_simple/test_election5', data=data, follow_redirects=True)
+                '/vote_simple/test_election5', data=data,
+                follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">Invalid Ballot!</li' in output.data)
@@ -459,7 +462,8 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_simple/test_election5', data=data, follow_redirects=True)
+                '/vote_simple/test_election5', data=data,
+                follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 'class="message">Your vote has been recorded.  Thank you!</'
