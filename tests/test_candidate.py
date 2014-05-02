@@ -50,7 +50,9 @@ class Candidatetests(Modeltests):
         elections.session = self.session
         elections.test_init_election()
 
-        # # Election #1
+        #
+        # Election #1
+        #
 
         obj = models.Candidate(  # id:1
             election_id=1,
@@ -79,7 +81,9 @@ class Candidatetests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        # # Election #3
+        #
+        # Election #3
+        #
 
         obj = models.Candidate(  # id:4
             election_id=3,
@@ -108,7 +112,9 @@ class Candidatetests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        # # Election #5
+        #
+        # Election #5
+        #
 
         obj = models.Candidate(  # id:7
             election_id=5,
@@ -137,7 +143,9 @@ class Candidatetests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        # # Election #4
+        #
+        # Election #4
+        #
 
         obj = models.Candidate(  # id:10
             election_id=4,
