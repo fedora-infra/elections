@@ -37,13 +37,12 @@ import flask
 from fedora.client import AuthError, AppError
 from fedora.client.fas2 import AccountSystem
 from flask.ext.fas_openid import FAS
-from sqlalchemy.orm.exc import NoResultFound
 
 import fedmsgshim
 
 APP = flask.Flask(__name__)
 APP.config.from_object('fedora_elections.default_config')
-if 'FEDORA_ELECTIONS_CONFIG' in os.environ:
+if 'FEDORA_ELECTIONS_CONFIG' in os.environ:  # pragma: no cover
     APP.config.from_envvar('FEDORA_ELECTIONS_CONFIG')
 
 # set up FAS
@@ -67,7 +66,7 @@ from fedora_elections import forms
 def is_authenticated():
     ''' Return a boolean specifying if the user is authenticated or not.
     '''
-    return hasattr(flask.g, 'fas_user') and not flask.g.fas_user is None
+    return hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None
 
 
 def is_admin(user):
@@ -106,6 +105,7 @@ def is_election_admin(user, election_id):
 
 
 def is_safe_url(target):
+    ''' Check is a url is safe to use or not. '''
     ref_url = urlparse(flask.request.host_url)
     test_url = urlparse(urljoin(flask.request.host_url, target))
     return test_url.scheme in ('http', 'https') and \
@@ -113,11 +113,12 @@ def is_safe_url(target):
 
 
 def safe_redirect_back(next=None, fallback=('index', {})):
+    ''' Safely redirect the user to its previous page. '''
     targets = []
-    if next:
+    if next:  # pragma: no cover
         targets.append(next)
     if 'next' in flask.request.args and \
-       flask.request.args['next']:
+       flask.request.args['next']:  # pragma: no cover
         targets.append(flask.request.args['next'])
     targets.append(flask.url_for(fallback[0], **fallback[1]))
     for target in targets:
@@ -174,7 +175,7 @@ def about_election(election_alias):
         return safe_redirect_back()
 
     usernamemap = {}
-    if (election.candidates_are_fasusers):
+    if (election.candidates_are_fasusers):  # pragma: no cover
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
@@ -232,8 +233,6 @@ def open_elections():
 
 @APP.route('/login', methods=('GET', 'POST'))
 def auth_login():
-    if flask.g.fas_user:
-        return safe_redirect_back()
     next_url = None
     if 'next' in flask.request.args:
         next_url = flask.request.args['next']
@@ -242,7 +241,7 @@ def auth_login():
         next_url = flask.url_for('.index')
 
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
-        return flask.redirect(next_url)
+        return safe_redirect_back(next_url)
     else:
         return FAS.login(return_url=next_url)
 

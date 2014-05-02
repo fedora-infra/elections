@@ -28,13 +28,14 @@ from datetime import datetime, time
 from functools import wraps
 
 import flask
-from sqlalchemy.orm.exc import NoResultFound
 
 from fedora_elections import fedmsgshim
 from fedora_elections import forms
 from fedora_elections import models
-from fedora_elections import APP, SESSION, is_authenticated, is_admin,\
-                             is_safe_url, safe_redirect_back
+from fedora_elections import (
+    APP, SESSION, is_authenticated, is_admin, is_election_admin,
+    is_safe_url, safe_redirect_back,
+)
 
 
 def login_required(f):
@@ -53,14 +54,14 @@ def get_valid_election(election_alias, ended=False):
     election = models.Election.get(SESSION, alias=election_alias)
 
     if not election:
-        flask.flash('The election, %s,  does not exist.' % election_alias)
+        flask.flash('The election, %s, does not exist.' % election_alias)
         return safe_redirect_back()
 
     if election.status == 'Pending':
         flask.flash('Voting has not yet started, sorry.')
         return safe_redirect_back()
 
-    elif not ended and election.status == 'Ended':
+    elif not ended and election.status in ('Ended', 'Embargoed'):
         flask.flash(
             'This election is closed.  You have been redirected to the '
             'election results.')
@@ -74,7 +75,6 @@ def get_valid_election(election_alias, ended=False):
         return safe_redirect_back()
 
     return election
-
 
 
 @APP.route('/vote/<election_alias>', methods=['GET', 'POST'])
@@ -96,7 +96,7 @@ def vote(election_alias):
         return vote_range(election_alias)
     elif election.voting_type == 'simple':
         return vote_simple(election_alias)
-    else:
+    else:  # pragma: no cover
         flask.flash(
             'Unknown election voting type: %s' % election.voting_type)
         return safe_redirect_back()
@@ -107,7 +107,7 @@ def vote(election_alias):
 def vote_range(election_alias):
     election = get_valid_election(election_alias)
 
-    if not isinstance(election, models.Election):
+    if not isinstance(election, models.Election):  # pragma: no cover
         return election
 
     if (election.voting_type == 'simple'):
@@ -172,16 +172,17 @@ def vote_range(election_alias):
                         uvotes[candidate.id] = vote
                     else:
                         flask.flash("Invalid data2.")
-                        uvotes[c.id] = 0
+                        uvotes[candidate.id] = 0
                         next_action = 'vote'
                 except ValueError:
+                    next_action = 'vote'
                     flask.flash("Invalid data")
 
-            if (next_action != 'vote'):
+            if next_action != 'vote':
                 next_action = 'confirm'
 
     usernamemap = {}
-    if (election.candidates_are_fasusers):
+    if (election.candidates_are_fasusers):  # pragma: no cover
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
@@ -204,7 +205,7 @@ def vote_range(election_alias):
 def vote_simple(election_alias):
     election = get_valid_election(election_alias)
 
-    if not isinstance(election, models.Election):
+    if not isinstance(election, models.Election):  # pragma: no cover
         return election
 
     if (election.voting_type == 'range'):
@@ -226,7 +227,17 @@ def vote_simple(election_alias):
         next_action = ''
         form_values = flask.request.form.values()
         if 'Submit' in form_values:
-            candidate_id = int(flask.request.form['candidate'])
+            try:
+                candidates_id = [cand.id for cand in election.candidates]
+                candidate_id = int(flask.request.form['candidate'])
+            except ValueError:
+                flask.flash("Invalid Ballot!", "error")
+                return safe_redirect_back()
+            if candidate_id not in candidates_id:
+                flask.flash("Invalid vote, this candidate is not listed for "
+                            "this election", "error")
+                return safe_redirect_back()
+
             new_vote = models.Vote(
                 election_id=election.id,
                 voter=flask.g.fas_user.username,
@@ -242,8 +253,12 @@ def vote_simple(election_alias):
 
         elif 'Preview' in form_values:
             if ('candidate' in flask.request.form):
-                flask.flash("Please confirm your vote!")
-                candidate_id = int(flask.request.form['candidate'])
+                try:
+                    candidate_id = int(flask.request.form['candidate'])
+                    flask.flash("Please confirm your vote!")
+                except ValueError:
+                    next_action = 'vote'
+                    flask.flash("Invalid data")
             else:
                 flask.flash("Please vote for a candidate")
                 next_action = 'vote'
@@ -252,7 +267,7 @@ def vote_simple(election_alias):
             next_action = 'confirm'
 
     usernamemap = {}
-    if (election.candidates_are_fasusers):
+    if (election.candidates_are_fasusers):  # pragma: no cover
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \
@@ -274,12 +289,12 @@ def vote_simple(election_alias):
 def election_results(election_alias):
     election = get_valid_election(election_alias, ended=True)
 
-    if not isinstance(election, models.Election):
+    if not isinstance(election, models.Election):  # pragma: no cover
         return election
 
     elif election.embargoed:
         if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
-            flask.flash("We are sorry.  The results for this election"
+            flask.flash("We are sorry.  The results for this election "
                         "cannot be viewed because they are currently "
                         "embargoed pending formal announcement.")
             return safe_redirect_back()
@@ -294,13 +309,13 @@ def election_results(election_alias):
                 pass
             else:
                 flask.flash(
-                    "We are sorry.  The results for this election"
+                    "We are sorry.  The results for this election "
                     "cannot be viewed because they are currently "
                     "embargoed pending formal announcement.")
                 return safe_redirect_back()
 
     usernamemap = {}
-    if (election.candidates_are_fasusers):
+    if (election.candidates_are_fasusers):  # pragma: no cover
         for candidate in election.candidates:
             try:
                 usernamemap[candidate.id] = \

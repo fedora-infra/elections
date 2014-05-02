@@ -3,6 +3,7 @@
 
 import sqlalchemy as sa
 from sqlalchemy import create_engine
+from sqlalchemy import func as safunc
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.declarative import declarative_base
@@ -39,7 +40,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     engine = create_engine(db_url, echo=debug)
     BASE.metadata.create_all(engine)
     #engine.execute(collection_package_create_view(driver=engine.driver))
-    if db_url.startswith('sqlite:'):
+    if db_url.startswith('sqlite:'):  # pragma: no cover
         ## Ignore the warning about con_record
         # pylint: disable=W0613
         def _fk_pragma_on_connect(dbapi_con, con_record):
@@ -104,8 +105,8 @@ class Election(BASE):
             alias=self.alias,
             description=self.description,
             url=self.url,
-            start_date=self.start_date,
-            end_date=self.end_date,
+            start_date=self.start_date.strftime('%Y-%m-%d %H:%M'),
+            end_date=self.end_date.strftime('%Y-%m-%d %H:%M'),
             embargoed=self.embargoed,
             voting_type=self.voting_type,
         )
@@ -207,11 +208,14 @@ class ElectionAdminGroup(BASE):
     __tablename__ = 'electionadmins'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),
-                            nullable=False)
+    election_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey('elections.id', ondelete='CASCADE', onupdate='CASCADE'),
+        nullable=False)
+    group_name = sa.Column(sa.Unicode(150), nullable=False)
+
     election = relationship(
         'Election', backref=backref('admin_groups', lazy='dynamic'))
-    group_name = sa.Column(sa.Unicode(150), nullable=False)
 
     @classmethod
     def by_election_id(cls, session, election_id):
@@ -228,13 +232,16 @@ class Candidate(BASE):
     __tablename__ = 'candidates'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),
-                            nullable=False)
-    election = relationship(
-        'Election', backref=backref('candidates', lazy='dynamic'))
+    election_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey('elections.id',  ondelete='RESTRICT', onupdate='CASCADE'),
+        nullable=False)
     # FAS username if candidates_are_fasusers
     name = sa.Column(sa.Unicode(150), nullable=False)
     url = sa.Column(sa.Unicode(250))
+
+    election = relationship(
+        'Election', backref=backref('candidates', lazy='dynamic'))
 
     def to_json(self):
         ''' Return a json representation of this object. '''
@@ -260,13 +267,16 @@ class LegalVoter(BASE):
     __tablename__ = 'legalvoters'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),
-                            nullable=False)
+    election_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey('elections.id', ondelete='RESTRICT', onupdate='CASCADE'),
+        nullable=False)
+    group_name = sa.Column(sa.Unicode(150), nullable=False)
+
     election = relationship(
         'Election', backref=backref('legal_voters', lazy='dynamic'))
     # special names:
     #     "cla + one" = cla_done + 1 non-cla group
-    group_name = sa.Column(sa.Unicode(150), nullable=False)
 
 
 class Vote(BASE):
@@ -279,15 +289,18 @@ class Vote(BASE):
     id = sa.Column(sa.Integer, primary_key=True)
     election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),
                             nullable=False)
+    voter = sa.Column(sa.Unicode(150), nullable=False)
+    timestamp = sa.Column(sa.DateTime, nullable=False, default=safunc.now())
+    candidate_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey('candidates.id', ondelete='RESTRICT', onupdate='CASCADE'),
+        nullable=False)
+    value = sa.Column(sa.Integer, nullable=False)
+
     election = relationship(
         'Election', backref=backref('votes', lazy='dynamic'))
-    voter = sa.Column(sa.Unicode(150), nullable=False)
-    timestamp = sa.Column(sa.DateTime, nullable=False)
-    candidate_id = sa.Column(sa.Integer, sa.ForeignKey('candidates.id'),
-                             nullable=False)
     candidate = relationship(
         'Candidate', backref=backref('votes', lazy='dynamic'))
-    value = sa.Column(sa.Integer, nullable=False)
 
     @classmethod
     def of_user_on_election(cls, session, user, election_id, count=False):
@@ -301,6 +314,8 @@ class Vote(BASE):
             cls.election_id == election_id
         ).filter(
             cls.voter == user
+        ).order_by(
+            cls.timestamp
         )
 
         if count:
