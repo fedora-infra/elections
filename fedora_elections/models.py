@@ -41,7 +41,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     BASE.metadata.create_all(engine)
     # engine.execute(collection_package_create_view(driver=engine.driver))
     if db_url.startswith('sqlite:'):  # pragma: no cover
-        # # Ignore the warning about con_record
+        # Ignore the warning about con_record
         # pylint: disable=W0613
         def _fk_pragma_on_connect(dbapi_con, con_record):
             ''' Tries to enforce referential constraints on sqlite. '''
@@ -52,7 +52,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
         # then, load the Alembic configuration and generate the
         # version table, "stamping" it with the most recent rev:
 
-        # # Ignore the warning missing alembic
+        # Ignore the warning missing alembic
         # pylint: disable=F0401
         from alembic.config import Config
         from alembic import command
