@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
  (c) 2014 - Copyright Pierre-Yves Chibon
@@ -176,7 +176,6 @@ class Votetests(Modeltests):
 
         obj = models.Candidate.by_id(self.session, 3)
         self.assertEqual(obj.vote_count, 7)
-
 
     def test_of_user_on_election(self):
         """ Test the Vote.of_user_on_election function. """

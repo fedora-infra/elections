@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
  (c) 2014 - Copyright Pierre-Yves Chibon
@@ -167,7 +167,6 @@ class FlaskAdmintests(ModelFlasktests):
                 'csrf_token': csrf_token,
             }
 
-
             output = self.app.post('/admin/new', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -202,7 +201,7 @@ class FlaskAdmintests(ModelFlasktests):
                 'input id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
             self.assertTrue(
-                '<td class="error">End date must be later than start date.</td>'
+                'class="error">End date must be later than start date.</td>'
                 in output.data)
 
             # Invalid: alias already taken
@@ -230,7 +229,6 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<td class="error">There is already another election with '
                 'this alias.</td>' in output.data)
-
 
             # Invalid: shortdesc already taken
             data = {
@@ -283,7 +281,6 @@ class FlaskAdmintests(ModelFlasktests):
                 '<a href="/admin/new_election/edit">' in output.data)
             self.assertTrue(
                 '<p>There are no candidates.</p>' in output.data)
-
 
     def test_admin_edit_election(self):
         """ Test the admin_edit_election function. """
