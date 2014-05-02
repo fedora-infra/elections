@@ -5,7 +5,7 @@
 
 ALTER TABLE elections ADD COLUMN voting_type VARCHAR(100) NOT NULL DEFAULT 'range';
 
-ALTER TABLE elections ADD COLUMN candidates_are_fasusers BOOLEAN NOT NULL DEFAULT false;
+-- ALTER TABLE elections ADD COLUMN candidates_are_fasusers BOOLEAN NOT NULL DEFAULT false;
 
 ALTER TABLE elections ADD COLUMN fas_user VARCHAR(50);
 
@@ -15,3 +15,7 @@ ALTER TABLE elections DROP COLUMN votes_per_user;
 
 
 -- ALTER TABLE elections RENAME COLUMN shortdesc TO summary;
+
+ALTER TABLE elections DROP COLUMN candidates_are_fasusers;
+
+ALTER TABLE elections RENAME COLUMN usefas TO candidates_are_fasusers;
