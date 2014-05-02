@@ -24,4 +24,5 @@ setup(
         'python-openid', 'python-openid-teams', 'python-openid-cla',
         'Flask-wtf', 'wtforms',
     ],
+    test_suite="tests",
 )
