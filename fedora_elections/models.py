@@ -39,9 +39,9 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     """
     engine = create_engine(db_url, echo=debug)
     BASE.metadata.create_all(engine)
-    #engine.execute(collection_package_create_view(driver=engine.driver))
+    # engine.execute(collection_package_create_view(driver=engine.driver))
     if db_url.startswith('sqlite:'):  # pragma: no cover
-        ## Ignore the warning about con_record
+        # Ignore the warning about con_record
         # pylint: disable=W0613
         def _fk_pragma_on_connect(dbapi_con, con_record):
             ''' Tries to enforce referential constraints on sqlite. '''
@@ -52,7 +52,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
         # then, load the Alembic configuration and generate the
         # version table, "stamping" it with the most recent rev:
 
-        ## Ignore the warning missing alembic
+        # Ignore the warning missing alembic
         # pylint: disable=F0401
         from alembic.config import Config
         from alembic import command
@@ -234,7 +234,10 @@ class Candidate(BASE):
     id = sa.Column(sa.Integer, primary_key=True)
     election_id = sa.Column(
         sa.Integer,
-        sa.ForeignKey('elections.id',  ondelete='RESTRICT', onupdate='CASCADE'),
+        sa.ForeignKey(
+            'elections.id',
+            ondelete='RESTRICT',
+            onupdate='CASCADE'),
         nullable=False)
     # FAS username if candidates_are_fasusers
     name = sa.Column(sa.Unicode(150), nullable=False)
@@ -293,7 +296,10 @@ class Vote(BASE):
     timestamp = sa.Column(sa.DateTime, nullable=False, default=safunc.now())
     candidate_id = sa.Column(
         sa.Integer,
-        sa.ForeignKey('candidates.id', ondelete='RESTRICT', onupdate='CASCADE'),
+        sa.ForeignKey(
+            'candidates.id',
+            ondelete='RESTRICT',
+            onupdate='CASCADE'),
         nullable=False)
     value = sa.Column(sa.Integer, nullable=False)
 
@@ -345,7 +351,7 @@ class Vote(BASE):
         ).filter(
             cls.election_id == election_id
         ).filter(
-                cls.value > 0
+            cls.value > 0
         ).count()
         stats['n_votes'] = n_votes
 

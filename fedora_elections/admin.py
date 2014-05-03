@@ -77,7 +77,7 @@ def admin_new_election():
             seats_elected=form.seats_elected.data,
             embargoed=int(form.embargoed.data),
             voting_type=form.voting_type.data,
-            candidates_are_fasusers=form.candidates_are_fasusers.data,
+            candidates_are_fasusers=int(form.candidates_are_fasusers.data),
             fas_user=flask.g.fas_user.username,
         )
 
@@ -135,6 +135,8 @@ def admin_edit_election(election_alias):
     form = forms.ElectionForm(election.id, obj=election)
     if form.validate_on_submit():
         form.embargoed.data = int(form.embargoed.data)
+        form.candidates_are_fasusers.data = int(
+            form.candidates_are_fasusers.data)
         form.populate_obj(election)
         SESSION.commit()
         fedmsgshim.publish(
@@ -203,7 +205,7 @@ def admin_add_multi_candidate(election_alias):
         candidates_name = []
         for entry in form.candidate.data.strip().split("|"):
             candidate = entry.split("!")
-            #No url
+            # No url
             if len(candidate) == 1:
                 cand = models.Candidate(
                     election=election,
