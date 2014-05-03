@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.0.1
+Version:        2.0.2
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -98,6 +98,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat May 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0.2-1
+- Update to 2.0.2
+- Fix is_safe_url method, imports were different here
+
 * Sat May 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0.1-1
 - Update to 2.0.1
 - Fix redirection after login
