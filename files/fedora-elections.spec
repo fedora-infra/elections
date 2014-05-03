@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.0
+Version:        2.0.1
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -98,6 +98,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat May 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0.1-1
+- Update to 2.0.1
+- Fix redirection after login
+
 * Wed Apr 09 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0-1
 - Clean up the spec with the changes made on the setup.py
 - Remove instanciated a sqlite database
