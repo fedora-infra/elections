@@ -75,9 +75,9 @@ def is_safe_url(target):
     """ Checks that the target url is safe and sending to the current
     website not some other malicious one.
     """
-    ref_url = urlparse.urlparse(flask.request.host_url)
-    test_url = urlparse.urlparse(
-        urlparse.urljoin(flask.request.host_url, target))
+    ref_url = urlparse(flask.request.host_url)
+    test_url = urlparse(
+        urljoin(flask.request.host_url, target))
     return test_url.scheme in ('http', 'https') and \
         ref_url.netloc == test_url.netloc
 
