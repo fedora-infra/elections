@@ -38,7 +38,8 @@ from fedora.client import AuthError, AppError
 from fedora.client.fas2 import AccountSystem
 from flask.ext.fas_openid import FAS
 
-import fedmsgshim
+import fedora_elections.fedmsgshim
+import fedora_elections.proxy
 
 APP = flask.Flask(__name__)
 APP.config.from_object('fedora_elections.default_config')
@@ -47,6 +48,7 @@ if 'FEDORA_ELECTIONS_CONFIG' in os.environ:  # pragma: no cover
 
 # set up FAS
 FAS = FAS(APP)
+APP.wsgi_app = fedora_elections.proxy.ReverseProxied(APP.wsgi_app)
 
 # FAS for usernames.
 FAS2 = AccountSystem(
