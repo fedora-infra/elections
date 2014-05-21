@@ -91,6 +91,14 @@ def vote(election_alias):
     if not isinstance(election, models.Election):
         return election
 
+    if election.legal_voters_list:
+        if len(set(flask.g.fas_user.groups).intersection(
+                set(election.legal_voters_list))) == 0:
+            flask.flash(
+                'You are not among the groups that are allowed to vote for this '
+                'election', 'error')
+            return safe_redirect_back()
+
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
 
