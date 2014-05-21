@@ -99,7 +99,7 @@ class FlaskElectionstests(ModelFlasktests):
                 '<li class="error">You need to be in one another group than '
                 'CLA to vote</li>' in output.data)
 
-        user = FakeUser(['packager'], username='pingou')
+        user = FakeUser(['voters'], username='pingou')
         with user_set(fedora_elections.APP, user):
 
             output = self.app.get('/vote/test_election')
@@ -142,7 +142,7 @@ class FlaskElectionstests(ModelFlasktests):
                 '<input type="submit" name="vote" value="Preview" />'
                 in output.data)
 
-        user = FakeUser(['packager'], username='toshio')
+        user = FakeUser(['voters'], username='toshio')
         with user_set(fedora_elections.APP, user):
 
             # Election in progress
@@ -164,7 +164,7 @@ class FlaskElectionstests(ModelFlasktests):
 
         self.setup_db()
 
-        user = FakeUser(['packager'], username='toshio')
+        user = FakeUser(['voters'], username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/vote/test_election3', follow_redirects=True)
@@ -172,7 +172,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'class="message">You have already voted in the election!</'
                 in output.data)
 
-        user = FakeUser(['packager'], username='pingou')
+        user = FakeUser(['voters'], username='pingou')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/vote/test_election3')
@@ -271,7 +271,7 @@ class FlaskElectionstests(ModelFlasktests):
 
         self.setup_db()
 
-        user = FakeUser(['packager'], username='pingou')
+        user = FakeUser(['voters'], username='pingou')
         with user_set(fedora_elections.APP, user):
             # Invalid candidate id
             data = {
