@@ -132,7 +132,7 @@ class FlaskElectionstests(ModelFlasktests):
     def test_vote_range(self):
         """ Test the vote_range function - the preview part. """
         output = self.app.get(
-            '/vote_range/test_election', follow_redirects=True)
+            '/vote/test_election', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
             '<title>OpenID transaction in progress</title>' in output.data
@@ -143,7 +143,7 @@ class FlaskElectionstests(ModelFlasktests):
         user = FakeUser([], username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
-                '/vote_range/test_election3', follow_redirects=True)
+                '/vote/test_election3', follow_redirects=True)
             self.assertTrue(
                 'class="message">You have already voted in the election!</'
                 in output.data)
@@ -151,13 +151,7 @@ class FlaskElectionstests(ModelFlasktests):
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
-                '/vote_range/test_election5')
-            self.assertTrue(
-                'be redirected automatically to target URL: '
-                '<a href="/vote_simple/test_election5">' in output.data)
-
-            output = self.app.get(
-                '/vote_range/test_election3')
+                '/vote/test_election3')
             self.assertTrue(
                 '<h2>test election 3 shortdesc</h2>' in output.data)
             self.assertTrue(
@@ -172,7 +166,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'name': 'Preview',
             }
 
-            output = self.app.post('/vote_range/test_election3', data=data)
+            output = self.app.post('/vote/test_election3', data=data)
             self.assertEqual(output.status_code, 400)
 
             # Invalid vote: too low
@@ -183,7 +177,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'name': 'Preview',
             }
 
-            output = self.app.post('/vote_range/test_election3', data=data)
+            output = self.app.post('/vote/test_election3', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h2>test election 3 shortdesc</h2>' in output.data)
@@ -199,7 +193,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'name': 'Preview',
             }
 
-            output = self.app.post('/vote_range/test_election3', data=data)
+            output = self.app.post('/vote/test_election3', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h2>test election 3 shortdesc</h2>' in output.data)
@@ -215,7 +209,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'name': 'Preview',
             }
 
-            output = self.app.post('/vote_range/test_election3', data=data)
+            output = self.app.post('/vote/test_election3', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h2>test election 3 shortdesc</h2>' in output.data)
@@ -231,7 +225,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'name': 'Preview',
             }
 
-            output = self.app.post('/vote_range/test_election3', data=data)
+            output = self.app.post('/vote/test_election3', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h2>test election 3 shortdesc</h2>' in output.data)
@@ -245,7 +239,7 @@ class FlaskElectionstests(ModelFlasktests):
     def test_vote_range_process(self):
         """ Test the vote_range function - the voting part. """
         output = self.app.get(
-            '/vote_range/test_election', follow_redirects=True)
+            '/vote/test_election', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
             '<title>OpenID transaction in progress</title>' in output.data
@@ -263,7 +257,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'name': 'Submit',
             }
 
-            output = self.app.post('/vote_range/test_election3', data=data)
+            output = self.app.post('/vote/test_election3', data=data)
             self.assertEqual(output.status_code, 400)
 
             # Invalid vote: too low
@@ -275,7 +269,7 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_range/test_election3', data=data, follow_redirects=True)
+                '/vote/test_election3', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">Invalid Ballot!</li' in output.data)
@@ -289,7 +283,7 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_range/test_election3', data=data, follow_redirects=True)
+                '/vote/test_election3', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">Invalid Ballot!</li' in output.data)
@@ -303,7 +297,7 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_range/test_election3', data=data, follow_redirects=True)
+                '/vote/test_election3', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">Invalid Ballot!</li' in output.data)
@@ -317,7 +311,7 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_range/test_election3', data=data, follow_redirects=True)
+                '/vote/test_election3', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 'class="message">Your vote has been recorded.  Thank you!</'
@@ -329,7 +323,7 @@ class FlaskElectionstests(ModelFlasktests):
     def test_vote_simple(self):
         """ Test the vote_simple function - the preview part. """
         output = self.app.get(
-            '/vote_simple/test_election', follow_redirects=True)
+            '/vote/test_election', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
             '<title>OpenID transaction in progress</title>' in output.data
@@ -340,20 +334,15 @@ class FlaskElectionstests(ModelFlasktests):
         user = FakeUser([], username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
-                '/vote_simple/test_election5', follow_redirects=True)
+                '/vote/test_election5', follow_redirects=True)
             self.assertTrue(
                 'class="message">You have already voted in the election!</'
                 in output.data)
 
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
-            output = self.app.get('/vote_simple/test_election3')
-            self.assertTrue(
-                'be redirected automatically to target URL: '
-                '<a href="/vote_range/test_election3">' in output.data)
-
             output = self.app.get(
-                '/vote_simple/test_election5')
+                '/vote/test_election5')
             self.assertTrue(
                 '<h2>test election 5 shortdesc</h2>' in output.data)
             self.assertTrue(
@@ -365,7 +354,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'name': 'Preview',
             }
 
-            output = self.app.post('/vote_simple/test_election5', data=data)
+            output = self.app.post('/vote/test_election5', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h2>test election 5 shortdesc</h2>' in output.data)
@@ -382,7 +371,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'name': 'Preview',
             }
 
-            output = self.app.post('/vote_simple/test_election5', data=data)
+            output = self.app.post('/vote/test_election5', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h2>test election 5 shortdesc</h2>' in output.data)
@@ -396,7 +385,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'name': 'Preview',
             }
 
-            output = self.app.post('/vote_simple/test_election5', data=data)
+            output = self.app.post('/vote/test_election5', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h2>test election 5 shortdesc</h2>' in output.data)
@@ -410,7 +399,7 @@ class FlaskElectionstests(ModelFlasktests):
     def test_vote_simple_process(self):
         """ Test the vote_simple function - the voting part. """
         output = self.app.get(
-            '/vote_simple/test_election', follow_redirects=True)
+            '/vote/test_election', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
             '<title>OpenID transaction in progress</title>' in output.data
@@ -427,7 +416,7 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_simple/test_election5', data=data,
+                '/vote/test_election5', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -441,7 +430,7 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_simple/test_election5', data=data,
+                '/vote/test_election5', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -455,7 +444,7 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_simple/test_election5', data=data,
+                '/vote/test_election5', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -468,7 +457,7 @@ class FlaskElectionstests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/vote_simple/test_election5', data=data,
+                '/vote/test_election5', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
