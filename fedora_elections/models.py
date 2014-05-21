@@ -245,8 +245,6 @@ class ElectionAdminGroup(BASE):
         ).first()
 
 
-
-
 class Candidate(BASE):
     __tablename__ = 'candidates'
 
