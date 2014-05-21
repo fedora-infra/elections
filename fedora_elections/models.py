@@ -112,6 +112,10 @@ class Election(BASE):
         )
 
     @property
+    def admin_groups_list(self):
+        return [grp.group_name for grp in self.admin_groups]
+
+    @property
     def status(self):
         now = datetime.utcnow()
         if now.date() < self.start_date.date():
@@ -226,6 +230,21 @@ class ElectionAdminGroup(BASE):
         ).filter(
             cls.election_id == election_id
         ).all()
+
+    @classmethod
+    def by_election_id_and_name(cls, session, election_id, group_name):
+        """ Return the ElectionAdminGroup having a specific election_id
+        and group_name.
+        """
+        return session.query(
+            cls
+        ).filter(
+            cls.election_id == election_id
+        ).filter(
+            cls.group_name == group_name
+        ).first()
+
+
 
 
 class Candidate(BASE):

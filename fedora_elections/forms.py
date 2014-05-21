@@ -59,6 +59,9 @@ class ElectionForm(wtf.Form):
 
     embargoed = wtforms.BooleanField('Embargo results?', default=True)
 
+    admin_grp = wtforms.TextField(
+        'Admin groups', [wtforms.validators.optional()])
+
     def __init__(form, election_id=None, *args, **kwargs):
         super(ElectionForm, form).__init__(*args, **kwargs)
         form._election_id = election_id
