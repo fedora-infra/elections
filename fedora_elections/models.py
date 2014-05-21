@@ -113,7 +113,7 @@ class Election(BASE):
 
     @property
     def admin_groups_list(self):
-        return [grp.group_name for grp in self.admin_groups]
+        return sorted([grp.group_name for grp in self.admin_groups])
 
     @property
     def status(self):
