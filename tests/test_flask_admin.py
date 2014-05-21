@@ -416,9 +416,9 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<li class="message">Election "test_election2" saved</li>'
                 in output.data)
-            # We edited the seats_elected from 1 to 2
             self.assertTrue(
                 '<li>Number elected: 2</li>' in output.data)
+            # We edited the admin groups
             self.assertTrue(
                 '<li>Admin groups: sysadmin-main, testers</li>'
                 in output.data)
@@ -445,11 +445,75 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<li class="message">Election "test_election2" saved</li>'
                 in output.data)
-            # We edited the seats_elected from 1 to 2
             self.assertTrue(
                 '<li>Number elected: 2</li>' in output.data)
+            # We edited the admin groups
             self.assertTrue(
                 '<li>Admin groups: sysadmin-main</li>'
+                in output.data)
+
+            # Edit LegalVoter Group
+
+            # Check election before edit
+            output = self.app.get('/admin/test_election3/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h3>Candidates</h3>' in output.data)
+            self.assertTrue('<li>Number elected: 1</li>' in output.data)
+            self.assertTrue('<li>Admin groups: </li>' in output.data)
+            self.assertTrue('<li>Legal voters: voters</li>' in output.data)
+
+            # Add a new admin group: sysadmin-main
+            data = {
+                'alias': 'test_election3',
+                'shortdesc': 'test election 3 shortdesc',
+                'description': 'test election 3 description',
+                'voting_type': 'range',
+                'url': 'https://fedoraproject.org',
+                'start_date': TODAY - timedelta(days=2),
+                'end_date': TODAY + timedelta(days=3),
+                'seats_elected': '1',
+                'candidates_are_fasusers': False,
+                'embargoed': False,
+                'lgl_voters': 'voters, sysadmin-main',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post(
+                '/admin/test_election3/edit', data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Election "test_election3" saved</li>'
+                in output.data)
+            # We edited the legal_voters
+            self.assertTrue(
+                '<li>Legal voters: sysadmin-main, voters</li>'
+                in output.data)
+
+            # Remove an existing group: voters
+            data = {
+                'alias': 'test_election3',
+                'shortdesc': 'test election 3 shortdesc',
+                'description': 'test election 3 description',
+                'voting_type': 'range',
+                'url': 'https://fedoraproject.org',
+                'start_date': TODAY - timedelta(days=2),
+                'end_date': TODAY + timedelta(days=3),
+                'seats_elected': '1',
+                'candidates_are_fasusers': False,
+                'embargoed': False,
+                'lgl_voters': 'sysadmin-main',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post(
+                '/admin/test_election3/edit', data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Election "test_election3" saved</li>'
+                in output.data)
+            # We edited the legal_voters
+            self.assertTrue(
+                '<li>Legal voters: sysadmin-main</li>'
                 in output.data)
 
     def test_admin_add_candidate(self):
