@@ -129,7 +129,7 @@ class Flasktests(ModelFlasktests):
             )
             flask.g.fas_user = FakeUser(
                 fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'])
-            self.assertFalse(fedora_elections.is_election_admin(
+            self.assertTrue(fedora_elections.is_election_admin(
                 flask.g.fas_user, 1))
 
     def test_auth_login(self):
