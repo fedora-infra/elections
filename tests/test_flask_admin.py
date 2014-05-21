@@ -269,6 +269,7 @@ class FlaskAdmintests(ModelFlasktests):
                 'seats_elected': 2,
                 'candidates_are_fasusers': False,
                 'embargoed': True,
+                'admin_grp': 'testers, sysadmin-main,,',
                 'csrf_token': csrf_token,
             }
 
@@ -282,6 +283,9 @@ class FlaskAdmintests(ModelFlasktests):
                 '<a href="/admin/new_election/edit">' in output.data)
             self.assertTrue(
                 '<p>There are no candidates.</p>' in output.data)
+            self.assertTrue(
+                '<li>Admin groups: sysadmin-main, testers</li>'
+                in output.data)
 
     def test_admin_edit_election(self):
         """ Test the admin_edit_election function. """
