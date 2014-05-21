@@ -44,6 +44,12 @@ def login_required(f):
         if not is_authenticated():
             return flask.redirect(flask.url_for(
                 'auth_login', next=flask.request.url))
+        elif not flask.g.fas_user.cla_done:
+            flask.flash(
+                'You need to be in one another group than CLA to vote',
+                'error')
+            return flask.redirect(flask.url_for('index'))
+
         return f(*args, **kwargs)
     return decorated_function
 
