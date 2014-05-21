@@ -48,7 +48,7 @@ def login_required(f):
             flask.flash(
                 'You need to be in one another group than CLA to vote',
                 'error')
-            return flask.redirect(flask.url_for('index'))
+            return safe_redirect_back()
 
         return f(*args, **kwargs)
     return decorated_function
