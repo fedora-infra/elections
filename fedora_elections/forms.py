@@ -59,6 +59,9 @@ class ElectionForm(wtf.Form):
 
     embargoed = wtforms.BooleanField('Embargo results?', default=True)
 
+    lgl_voters = wtforms.TextField(
+        'Legal voters groups', [wtforms.validators.optional()])
+
     admin_grp = wtforms.TextField(
         'Admin groups', [wtforms.validators.optional()])
 
