@@ -98,11 +98,12 @@ def admin_new_election():
 
         # Add legal voters groups if there are any
         for voter_grp in form.lgl_voters.data.split(','):
-            lglvoters = models.LegalVoter(
-                election=election,
-                group_name=voter_grp
-            )
-            SESSION.add(lglvoters)
+            if voter_grp.strip():
+                lglvoters = models.LegalVoter(
+                    election=election,
+                    group_name=voter_grp
+                )
+                SESSION.add(lglvoters)
 
         SESSION.commit()
 
