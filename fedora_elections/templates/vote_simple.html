@@ -6,7 +6,7 @@
 
 <p><a href="{{election.url}}">[More Information]</a></p>
 
-<form action="" method="post">
+<form action="{{ url_for('vote', election_alias=election.alias) }}" method="post">
   <table border="0" cellpadding="1">
     {% for candidate in election.candidates|sort %}
       <tr>
