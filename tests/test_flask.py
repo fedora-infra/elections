@@ -138,6 +138,22 @@ class Flasktests(ModelFlasktests):
             self.assertTrue(fedora_elections.is_election_admin(
                 flask.g.fas_user, 1))
 
+        self.setup_db()
+
+        with app.test_request_context():
+            flask.g.fas_user = FakeUser('testers')
+            # This is user is not an admin for election #1
+            self.assertFalse(
+                fedora_elections.is_election_admin(
+                    flask.g.fas_user, 1)
+            )
+
+            # This is user is an admin for election #2
+            self.assertTrue(
+                fedora_elections.is_election_admin(
+                    flask.g.fas_user, 2)
+            )
+
     def test_auth_login(self):
         """ Test the auth_login function. """
         app = flask.Flask('fedora_elections')
