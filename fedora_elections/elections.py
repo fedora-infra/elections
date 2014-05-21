@@ -101,9 +101,6 @@ def vote(election_alias):
             'Unknown election voting type: %s' % election.voting_type)
         return safe_redirect_back()
 
-
-@APP.route('/vote_range/<election_alias>', methods=['GET', 'POST'])
-@login_required
 def vote_range(election_alias):
     election = get_valid_election(election_alias)
 
@@ -200,8 +197,6 @@ def vote_range(election_alias):
         nextaction=next_action)
 
 
-@APP.route('/vote_simple/<election_alias>', methods=['GET', 'POST'])
-@login_required
 def vote_simple(election_alias):
     election = get_valid_election(election_alias)
 

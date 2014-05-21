@@ -23,11 +23,7 @@
         <td>
           {% if election.status == "In progress" %}
             {% if election not in voted %}
-              {% if election.voting_type == 'range' %}
-                <a href="{{ url_for('vote_range', election_alias=election.alias) }}">
-              {% elif election.voting_type == 'simple' %}
-                <a href="{{ url_for('vote_simple', election_alias=election.alias) }}">
-              {% endif %}
+              <a href="{{ url_for('vote', election_alias=election.alias) }}">
               Vote now!
               </a>
             {% endif %}
