@@ -385,6 +385,23 @@ class FlaskAdmintests(ModelFlasktests):
                 '<p>3 candidates found</p>'
                 in output.data)
 
+    def test_admin_edit_election_admin_groups(self):
+        """ Test the admin_edit_election function when editing admin groups. """
+        user = FakeUser(
+            fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
+            username='toshio')
+        with user_set(fedora_elections.APP, user):
+            output = self.app.get('/admin/test_election/edit')
+            self.assertEqual(output.status_code, 404)
+
+        self.setup_db()
+
+        with user_set(fedora_elections.APP, user):
+            output = self.app.get('/admin/test_election2/edit')
+            self.assertEqual(output.status_code, 200)
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
             # Edit Admin Group
 
             # Check election before edit
@@ -452,6 +469,22 @@ class FlaskAdmintests(ModelFlasktests):
                 '<li>Admin groups: sysadmin-main</li>'
                 in output.data)
 
+    def test_admin_edit_election_legal_voters(self):
+        """ Test the admin_edit_election function when editing legal voters. """
+        user = FakeUser(
+            fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
+            username='toshio')
+        with user_set(fedora_elections.APP, user):
+            output = self.app.get('/admin/test_election/edit')
+            self.assertEqual(output.status_code, 404)
+
+        self.setup_db()
+
+        with user_set(fedora_elections.APP, user):
+            output = self.app.get('/admin/test_election3/edit')
+            self.assertEqual(output.status_code, 200)
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
             # Edit LegalVoter Group
 
             # Check election before edit
