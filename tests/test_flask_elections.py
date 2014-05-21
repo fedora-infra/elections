@@ -55,7 +55,7 @@ class FlaskElectionstests(ModelFlasktests):
             '<title>OpenID transaction in progress</title>' in output.data
             or 'discoveryfailure' in output.data)
 
-        user = FakeUser([], username='pingou')
+        user = FakeUser(['packager'], username='pingou')
         with user_set(fedora_elections.APP, user):
             output = self.app.get('/vote/test_election')
             self.assertEqual(output.status_code, 302)
@@ -84,10 +84,10 @@ class FlaskElectionstests(ModelFlasktests):
             output = self.app.get(
                 '/vote/test_election', follow_redirects=True)
             self.assertTrue(
-                '<li class="error">You need to be in one another group than '
-                'CLA to vote</li>' in output.data)
+                '<li class="error">You must sign the CLA to vote</li>'
+                in output.data)
 
-        user = FakeUser([], username='pingou')
+        user = FakeUser(['packager'], username='pingou')
         with user_set(fedora_elections.APP, user):
 
             output = self.app.get('/vote/test_election')
@@ -130,7 +130,7 @@ class FlaskElectionstests(ModelFlasktests):
                 '<input type="submit" name="vote" value="Preview" />'
                 in output.data)
 
-        user = FakeUser([], username='toshio')
+        user = FakeUser(['packager'], username='toshio')
         with user_set(fedora_elections.APP, user):
 
             # Election in progress
@@ -152,7 +152,7 @@ class FlaskElectionstests(ModelFlasktests):
 
         self.setup_db()
 
-        user = FakeUser([], username='toshio')
+        user = FakeUser(['packager'], username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/vote/test_election3', follow_redirects=True)
@@ -160,7 +160,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'class="message">You have already voted in the election!</'
                 in output.data)
 
-        user = FakeUser([], username='pingou')
+        user = FakeUser(['packager'], username='pingou')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/vote/test_election3')
@@ -259,7 +259,7 @@ class FlaskElectionstests(ModelFlasktests):
 
         self.setup_db()
 
-        user = FakeUser([], username='pingou')
+        user = FakeUser(['packager'], username='pingou')
         with user_set(fedora_elections.APP, user):
             # Invalid candidate id
             data = {
@@ -343,7 +343,7 @@ class FlaskElectionstests(ModelFlasktests):
 
         self.setup_db()
 
-        user = FakeUser([], username='toshio')
+        user = FakeUser(['packager'], username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/vote/test_election5', follow_redirects=True)
@@ -351,7 +351,7 @@ class FlaskElectionstests(ModelFlasktests):
                 'class="message">You have already voted in the election!</'
                 in output.data)
 
-        user = FakeUser([], username='pingou')
+        user = FakeUser(['packager'], username='pingou')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/vote/test_election5')
@@ -419,7 +419,7 @@ class FlaskElectionstests(ModelFlasktests):
 
         self.setup_db()
 
-        user = FakeUser([], username='pingou')
+        user = FakeUser(['packager'], username='pingou')
         with user_set(fedora_elections.APP, user):
             # Invalid candidate id
             data = {
@@ -508,7 +508,7 @@ class FlaskElectionstests(ModelFlasktests):
             'pending formal announcement.</li>' in output.data)
         self.assertTrue('<h3>Current elections</h3>' in output.data)
 
-        user = FakeUser([], username='toshio')
+        user = FakeUser(['packager'], username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/results/test_election2', follow_redirects=True)
@@ -541,9 +541,7 @@ class FlaskElectionstests(ModelFlasktests):
                 '<h3>Some statistics about this election</h3>'
                 in output.data)
 
-        user = FakeUser(
-            ['gitr2spec'],
-            username='kevin')
+        user = FakeUser(['gitr2spec'], username='kevin')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/results/test_election3', follow_redirects=True)
