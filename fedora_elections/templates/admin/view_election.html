@@ -16,6 +16,7 @@
     <li>Number elected: {{ election.seats_elected }}</li>
     <li>Election type: {{ election.voting_type }}</li>
     <li>Admin groups: {{ election.admin_groups_list | join(', ') }}</li>
+    <li>Legal voters: {{ election.legal_voters_list | join(', ') }}</li>
   </ul>
   <h3>Candidates</h3>
   {% if election.candidates.all() %}
