@@ -52,7 +52,8 @@ class FlaskAdmintests(ModelFlasktests):
         output = self.app.get('/admin/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title>OpenID transaction in progress</title>' in output.data)
+            '<title>OpenID transaction in progress</title>' in output.data
+            or 'discoveryfailure' in output.data)
 
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
