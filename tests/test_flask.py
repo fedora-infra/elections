@@ -154,6 +154,15 @@ class Flasktests(ModelFlasktests):
                     flask.g.fas_user, 2)
             )
 
+    def test_is_safe_url(self):
+        """ Test the is_safe_url function. """
+        app = flask.Flask('fedora_elections')
+        with app.test_request_context():
+            self.assertFalse(
+                fedora_elections.is_safe_url('https://google.fr'))
+            self.assertTrue(
+                fedora_elections.is_safe_url('/admin/'))
+
     def test_auth_login(self):
         """ Test the auth_login function. """
         app = flask.Flask('fedora_elections')
