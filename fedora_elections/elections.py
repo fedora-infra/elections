@@ -46,6 +46,10 @@ def login_required(f):
                 'auth_login', next=flask.request.url))
         elif not flask.g.fas_user.cla_done:
             flask.flash(
+                'You must sign the CLA to vote', 'error')
+            return safe_redirect_back()
+        elif len(flask.g.fas_user.groups) == 0:
+            flask.flash(
                 'You need to be in one another group than CLA to vote',
                 'error')
             return safe_redirect_back()
