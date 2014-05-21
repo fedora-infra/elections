@@ -5,13 +5,24 @@
   {% if election.url %}
     <p><a href="{{ election.url }}">[More Information]</a></p>
   {% endif %}
-  <table border="1" cellpadding="1">
+  <table id="results">
       <tr>
           <th>Candidate</th>
           <th title="Number of votes received">Votes</th>
       </tr>
-    {% for candidate in election.candidates|sort(attribute='vote_count',reverse=True) %}
-      <tr>
+
+
+    {% for candidate in election.candidates|sort(attribute='vote_count', reverse=True) %}
+    {% if loop.index <= election.seats_elected %}
+    {% set flag = False %}
+    {% set votes = candidate.vote_count %}
+    {% elif loop.index > election.seats_elected and votes > candidate.vote_count and not flag %}
+    {% set flag = True %}
+    {% set lastrow = True %}
+    {% else %}
+    {% set lastrow = False %}
+    {% endif %}
+    <tr class="{% if lastrow == True %}firstout{% endif %} {{ loop.cycle('row_odd', 'row_even') }}">
         <td>
           {% if election.candidates_are_fasusers %}
             {{ usernamemap[candidate.id] }}
@@ -30,6 +41,10 @@
   <section class="stats">
       <h3>Some statistics about this election</h3>
       <table>
+          <tr>
+              <th>Number of seats elections</th>
+              <td>{{ election.seats_elected }}</td>
+          </tr>
           <tr>
               <th>Number of voters</th>
               <td>{{ stats['n_voters'] }}</td>
