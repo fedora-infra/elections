@@ -112,6 +112,12 @@ class Flasktests(ModelFlasktests):
                 fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'])
             self.assertTrue(fedora_elections.is_admin(flask.g.fas_user))
 
+            fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'] = [
+                'sysadmin-main', 'sysadmin-elections']
+            flask.g.fas_user = FakeUser(
+                fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'])
+            self.assertTrue(fedora_elections.is_admin(flask.g.fas_user))
+
     def test_is_election_admin(self):
         """ Test the is_election_admin function. """
         app = flask.Flask('fedora_elections')
