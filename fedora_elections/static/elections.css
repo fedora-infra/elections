@@ -49,6 +49,15 @@ body#admin table {
     padding-top:2em;
 }
 
+#results .firstout tr,
+#results .firstout td {
+    border-top: 2px solid red !important;
+}
+
+.row_even, .row_even td {
+    background-color: #F0F0F0;
+}
+
 #content {
     float:left;
     width:74%px;
