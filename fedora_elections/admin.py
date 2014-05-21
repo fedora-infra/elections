@@ -87,12 +87,22 @@ def admin_new_election():
                                              time(23, 59, 59))
         SESSION.add(election)
 
+        # Add admin groups if there are any
         for admin_grp in form.admin_grp.data.split(','):
-            admin = models.ElectionAdminGroup(
+            if admin_grp.strip():
+                admin = models.ElectionAdminGroup(
+                    election=election,
+                    group_name=admin_grp.strip(),
+                )
+                SESSION.add(admin)
+
+        # Add legal voters groups if there are any
+        for voter_grp in form.lgl_voters.data.split(','):
+            lglvoters = models.LegalVoter(
                 election=election,
-                group_name=admin_grp.strip(),
+                group_name=voter_grp
             )
-            SESSION.add(admin)
+            SESSION.add(lglvoters)
 
         SESSION.commit()
 
@@ -145,7 +155,7 @@ def admin_edit_election(election_alias):
         new_groups = set(
             [grp.strip() for grp in form.admin_grp.data.split(',')])
 
-        # Add the new groups
+        # Add the new admin groups
         for admin_grp in new_groups.difference(admin_groups):
             admin = models.ElectionAdminGroup(
                 election=election,
@@ -153,10 +163,30 @@ def admin_edit_election(election_alias):
             )
             SESSION.add(admin)
 
-        # Remove the groups that were removed with this edition
+        # Remove the admin groups that were removed with this edition
         for admin_grp in admin_groups.difference(new_groups):
             admingrp = models.ElectionAdminGroup.by_election_id_and_name(
                 SESSION, election.id, admin_grp)
+            SESSION.delete(admingrp)
+
+        legal_voters = set(election.legal_voters_list)
+
+        new_lgl_voters_groups = set(
+            [grp.strip() for grp in form.lgl_voters.data.split(',')
+             if grp.strip()])
+
+        # Add the new legal voter groups
+        for lgl_grp in new_lgl_voters_groups.difference(legal_voters):
+            admin = models.LegalVoter(
+                election=election,
+                group_name=lgl_grp,
+            )
+            SESSION.add(admin)
+
+        # Remove the legal voter groups that were removed with this edition
+        for lgl_grp in legal_voters.difference(new_lgl_voters_groups):
+            admingrp = models.LegalVoter.by_election_id_and_name(
+                SESSION, election.id, lgl_grp)
             SESSION.delete(admingrp)
 
         SESSION.commit()
@@ -172,6 +202,7 @@ def admin_edit_election(election_alias):
             'admin_view_election', election_alias=election.alias))
 
     form.admin_grp.data = ', '.join(election.admin_groups_list)
+    form.lgl_voters.data = ', '.join(election.legal_voters_list)
     return flask.render_template(
         'admin/election_form.html',
         form=form,

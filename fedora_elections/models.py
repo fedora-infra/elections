@@ -116,6 +116,10 @@ class Election(BASE):
         return sorted([grp.group_name for grp in self.admin_groups])
 
     @property
+    def legal_voters_list(self):
+        return sorted([grp.group_name for grp in self.legal_voters])
+
+    @property
     def status(self):
         now = datetime.utcnow()
         if now.date() < self.start_date.date():
@@ -297,6 +301,19 @@ class LegalVoter(BASE):
         'Election', backref=backref('legal_voters', lazy='dynamic'))
     # special names:
     #     "cla + one" = cla_done + 1 non-cla group
+
+    @classmethod
+    def by_election_id_and_name(cls, session, election_id, group_name):
+        """ Return the ElectionAdminGroup having a specific election_id
+        and group_name.
+        """
+        return session.query(
+            cls
+        ).filter(
+            cls.election_id == election_id
+        ).filter(
+            cls.group_name == group_name
+        ).first()
 
 
 class Vote(BASE):
