@@ -87,6 +87,18 @@ class FlaskElectionstests(ModelFlasktests):
                 '<li class="error">You must sign the CLA to vote</li>'
                 in output.data)
 
+        user = FakeUser([], username='pingou')
+        with user_set(fedora_elections.APP, user):
+
+            output = self.app.get('/vote/test_election')
+            self.assertEqual(output.status_code, 302)
+
+            output = self.app.get(
+                '/vote/test_election', follow_redirects=True)
+            self.assertTrue(
+                '<li class="error">You need to be in one another group than '
+                'CLA to vote</li>' in output.data)
+
         user = FakeUser(['packager'], username='pingou')
         with user_set(fedora_elections.APP, user):
 
