@@ -81,6 +81,15 @@ class Electiontests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
+        # Add an AdminGroup to election #2
+        admin = models.ElectionAdminGroup(
+            election=obj,
+            group_name='testers',
+        )
+        self.session.add(admin)
+        self.session.commit()
+        self.assertNotEqual(obj, admin)
+
         # Election open
         obj = models.Election(  # id:3
             shortdesc='test election 3 shortdesc',

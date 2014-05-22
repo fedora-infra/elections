@@ -107,6 +107,8 @@ def is_election_admin(user, election_id):
         return False
     if not user.cla_done or len(user.groups) < 1:
         return False
+    if is_admin(user):
+        return True
 
     admingroups = [
         group.group_name

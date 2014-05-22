@@ -87,11 +87,12 @@ def admin_new_election():
                                              time(23, 59, 59))
         SESSION.add(election)
 
-        admin = models.ElectionAdminGroup(
-            election=election,
-            group_name=APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
-        )
-        SESSION.add(admin)
+        for admin_grp in form.admin_grp.data.split(','):
+            admin = models.ElectionAdminGroup(
+                election=election,
+                group_name=admin_grp.strip(),
+            )
+            SESSION.add(admin)
 
         SESSION.commit()
 
@@ -138,6 +139,26 @@ def admin_edit_election(election_alias):
         form.candidates_are_fasusers.data = int(
             form.candidates_are_fasusers.data)
         form.populate_obj(election)
+
+        admin_groups = set(election.admin_groups_list)
+
+        new_groups = set(
+            [grp.strip() for grp in form.admin_grp.data.split(',')])
+
+        # Add the new groups
+        for admin_grp in new_groups.difference(admin_groups):
+            admin = models.ElectionAdminGroup(
+                election=election,
+                group_name=admin_grp,
+            )
+            SESSION.add(admin)
+
+        # Remove the groups that were removed with this edition
+        for admin_grp in admin_groups.difference(new_groups):
+            admingrp = models.ElectionAdminGroup.by_election_id_and_name(
+                SESSION, election.id, admin_grp)
+            SESSION.delete(admingrp)
+
         SESSION.commit()
         fedmsgshim.publish(
             topic="election.edit",
@@ -150,6 +171,7 @@ def admin_edit_election(election_alias):
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
+    form.admin_grp.data = ', '.join(election.admin_groups_list)
     return flask.render_template(
         'admin/election_form.html',
         form=form,

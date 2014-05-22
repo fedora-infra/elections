@@ -112,6 +112,12 @@ class Flasktests(ModelFlasktests):
                 fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'])
             self.assertTrue(fedora_elections.is_admin(flask.g.fas_user))
 
+            fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'] = [
+                'sysadmin-main', 'sysadmin-elections']
+            flask.g.fas_user = FakeUser(
+                fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'])
+            self.assertTrue(fedora_elections.is_admin(flask.g.fas_user))
+
     def test_is_election_admin(self):
         """ Test the is_election_admin function. """
         app = flask.Flask('fedora_elections')
@@ -129,8 +135,33 @@ class Flasktests(ModelFlasktests):
             )
             flask.g.fas_user = FakeUser(
                 fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'])
-            self.assertFalse(fedora_elections.is_election_admin(
+            self.assertTrue(fedora_elections.is_election_admin(
                 flask.g.fas_user, 1))
+
+        self.setup_db()
+
+        with app.test_request_context():
+            flask.g.fas_user = FakeUser('testers')
+            # This is user is not an admin for election #1
+            self.assertFalse(
+                fedora_elections.is_election_admin(
+                    flask.g.fas_user, 1)
+            )
+
+            # This is user is an admin for election #2
+            self.assertTrue(
+                fedora_elections.is_election_admin(
+                    flask.g.fas_user, 2)
+            )
+
+    def test_is_safe_url(self):
+        """ Test the is_safe_url function. """
+        app = flask.Flask('fedora_elections')
+        with app.test_request_context():
+            self.assertFalse(
+                fedora_elections.is_safe_url('https://google.fr'))
+            self.assertTrue(
+                fedora_elections.is_safe_url('/admin/'))
 
     def test_auth_login(self):
         """ Test the auth_login function. """

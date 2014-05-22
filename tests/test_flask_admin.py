@@ -52,7 +52,8 @@ class FlaskAdmintests(ModelFlasktests):
         output = self.app.get('/admin/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title>OpenID transaction in progress</title>' in output.data)
+            '<title>OpenID transaction in progress</title>' in output.data
+            or 'discoveryfailure' in output.data)
 
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
@@ -382,6 +383,73 @@ class FlaskAdmintests(ModelFlasktests):
                 '<li>Number elected: 2</li>' in output.data)
             self.assertTrue(
                 '<p>3 candidates found</p>'
+                in output.data)
+
+            # Edit Admin Group
+
+            # Check election before edit
+            output = self.app.get('/admin/test_election2/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h3>Candidates</h3>' in output.data)
+            self.assertTrue('<li>Number elected: 1</li>' in output.data)
+            self.assertTrue('<li>Admin groups: testers</li>' in output.data)
+
+            # Add a new admin group: sysadmin-main
+            data = {
+                'alias': 'test_election2',
+                'shortdesc': 'test election 2 shortdesc',
+                'description': 'test election 2 description',
+                'voting_type': 'range',
+                'url': 'https://fedoraproject.org',
+                'start_date': TODAY - timedelta(days=7),
+                'end_date': TODAY - timedelta(days=5),
+                'seats_elected': '2',
+                'candidates_are_fasusers': False,
+                'embargoed': False,
+                'admin_grp': 'testers, sysadmin-main',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post(
+                '/admin/test_election2/edit', data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Election "test_election2" saved</li>'
+                in output.data)
+            # We edited the seats_elected from 1 to 2
+            self.assertTrue(
+                '<li>Number elected: 2</li>' in output.data)
+            self.assertTrue(
+                '<li>Admin groups: sysadmin-main, testers</li>'
+                in output.data)
+
+            # Remove an existing group: testers
+            data = {
+                'alias': 'test_election2',
+                'shortdesc': 'test election 2 shortdesc',
+                'description': 'test election 2 description',
+                'voting_type': 'range',
+                'url': 'https://fedoraproject.org',
+                'start_date': TODAY - timedelta(days=7),
+                'end_date': TODAY - timedelta(days=5),
+                'seats_elected': '2',
+                'candidates_are_fasusers': False,
+                'embargoed': False,
+                'admin_grp': 'sysadmin-main',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post(
+                '/admin/test_election2/edit', data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Election "test_election2" saved</li>'
+                in output.data)
+            # We edited the seats_elected from 1 to 2
+            self.assertTrue(
+                '<li>Number elected: 2</li>' in output.data)
+            self.assertTrue(
+                '<li>Admin groups: sysadmin-main</li>'
                 in output.data)
 
     def test_admin_add_candidate(self):
