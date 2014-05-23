@@ -93,33 +93,18 @@ def vote(election_alias):
         return safe_redirect_back()
 
     if election.voting_type == 'range':
-        return vote_range(election_alias)
+        return vote_range(election)
     elif election.voting_type == 'simple':
-        return vote_simple(election_alias)
+        return vote_simple(election)
     else:  # pragma: no cover
         flask.flash(
             'Unknown election voting type: %s' % election.voting_type)
         return safe_redirect_back()
 
 
-@APP.route('/vote_range/<election_alias>', methods=['GET', 'POST'])
-@login_required
-def vote_range(election_alias):
-    election = get_valid_election(election_alias)
-
-    if not isinstance(election, models.Election):  # pragma: no cover
-        return election
-
-    if (election.voting_type == 'simple'):
-        return flask.redirect(flask.url_for(
-            'vote_simple', election_alias=election_alias))
-
+def vote_range(election):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
-
-    if votes > 0:
-        flask.flash('You have already voted in the election!')
-        return safe_redirect_back()
 
     num_candidates = election.candidates.count()
 
@@ -200,24 +185,9 @@ def vote_range(election_alias):
         nextaction=next_action)
 
 
-@APP.route('/vote_simple/<election_alias>', methods=['GET', 'POST'])
-@login_required
-def vote_simple(election_alias):
-    election = get_valid_election(election_alias)
-
-    if not isinstance(election, models.Election):  # pragma: no cover
-        return election
-
-    if (election.voting_type == 'range'):
-        return flask.redirect(flask.url_for(
-            'vote_range', election_alias=election_alias))
-
+def vote_simple(election):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
-
-    if (votes != 0):
-        flask.flash('You have already voted in the election!')
-        return safe_redirect_back()
 
     num_candidates = election.candidates.count()
     next_action = 'vote'
