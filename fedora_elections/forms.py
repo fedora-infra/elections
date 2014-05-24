@@ -137,6 +137,6 @@ def get_simple_voting_form(candidates, max_range):
         'Candidates',
         choices=titles
     )
-    setattr(SimpleVoting, 'candidates', field)
+    setattr(SimpleVoting, 'candidate', field)
 
     return SimpleVoting()
