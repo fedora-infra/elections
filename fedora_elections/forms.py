@@ -116,7 +116,7 @@ def get_voting_range_form(candidates, max_range):
             title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
         field = wtforms.SelectField(
             title,
-            choices=[(str(item), item) for item in range(max_range)]
+            choices=[(str(item), item) for item in range(max_range + 1)]
         )
         setattr(VotingRange, candidate.name, field)
 
