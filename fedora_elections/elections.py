@@ -200,7 +200,7 @@ def vote_simple(election):
                     election_id=election.id,
                     voter=flask.g.fas_user.username,
                     timestamp=datetime.now(),
-                    candidate_id=cand_name[candidate.data],
+                    candidate_id=candidate.data,
                     value=1,
                 )
                 SESSION.add(new_vote)
