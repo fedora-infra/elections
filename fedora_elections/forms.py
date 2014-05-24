@@ -112,8 +112,8 @@ def get_range_voting_form(candidates, max_range):
 
     for candidate in candidates:
         title = candidate.name
-        #if candidate.url:
-            #title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
+        if candidate.url:
+            title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
         field = wtforms.SelectField(
             title,
             choices=[(str(item), item) for item in range(max_range + 1)]
@@ -130,9 +130,9 @@ def get_simple_voting_form(candidates, max_range):
     titles = []
     for candidate in candidates:
         title = candidate.name
-        #if candidate.url:
-            #title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
-        titles.append((title, title))
+        if candidate.url:
+            title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
+        titles.append((str(candidate.id), title))
     field = wtforms.RadioField(
         'Candidates',
         choices=titles
