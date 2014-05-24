@@ -183,51 +183,38 @@ def vote_simple(election):
         SESSION, flask.g.fas_user.username, election.id, count=True)
 
     num_candidates = election.candidates.count()
-    next_action = 'vote'
-    candidate_id = -1
 
-    if flask.request.method == 'POST':
-        next_action = ''
-        form_values = flask.request.form.values()
-        if 'Submit' in form_values:
-            try:
-                candidates_id = [cand.id for cand in election.candidates]
-                candidate_id = int(flask.request.form['candidate'])
-            except ValueError:
-                flask.flash("Invalid Ballot!", "error")
-                return safe_redirect_back()
-            if candidate_id not in candidates_id:
-                flask.flash("Invalid vote, this candidate is not listed for "
-                            "this election", "error")
-                return safe_redirect_back()
+    cand_name = {}
+    for candidate in election.candidates:
+        cand_name[candidate.name] = candidate.id
+    next_action = 'confirm'
 
-            new_vote = models.Vote(
-                election_id=election.id,
-                voter=flask.g.fas_user.username,
-                timestamp=datetime.now(),
-                candidate_id=candidate_id,
-                value=1
-            )
-            SESSION.add(new_vote)
+    form = forms.get_simple_voting_form(
+        candidates=election.candidates,
+        max_range=num_candidates)
+
+    if form.validate_on_submit():
+        if form.action.data == 'submit':
+            for candidate in form:
+                if candidate.short_name in ['csrf_token', 'action']:
+                    continue
+
+                new_vote = models.Vote(
+                    election_id=election.id,
+                    voter=flask.g.fas_user.username,
+                    timestamp=datetime.now(),
+                    candidate_id=cand_name[candidate.data],
+                    value=1,
+                )
+                SESSION.add(new_vote)
             SESSION.commit()
 
             flask.flash("Your vote has been recorded.  Thank you!")
             return safe_redirect_back()
 
-        elif 'Preview' in form_values:
-            if ('candidate' in flask.request.form):
-                try:
-                    candidate_id = int(flask.request.form['candidate'])
-                    flask.flash("Please confirm your vote!")
-                except ValueError:
-                    next_action = 'vote'
-                    flask.flash("Invalid data")
-            else:
-                flask.flash("Please vote for a candidate")
-                next_action = 'vote'
-
-        if (next_action != 'vote'):
-            next_action = 'confirm'
+        if form.action.data == 'preview':
+            flask.flash("Please confirm your vote!")
+            next_action = 'vote'
 
     usernamemap = {}
     if (election.candidates_are_fasusers):  # pragma: no cover
@@ -242,9 +229,9 @@ def vote_simple(election):
     return flask.render_template(
         'vote_simple.html',
         election=election,
+        form=form,
         num_candidates=num_candidates,
         usernamemap=usernamemap,
-        candidate_id=candidate_id,
         nextaction=next_action)
 
 
