@@ -12,7 +12,8 @@
   <table border="1" cellpadding="1">
     {% for field in form if field.widget.input_type != 'hidden' %}
     {% if nextaction == 'vote' %}
-      {{ render_field_data_in_row(field, num_candidates=num_candidates) }}
+      {{ render_field_data_in_row(
+          field, num_candidates=num_candidates, usernamemap=usernamemap) }}
     {% else %}
       {{ render_field_in_row(field) }}
     {% endif %}
