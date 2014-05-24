@@ -126,35 +126,28 @@ def vote_range(election):
 
     num_candidates = election.candidates.count()
 
-    uvotes = {}
+    cand_name = {}
     for candidate in election.candidates:
-        uvotes[candidate.id] = ""
-    next_action = 'vote'
+        cand_name[candidate.name] = candidate.id
+    next_action = 'confirm'
 
-    if flask.request.method == 'POST':
-        next_action = ''
-        form_values = flask.request.form.values()
-        if 'Submit' in form_values:
-            for candidate in election.candidates:
-                try:
-                    vote = int(flask.request.form[str(candidate.id)])
-                    if vote >= 0 and vote <= num_candidates:
-                        uvotes[candidate.id] = int(vote)
-                    else:
-                        flask.flash("Invalid Ballot!")
-                        return safe_redirect_back()
+    form = forms.get_voting_range_form(
+        candidates=election.candidates,
+        max_range=num_candidates)
 
-                except ValueError:
-                    flask.flash("Invalid Ballot!")
-                    return safe_redirect_back()
+    if form.validate_on_submit():
 
-            for uvote in uvotes:
+        if form.action.data == 'submit':
+            for candidate in form:
+                if candidate.short_name in ['csrf_token', 'action']:
+                    continue
+
                 new_vote = models.Vote(
                     election_id=election.id,
                     voter=flask.g.fas_user.username,
                     timestamp=datetime.now(),
-                    candidate_id=uvote,
-                    value=uvotes[uvote]
+                    candidate_id=cand_name[candidate.short_name],
+                    value=candidate.data,
                 )
                 SESSION.add(new_vote)
             SESSION.commit()
@@ -162,27 +155,9 @@ def vote_range(election):
             flask.flash("Your vote has been recorded.  Thank you!")
             return safe_redirect_back()
 
-        elif 'Preview' in form_values:
+        if form.action.data == 'preview':
             flask.flash("Please confirm your vote!")
-            for candidate in election.candidates:
-                try:
-                    vote = int(flask.request.form[str(candidate.id)])
-                    if vote > num_candidates:
-                        flask.flash("Invalid data.")
-                        uvotes[candidate.id] = 0
-                        next_action = 'vote'
-                    elif vote >= 0:
-                        uvotes[candidate.id] = vote
-                    else:
-                        flask.flash("Invalid data2.")
-                        uvotes[candidate.id] = 0
-                        next_action = 'vote'
-                except ValueError:
-                    next_action = 'vote'
-                    flask.flash("Invalid data")
-
-            if next_action != 'vote':
-                next_action = 'confirm'
+            next_action = 'vote'
 
     usernamemap = {}
     if (election.candidates_are_fasusers):  # pragma: no cover
@@ -197,9 +172,9 @@ def vote_range(election):
     return flask.render_template(
         'vote_range.html',
         election=election,
+        form=form,
         num_candidates=num_candidates,
         usernamemap=usernamemap,
-        voteinfo=uvotes,
         nextaction=next_action)
 
 
