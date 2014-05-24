@@ -21,9 +21,10 @@
 </tr>
 {% endmacro %}
 
-{% macro render_field_data_in_row(field, num_candidates, after="") %}
+{% macro render_field_data_in_row(field, num_candidates, usernamemap=None, after="") %}
 <tr>
-    <td>{{ field.label }}</td>
+    <td>{% if usernamema %} {{ usernamemap[field.label] }} {%
+        else %} {{ field.label }} {% endif %}</td>
     <td>
       {% set weightpercent = (field.data | int *100) / num_candidates %}
       {% if weightpercent >= 90 %}
