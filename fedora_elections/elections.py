@@ -131,7 +131,7 @@ def vote_range(election):
         cand_name[candidate.name] = candidate.id
     next_action = 'confirm'
 
-    form = forms.get_voting_range_form(
+    form = forms.get_range_voting_form(
         candidates=election.candidates,
         max_range=num_candidates)
 

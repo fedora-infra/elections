@@ -106,8 +106,8 @@ class ConfirmationForm(wtf.Form):
     pass
 
 
-def get_voting_range_form(candidates, max_range):
-    class VotingRange(wtf.Form):
+def get_range_voting_form(candidates, max_range):
+    class RangeVoting(wtf.Form):
         action = wtforms.HiddenField()
 
     for candidate in candidates:
@@ -118,6 +118,6 @@ def get_voting_range_form(candidates, max_range):
             title,
             choices=[(str(item), item) for item in range(max_range + 1)]
         )
-        setattr(VotingRange, candidate.name, field)
+        setattr(RangeVoting, candidate.name, field)
 
-    return VotingRange()
+    return RangeVoting()
