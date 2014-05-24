@@ -152,7 +152,7 @@ class FlaskElectionstests(ModelFlasktests):
             self.assertTrue(
                 '<h2>test election 5 shortdesc</h2>' in output.data)
             self.assertTrue(
-                '<input type="submit" name="vote" value="Preview" />'
+                '<input type="hidden" name="action" value="preview" />'
                 in output.data)
 
         user = FakeUser(['voters'], username='toshio')
@@ -430,12 +430,12 @@ class FlaskElectionstests(ModelFlasktests):
             self.assertTrue(
                 '<h2>test election 5 shortdesc</h2>' in output.data)
             self.assertTrue(
-                '<input type="submit" name="vote" value="Preview" />'
+                '<input type="hidden" name="action" value="preview" />'
                 in output.data)
 
             # Invalid vote: No candidate
             data = {
-                'name': 'Preview',
+                'action': 'preview',
             }
 
             output = self.app.post('/vote/test_election5', data=data)
@@ -443,16 +443,43 @@ class FlaskElectionstests(ModelFlasktests):
             self.assertTrue(
                 '<h2>test election 5 shortdesc</h2>' in output.data)
             self.assertTrue(
-                '<li class="message">Please vote for a candidate</li>'
+                '<td class="error">Not a valid choice</td>'
                 in output.data)
+            self.assertEqual(
+                output.data.count('<td class="error">Not a valid choice</td>'),
+                1)
             self.assertTrue(
-                '<input type="submit" name="vote" value="Preview" />'
+                '<input type="hidden" name="action" value="preview" />'
+                in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            # Invalid vote: No candidate
+            data = {
+                'action': 'preview',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/vote/test_election5', data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<h2>test election 5 shortdesc</h2>' in output.data)
+            self.assertTrue(
+                '<td class="error">Not a valid choice</td>'
+                in output.data)
+            self.assertEqual(
+                output.data.count('<td class="error">Not a valid choice</td>'),
+                1)
+            self.assertTrue(
+                '<input type="hidden" name="action" value="preview" />'
                 in output.data)
 
             # Invalid vote: Not numeric
             data = {
                 'candidate': 'a',
-                'name': 'Preview',
+                'action': 'preview',
+                'csrf_token': csrf_token,
             }
 
             output = self.app.post('/vote/test_election5', data=data)
@@ -460,13 +487,17 @@ class FlaskElectionstests(ModelFlasktests):
             self.assertTrue(
                 '<h2>test election 5 shortdesc</h2>' in output.data)
             self.assertTrue(
-                '<input type="submit" name="vote" value="Preview" />'
+                '<input type="hidden" name="action" value="preview" />'
                 in output.data)
+            self.assertEqual(
+                output.data.count('<td class="error">Not a valid choice</td>'),
+                1)
 
             # Valid input
             data = {
-                'candidate': 7,
-                'name': 'Preview',
+                'candidate': 'Ralph',
+                'action': 'preview',
+                'csrf_token': csrf_token,
             }
 
             output = self.app.post('/vote/test_election5', data=data)
@@ -474,7 +505,7 @@ class FlaskElectionstests(ModelFlasktests):
             self.assertTrue(
                 '<h2>test election 5 shortdesc</h2>' in output.data)
             self.assertTrue(
-                '<input type="submit" name="confirm" value="Submit" />'
+                '<input type="hidden" name="action" value="submit" />'
                 in output.data)
             self.assertTrue(
                 '<li class="message">Please confirm your vote!</li>'
@@ -493,51 +524,73 @@ class FlaskElectionstests(ModelFlasktests):
 
         user = FakeUser(['packager'], username='pingou')
         with user_set(fedora_elections.APP, user):
-            # Invalid candidate id
+            # Invalid candidate id - no csrf
             data = {
                 'candidate': 1,
-                'name': 'Submit',
+                'action': 'submit',
             }
 
             output = self.app.post(
                 '/vote/test_election5', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue(
-                '<li class="error">Invalid vote, this candidate is not '
-                'listed for this election</li>' in output.data)
+            self.assertEqual(
+                output.data.count('<td class="error">Not a valid choice</td>'),
+                1)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            # Invalid candidate id
+            data = {
+                'candidate': 1,
+                'action': 'submit',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post(
+                '/vote/test_election5', data=data,
+                follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertEqual(
+                output.data.count('<td class="error">Not a valid choice</td>'),
+                1)
 
             # Invalid vote: too low
             data = {
                 'candidate': -1,
-                'name': 'Submit',
+                'action': 'submit',
+                'csrf_token': csrf_token,
             }
 
             output = self.app.post(
                 '/vote/test_election5', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue(
-                '<li class="error">Invalid vote, this candidate is not '
-                'listed for this election</li>' in output.data)
+            self.assertEqual(
+                output.data.count('<td class="error">Not a valid choice</td>'),
+                1)
 
             # Invalid vote: Not numeric
             data = {
                 'candidate': 'a',
-                'name': 'Submit',
+                'action': 'submit',
+                'csrf_token': csrf_token,
             }
 
             output = self.app.post(
                 '/vote/test_election5', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue(
-                '<li class="error">Invalid Ballot!</li' in output.data)
+            self.assertEqual(
+                output.data.count('<td class="error">Not a valid choice</td>'),
+                1)
 
             # Valid input
             data = {
-                'candidate': 7,
-                'name': 'Submit',
+                'candidate': 'Toshio',
+                'action': 'submit',
+                'csrf_token': csrf_token,
             }
 
             output = self.app.post(
