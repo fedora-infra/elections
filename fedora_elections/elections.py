@@ -184,9 +184,6 @@ def vote_simple(election):
 
     num_candidates = election.candidates.count()
 
-    cand_name = {}
-    for candidate in election.candidates:
-        cand_name[candidate.name] = candidate.id
     next_action = 'confirm'
 
     form = forms.get_simple_voting_form(
