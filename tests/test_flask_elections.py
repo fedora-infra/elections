@@ -495,7 +495,7 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Valid input
             data = {
-                'candidate': 'Ralph',
+                'candidate': 7,
                 'action': 'preview',
                 'csrf_token': csrf_token,
             }
@@ -588,7 +588,7 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Valid input
             data = {
-                'candidate': 'Toshio',
+                'candidate': 8,
                 'action': 'submit',
                 'csrf_token': csrf_token,
             }
