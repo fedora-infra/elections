@@ -121,3 +121,22 @@ def get_range_voting_form(candidates, max_range):
         setattr(RangeVoting, candidate.name, field)
 
     return RangeVoting()
+
+
+def get_simple_voting_form(candidates, max_range):
+    class SimpleVoting(wtf.Form):
+        action = wtforms.HiddenField()
+
+    titles = []
+    for candidate in candidates:
+        title = candidate.name
+        if candidate.url:
+            title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
+        titles.append((title, title))
+    field = wtforms.RadioField(
+        'Candidates',
+        choices=titles
+    )
+    setattr(SimpleVoting, 'candidates', field)
+
+    return SimpleVoting()
