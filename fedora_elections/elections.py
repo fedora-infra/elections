@@ -99,8 +99,8 @@ def vote(election_alias):
         if len(set(flask.g.fas_user.groups).intersection(
                 set(election.legal_voters_list))) == 0:
             flask.flash(
-                'You are not among the groups that are allowed to vote for this '
-                'election', 'error')
+                'You are not among the groups that are allowed to vote '
+                'for this election', 'error')
             return safe_redirect_back()
 
     votes = models.Vote.of_user_on_election(
@@ -255,7 +255,6 @@ def vote_select(election):
         max_selection=max_selection,
         usernamemap=usernamemap,
         nextaction=next_action)
-
 
 
 def vote_simple(election):
