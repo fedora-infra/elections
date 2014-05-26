@@ -34,6 +34,7 @@ class ElectionForm(wtf.Form):
             ('range', 'Range Voting'),
             ('simple', 'Simple Voting'),
             ('range_3', 'Simplified Range Voting (max = 3)'),
+            ('select', 'Select Voting'),
         ],
         default='range')
 
