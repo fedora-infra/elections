@@ -390,7 +390,8 @@ class FlaskAdmintests(ModelFlasktests):
                 in output.data)
 
     def test_admin_edit_election_admin_groups(self):
-        """ Test the admin_edit_election function when editing admin groups. """
+        """ Test the admin_edit_election function when editing admin groups.
+        """
         user = FakeUser(
             fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
             username='toshio')
@@ -474,7 +475,8 @@ class FlaskAdmintests(ModelFlasktests):
                 in output.data)
 
     def test_admin_edit_election_legal_voters(self):
-        """ Test the admin_edit_election function when editing legal voters. """
+        """ Test the admin_edit_election function when editing legal voters.
+        """
         user = FakeUser(
             fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
             username='toshio')
