@@ -112,8 +112,6 @@ def vote(election_alias):
 
     if election.voting_type == 'range':
         return vote_range(election)
-    elif election.voting_type == 'range_3':
-        return vote_range(election, max_range=3)
     elif election.voting_type == 'simple':
         return vote_simple(election)
     elif election.voting_type == 'select':
@@ -124,7 +122,7 @@ def vote(election_alias):
         return safe_redirect_back()
 
 
-def vote_range(election, max_range=None):
+def vote_range(election):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
 
@@ -135,12 +133,13 @@ def vote_range(election, max_range=None):
         cand_name[candidate.name] = candidate.id
     next_action = 'confirm'
 
-    if max_range is None:
-        max_range = num_candidates
+    max_selection = num_candidates
+    if election.max_votes:
+        max_selection = election.max_votes
 
     form = forms.get_range_voting_form(
         candidates=election.candidates,
-        max_range=max_range)
+        max_range=max_selection)
 
     if form.validate_on_submit():
 
@@ -181,12 +180,12 @@ def vote_range(election, max_range=None):
         election=election,
         form=form,
         num_candidates=num_candidates,
-        max_range=max_range,
+        max_range=max_selection,
         usernamemap=usernamemap,
         nextaction=next_action)
 
 
-def vote_select(election, max_selection=None):
+def vote_select(election):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
 
@@ -197,8 +196,9 @@ def vote_select(election, max_selection=None):
         cand_name[candidate.name] = candidate.id
     next_action = 'confirm'
 
-    if max_selection is None:
-        max_selection = num_candidates
+    max_selection = num_candidates
+    if election.max_votes:
+        max_selection = election.max_votes
 
     form = forms.get_select_voting_form(
         candidates=election.candidates,
@@ -206,27 +206,36 @@ def vote_select(election, max_selection=None):
 
     if form.validate_on_submit():
 
-        if form.action.data == 'submit':
-            for candidate in form:
-                if candidate.short_name in ['csrf_token', 'action']:
-                    continue
+        cnt = 0
+        for candidate in form:
+            if candidate.short_name in ['csrf_token', 'action']:
+                continue
+            if candidate.data:
+                cnt += 1
+        if cnt > max_selection:
+            flask.flash('Too many candidates submitted', 'error')
+        else:
+            if form.action.data == 'submit':
+                for candidate in form:
+                    if candidate.short_name in ['csrf_token', 'action']:
+                        continue
 
-                new_vote = models.Vote(
-                    election_id=election.id,
-                    voter=flask.g.fas_user.username,
-                    timestamp=datetime.now(),
-                    candidate_id=cand_name[candidate.short_name],
-                    value=int(candidate.data),
-                )
-                SESSION.add(new_vote)
-            SESSION.commit()
+                    new_vote = models.Vote(
+                        election_id=election.id,
+                        voter=flask.g.fas_user.username,
+                        timestamp=datetime.now(),
+                        candidate_id=cand_name[candidate.short_name],
+                        value=int(candidate.data),
+                    )
+                    SESSION.add(new_vote)
+                SESSION.commit()
 
-            flask.flash("Your vote has been recorded.  Thank you!")
-            return safe_redirect_back()
+                flask.flash("Your vote has been recorded.  Thank you!")
+                return safe_redirect_back()
 
-        if form.action.data == 'preview':
-            flask.flash("Please confirm your vote!")
-            next_action = 'vote'
+            if form.action.data == 'preview':
+                flask.flash("Please confirm your vote!")
+                next_action = 'vote'
 
     usernamemap = {}
     if (election.candidates_are_fasusers):  # pragma: no cover
