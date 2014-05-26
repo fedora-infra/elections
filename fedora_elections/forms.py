@@ -38,6 +38,10 @@ class ElectionForm(wtf.Form):
         ],
         default='range')
 
+    max_votes = wtforms.TextField(
+        'Maximum Range/Votes',
+        [wtforms.validators.optional()])
+
     url = wtforms.TextField(
         'URL<span class="error">*</span>', [
             wtforms.validators.Required(),
