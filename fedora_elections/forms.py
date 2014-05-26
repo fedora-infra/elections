@@ -131,7 +131,7 @@ def get_range_voting_form(candidates, max_range):
     return RangeVoting()
 
 
-def get_simple_voting_form(candidates, max_range):
+def get_simple_voting_form(candidates):
     class SimpleVoting(wtf.Form):
         action = wtforms.HiddenField()
 
