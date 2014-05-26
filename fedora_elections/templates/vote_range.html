@@ -48,6 +48,8 @@
 {% else %}
   <p />
 {% endif %}
+
+{% if election.voting_type == 'range' %}
 <div>
   <h2>Information on Range Voting</h2>
   <p>
@@ -58,8 +60,8 @@
   </p>
   <p>
     To cast your vote in this election simply select a value between 0 and
-    {{num_candidates}} with 0 as 'least or no preference' and
-    {{num_candidates}} as 'highest preference'.
+    {{ max_range }} with 0 as 'least or no preference' and
+    {{ max_range }} as 'highest preference'.
   </p>
   <p>
     At the end of the election, the highest ranking candidate(s) are marked
@@ -70,4 +72,28 @@
     <a href="http://rangevoting.org/">Center for Range Voting</a>.
   </p>
 </div>
+{% elif election.voting_type == 'range_3' %}
+<div>
+  <h2>Information on Simplified Range Voting</h2>
+  <p>
+    Fedora Project has implemented a simplified version of
+    <a href="http://rangevoting.org/">Range Voting</a>
+    for this election, in particular the "Range (score-summing, blanks
+    treated as zero score, no quorum rule)" range voting system.
+  </p>
+  <p>
+    To cast your vote in this election simply select a value between 0 and
+    {{ max_range }} with 0 as 'least or no preference' and
+    {{ max_range }} as 'highest preference'.
+  </p>
+  <p>
+    At the end of the election, the highest ranking candidate(s) are marked
+    as the winners.
+  </p>
+  <p>
+    For more information about Range Voting, visit the
+    <a href="http://rangevoting.org/">Center for Range Voting</a>.
+  </p>
+</div>
+{% endif %}
 {% endblock %}
