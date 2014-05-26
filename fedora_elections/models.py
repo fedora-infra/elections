@@ -94,6 +94,7 @@ class Election(BASE):
     seats_elected = sa.Column(sa.Integer, nullable=False, default=1)
     embargoed = sa.Column(sa.Integer, nullable=False, default=0)
     voting_type = sa.Column(sa.Unicode(100), nullable=False, default=u'range')
+    max_votes = sa.Column(sa.Integer, nullable=True)
     candidates_are_fasusers = sa.Column(
         sa.Integer, nullable=False, default=0)
     fas_user = sa.Column(sa.Unicode(50), nullable=False)
