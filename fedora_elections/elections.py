@@ -112,6 +112,8 @@ def vote(election_alias):
 
     if election.voting_type == 'range':
         return vote_range(election)
+    elif election.voting_type == 'range_3':
+        return vote_range(election, max_range=3)
     elif election.voting_type == 'simple':
         return vote_simple(election)
     else:  # pragma: no cover
