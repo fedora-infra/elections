@@ -267,8 +267,7 @@ def vote_simple(election):
     next_action = 'confirm'
 
     form = forms.get_simple_voting_form(
-        candidates=election.candidates,
-        max_range=num_candidates)
+        candidates=election.candidates)
 
     if form.validate_on_submit():
         if form.action.data == 'submit':
