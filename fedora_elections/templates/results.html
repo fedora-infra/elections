@@ -14,12 +14,20 @@
 
     {% for candidate in election.candidates|sort(attribute='vote_count', reverse=True) %}
     {% if loop.index <= election.seats_elected %}
+    {# If we are below the number of user that will be selected, get the number
+    of votes and the flag to False#}
     {% set flag = False %}
     {% set votes = candidate.vote_count %}
     {% elif loop.index > election.seats_elected and votes > candidate.vote_count and not flag %}
+    {# if we are above the number of user that will be selected (seats
+    available), check if the number of votes for this candidate is lower than
+    the number of votes for the last candidate and if the Flag is False #}
     {% set flag = True %}
     {% set lastrow = True %}
     {% else %}
+    {# we are above the number of seats available, the number of votes is below
+    that of the last candidate above selected and the Flag is True which means
+    we already passed the condition above #}
     {% set lastrow = False %}
     {% endif %}
     <tr class="{% if lastrow == True %}firstout{% endif %} {{ loop.cycle('row_odd', 'row_even') }}">
