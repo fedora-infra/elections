@@ -104,3 +104,39 @@ class MultiCandidateForm(wtf.Form):
 
 class ConfirmationForm(wtf.Form):
     pass
+
+
+def get_range_voting_form(candidates, max_range):
+    class RangeVoting(wtf.Form):
+        action = wtforms.HiddenField()
+
+    for candidate in candidates:
+        title = candidate.name
+        if candidate.url:
+            title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
+        field = wtforms.SelectField(
+            title,
+            choices=[(str(item), item) for item in range(max_range + 1)]
+        )
+        setattr(RangeVoting, candidate.name, field)
+
+    return RangeVoting()
+
+
+def get_simple_voting_form(candidates, max_range):
+    class SimpleVoting(wtf.Form):
+        action = wtforms.HiddenField()
+
+    titles = []
+    for candidate in candidates:
+        title = candidate.name
+        if candidate.url:
+            title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
+        titles.append((str(candidate.id), title))
+    field = wtforms.RadioField(
+        'Candidates',
+        choices=titles
+    )
+    setattr(SimpleVoting, 'candidate', field)
+
+    return SimpleVoting()

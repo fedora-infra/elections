@@ -11,10 +11,39 @@
 </div>
 {% endmacro %}
 
-{% macro render_field_in_row(field, after="") %}
+{% macro render_field_in_row(field, usernamemap=None, after="") %}
 <tr>
-    <td>{{ field.label }}</td>
+    <td>{% if usernamema %} {{ usernamemap[field.label] }} {%
+        else %} {{ field.label }} {% endif %}</td>
     <td>{{ field(**kwargs)|safe }}</td>
+{% if after %} <td>{{ after }}</td>{% endif %}
+{% if field.errors %}{% for error in field.errors
+%}<td class="error">{{ error }}</td>{% endfor %}{% endif %}
+</tr>
+{% endmacro %}
+
+{% macro render_field_data_in_row(field, num_candidates, usernamemap=None, after="") %}
+<tr>
+    <td>{% if usernamema %} {{ usernamemap[field.label] }} {%
+        else %} {{ field.label }} {% endif %}</td>
+    <td>
+      {% set weightpercent = (field.data | int *100) / num_candidates %}
+      {% if weightpercent >= 90 %}
+        <div class="vthot">
+      {% elif weightpercent >= 70 %}
+        <div class="vtwarm">
+      {% elif weightpercent >= 50 %}
+        <div class="vtmedwarm">
+      {% elif weightpercent >= 30 %}
+        <div class="vtmedcool">
+      {% elif weightpercent >= 10 %}
+        <div class="vtcool">
+      {% else %}
+        <div class="vtcold">
+      {% endif %}
+          {{ field }}
+        </div>
+    </td>
 {% if after %} <td>{{ after }}</td>{% endif %}
 {% if field.errors %}{% for error in field.errors
 %}<td class="error">{{ error }}</td>{% endfor %}{% endif %}

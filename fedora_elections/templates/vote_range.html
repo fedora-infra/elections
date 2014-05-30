@@ -1,3 +1,5 @@
+{% from "_formhelpers.html" import render_field_in_row, render_field_data_in_row %}
+
 {% extends "base.html" %}
 {% block body %}
 <h2>{{election.shortdesc}}</h2>
@@ -8,73 +10,28 @@
 
 <form action="{{ url_for('vote', election_alias=election.alias) }}" method="post">
   <table border="1" cellpadding="1">
-    {% for candidate in election.candidates %}
-      <tr>
-        <td>
-          {% if election.candidates_are_fasusers %}
-            {{ usernamemap[candidate.id] }}
-          {% else %}
-            {{ candidate.name }}
-          {% endif %}
-          <a href="{{candidate.url}}">[Info]</a>
-        </td>
-        <!-- If user is logged in: -->
-        {% if g.fas_user %}
-          {% if nextaction == 'vote' %}
-            <td>
-              <select name="{{candidate.id}}">
-                {% for opt in range(0, num_candidates+1) %}
-                  <option value={{opt}}>{{opt}}</option>
-                {% endfor %}
-              </select>
-            </td>
-          {% endif %}
-          {% if nextaction == 'confirm' %}
-            <td>
-              {% set cid = candidate.id %}
-              <input type="hidden" name="{{candidate.id}}"
-                     value="{{voteinfo[cid]}}" />
-              {% set weightpercent = (voteinfo[candidate.id]*100)/num_candidates %}
-              {% if weightpercent >= 90 %}
-                <div class="vthot">
-                  {{voteinfo[cid]}}
-                </div>
-              {% elif weightpercent >= 70 %}
-                <div class="vtwarm">
-                  {{voteinfo[cid]}}
-                </div>
-              {% elif weightpercent >= 50 %}
-                <div class="vtmedwarm">
-                  {{voteinfo[cid]}}
-                </div>
-              {% elif weightpercent >= 30 %}
-                <div class="vtmedcool">
-                  {{voteinfo[cid]}}
-                </div>
-              {% elif weightpercent >= 10 %}
-                <div class="vtcool">
-                  {{voteinfo[cid]}}
-                </div>
-              {% else %}
-                <div class="vtcold">
-                  {{voteinfo[cid]}}
-                </div>
-              {% endif %}
-            </td>
-          {% endif %}
-        {% endif %}
-        <!-- End if user logged in -->
-      </tr>
+    {% for field in form if field.widget.input_type != 'hidden' %}
+    {% if nextaction == 'vote' %}
+      {{ render_field_data_in_row(
+          field, num_candidates=num_candidates, usernamemap=usernamemap) }}
+    {% else %}
+      {{ render_field_in_row(field) }}
+    {% endif %}
     {% endfor %}
+
   </table>
   {% if g.fas_user %}
     <p>
-    {% if nextaction == 'confirm' %}
+    {% if nextaction == 'vote' %}
+      <input type="hidden" name="action" value="submit" />
       <input type="submit" name="{{nextaction}}" value="Submit" />
     {% else %}
+      <input type="hidden" name="action" value="preview" />
       <input type="submit" name="{{nextaction}}" value="Preview" />
     {% endif %}
     </p>
+    <a href="{{ url_for('open_elections') }}">Back</a>
+    {{ form.csrf_token }}
   {% endif %}
 </form>
 

@@ -1,3 +1,5 @@
+{% from "_formhelpers.html" import render_field_in_row, render_field_data_in_row %}
+
 {% extends "base.html" %}
 {% block body %}
 <h2>{{election.shortdesc}}</h2>
@@ -7,33 +9,24 @@
 <p><a href="{{election.url}}">[More Information]</a></p>
 
 <form action="{{ url_for('vote', election_alias=election.alias) }}" method="post">
-  <table border="0" cellpadding="1">
-    {% for candidate in election.candidates|sort %}
-      <tr>
-        <td>
-          {% if candidate.id == candidate_id %}
-            <input type="radio" name="candidate" value="{{ candidate.id }}" checked="checked">
-          {% else %}
-            <input type="radio" name="candidate" value="{{ candidate.id }}">
-          {% endif %}
-          {% if election.candidates_are_fasusers %}
-            {{ usernamemap[candidate.id] }}
-          {% else %}
-            {{ candidate.name }}
-          {% endif %}
-          <a href="{{candidate.url}}">[Info]</a>
-        </td>
-      </tr>
+  <table border="1" cellpadding="1">
+    {% for field in form if field.widget.input_type != 'hidden' %}
+      {{ render_field_in_row(field) }}
     {% endfor %}
+
   </table>
   {% if g.fas_user %}
     <p>
-    {% if nextaction == 'confirm' %}
+    {% if nextaction == 'vote' %}
+      <input type="hidden" name="action" value="submit" />
       <input type="submit" name="{{nextaction}}" value="Submit" />
     {% else %}
+      <input type="hidden" name="action" value="preview" />
       <input type="submit" name="{{nextaction}}" value="Preview" />
     {% endif %}
     </p>
+    <a href="{{ url_for('open_elections') }}">Back</a>
+    {{ form.csrf_token }}
   {% endif %}
 </form>
 
