@@ -112,6 +112,8 @@ def vote(election_alias):
 
     if election.voting_type == 'range':
         return vote_range(election)
+    elif election.voting_type == 'range_3':
+        return vote_range(election, max_range=3)
     elif election.voting_type == 'simple':
         return vote_simple(election)
     else:  # pragma: no cover
@@ -120,7 +122,7 @@ def vote(election_alias):
         return safe_redirect_back()
 
 
-def vote_range(election):
+def vote_range(election, max_range=None):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
 
@@ -131,9 +133,12 @@ def vote_range(election):
         cand_name[candidate.name] = candidate.id
     next_action = 'confirm'
 
+    if max_range is None:
+        max_range = num_candidates
+
     form = forms.get_range_voting_form(
         candidates=election.candidates,
-        max_range=num_candidates)
+        max_range=max_range)
 
     if form.validate_on_submit():
 
@@ -174,6 +179,7 @@ def vote_range(election):
         election=election,
         form=form,
         num_candidates=num_candidates,
+        max_range=max_range,
         usernamemap=usernamemap,
         nextaction=next_action)
 

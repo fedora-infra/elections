@@ -30,8 +30,11 @@ class ElectionForm(wtf.Form):
 
     voting_type = wtforms.RadioField(
         'Type<span class="error">*</span>',
-        choices=[('range', 'Range Voting'),
-                 ('simple', 'Simple Voting')],
+        choices=[
+            ('range', 'Range Voting'),
+            ('simple', 'Simple Voting'),
+            ('range_3', 'Simplified Range Voting (max = 3)'),
+        ],
         default='range')
 
     url = wtforms.TextField(
