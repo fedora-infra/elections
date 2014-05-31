@@ -156,6 +156,14 @@ def admin_edit_election(election_alias):
     form = forms.ElectionForm(election.id, obj=election)
     if form.validate_on_submit():
         form.embargoed.data = int(form.embargoed.data)
+        if form.max_votes.data:
+            try:
+                form.max_votes.data = int(form.max_votes.data)
+            except ValueError:
+                form.max_votes.data = None
+        else:
+            form.max_votes.data = None
+
         form.candidates_are_fasusers.data = int(
             form.candidates_are_fasusers.data)
         form.populate_obj(election)
