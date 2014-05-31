@@ -34,6 +34,7 @@ class ElectionForm(wtf.Form):
             ('range', 'Range Voting'),
             ('simple', 'Simple Voting'),
             ('range_3', 'Simplified Range Voting (max = 3)'),
+            ('select', 'Select Voting'),
         ],
         default='range')
 
@@ -143,3 +144,21 @@ def get_simple_voting_form(candidates, max_range):
     setattr(SimpleVoting, 'candidate', field)
 
     return SimpleVoting()
+
+
+def get_select_voting_form(candidates, max_selection):
+    class SelectVoting(wtf.Form):
+        action = wtforms.HiddenField()
+
+    for candidate in candidates:
+        title = candidate.name
+        if candidate.url:
+            title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
+        field = wtforms.BooleanField(
+            title,
+        )
+        setattr(SelectVoting, candidate.name, field)
+
+    # TODO: See if we can add a form wide validation using max_selection
+
+    return SelectVoting()

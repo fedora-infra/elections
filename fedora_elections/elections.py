@@ -116,6 +116,8 @@ def vote(election_alias):
         return vote_range(election, max_range=3)
     elif election.voting_type == 'simple':
         return vote_simple(election)
+    elif election.voting_type == 'select':
+        return vote_select(election)
     else:  # pragma: no cover
         flask.flash(
             'Unknown election voting type: %s' % election.voting_type)
@@ -182,6 +184,69 @@ def vote_range(election, max_range=None):
         max_range=max_range,
         usernamemap=usernamemap,
         nextaction=next_action)
+
+
+def vote_select(election, max_selection=None):
+    votes = models.Vote.of_user_on_election(
+        SESSION, flask.g.fas_user.username, election.id, count=True)
+
+    num_candidates = election.candidates.count()
+
+    cand_name = {}
+    for candidate in election.candidates:
+        cand_name[candidate.name] = candidate.id
+    next_action = 'confirm'
+
+    if max_selection is None:
+        max_selection = num_candidates
+
+    form = forms.get_select_voting_form(
+        candidates=election.candidates,
+        max_selection=max_selection)
+
+    if form.validate_on_submit():
+
+        if form.action.data == 'submit':
+            for candidate in form:
+                if candidate.short_name in ['csrf_token', 'action']:
+                    continue
+
+                new_vote = models.Vote(
+                    election_id=election.id,
+                    voter=flask.g.fas_user.username,
+                    timestamp=datetime.now(),
+                    candidate_id=cand_name[candidate.short_name],
+                    value=int(candidate.data),
+                )
+                SESSION.add(new_vote)
+            SESSION.commit()
+
+            flask.flash("Your vote has been recorded.  Thank you!")
+            return safe_redirect_back()
+
+        if form.action.data == 'preview':
+            flask.flash("Please confirm your vote!")
+            next_action = 'vote'
+
+    usernamemap = {}
+    if (election.candidates_are_fasusers):  # pragma: no cover
+        for candidate in election.candidates:
+            try:
+                usernamemap[candidate.id] = \
+                    FAS2.person_by_username(candidate.name)['human_name']
+            except (KeyError, AuthError):
+                # User has their name set to private or user doesn't exist.
+                usernamemap[candidate.id] = candidate.name
+
+    return flask.render_template(
+        'vote_simple.html',
+        election=election,
+        form=form,
+        num_candidates=num_candidates,
+        max_selection=max_selection,
+        usernamemap=usernamemap,
+        nextaction=next_action)
+
 
 
 def vote_simple(election):
