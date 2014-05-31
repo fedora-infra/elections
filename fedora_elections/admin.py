@@ -67,6 +67,14 @@ def admin_new_election():
     form = forms.ElectionForm()
     if form.validate_on_submit():
 
+        if form.max_votes.data:
+            try:
+                form.max_votes.data = int(form.max_votes.data)
+            except ValueError:
+                form.max_votes.data = None
+        else:
+            form.max_votes.data = None
+
         election = models.Election(
             shortdesc=form.shortdesc.data,
             alias=form.alias.data,
@@ -77,6 +85,7 @@ def admin_new_election():
             seats_elected=form.seats_elected.data,
             embargoed=int(form.embargoed.data),
             voting_type=form.voting_type.data,
+            max_votes=form.max_votes.data,
             candidates_are_fasusers=int(form.candidates_are_fasusers.data),
             fas_user=flask.g.fas_user.username,
         )
