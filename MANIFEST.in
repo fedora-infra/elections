@@ -3,3 +3,4 @@ include createdb.py
 recursive-include fedora_elections *
 recursive-include files *
 recursive-include tests *
+recursive-include alembic *
