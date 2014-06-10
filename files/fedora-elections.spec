@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.1
+Version:        2.1.1
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -108,6 +108,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jun 10 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.1.1-1
+- Update to 2.1.1
+- Fix FAS integration (missing imports)
+
 * Tue Jun 10 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.1-1
 - Update to 2.1
 - Add simplified range voting
