@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.0.2
+Version:        2.1
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -108,6 +108,19 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jun 10 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.1-1
+- Update to 2.1
+- Add simplified range voting
+- Add select voting
+- Add group admins
+- Add legal voters
+- Add csrf protections to the voting page
+- Decorate the result page to actually show the result/selection
+- Put all the votes at the same URL
+- Fix using https everywhere
+- fedmsg integration upon election/candidate creation, edition, deletion
+- unit-tests
+
 * Sat May 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0.2-1
 - Update to 2.0.2
 - Fix is_safe_url method, imports were different here
