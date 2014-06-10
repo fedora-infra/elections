@@ -24,7 +24,7 @@
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
 
-__version__ = '2.0.2'
+__version__ = '2.1'
 
 import os
 
