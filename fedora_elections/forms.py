@@ -32,9 +32,9 @@ class ElectionForm(wtf.Form):
         'Type<span class="error">*</span>',
         choices=[
             ('range', 'Range Voting'),
-            ('simple', 'Simple Voting'),
-            ('range_3', 'Simplified Range Voting (max = 3)'),
-            ('select', 'Select Voting'),
+            ('simple', 'Simple Voting (choose one candidate in the list)'),
+            ('range_3', 'Simplified Range Voting (max is set below)'),
+            ('select', 'Select Voting (check or not the box, maximum vote set below)'),
         ],
         default='range')
 
