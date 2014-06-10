@@ -77,6 +77,11 @@ install -m 644 files/fedora-elections.wsgi \
 install -m 644 createdb.py \
   $RPM_BUILD_ROOT/%{_datadir}/fedora-elections/fedora-elections_createdb.py
 
+# Install the alembic configuration file
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/fedora-elections
+install -m 644 files/alembic.ini \
+  $RPM_BUILD_ROOT/%{_sysconfdir}/fedora-elections/alembic.ini
+
 # Install the alembic files
 cp -r alembic \
   $RPM_BUILD_ROOT/%{_datadir}/fedora-elections/alembic
@@ -95,6 +100,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.cfg
+%config(noreplace) %{_sysconfdir}/%{name}/alembic.ini
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %{python_sitelib}/%{modname}/
 %{python_sitelib}/%{modname}*.egg-info/
