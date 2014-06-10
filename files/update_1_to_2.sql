@@ -16,6 +16,10 @@ ALTER TABLE elections DROP COLUMN votes_per_user;
 
 -- ALTER TABLE elections RENAME COLUMN shortdesc TO summary;
 
+
+-- For 2.1
 ALTER TABLE elections DROP COLUMN candidates_are_fasusers;
 
 ALTER TABLE elections RENAME COLUMN usefas TO candidates_are_fasusers;
+
+ALTER TABLE elections ALTER COLUMN candidates_are_fasusers TYPE integer;
