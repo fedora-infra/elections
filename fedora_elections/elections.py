@@ -28,12 +28,13 @@ from datetime import datetime, time
 from functools import wraps
 
 import flask
+from fedora.client import AuthError
 
 from fedora_elections import fedmsgshim
 from fedora_elections import forms
 from fedora_elections import models
 from fedora_elections import (
-    APP, SESSION, is_authenticated, is_admin, is_election_admin,
+    APP, SESSION, FAS2, is_authenticated, is_admin, is_election_admin,
     is_safe_url, safe_redirect_back,
 )
 
