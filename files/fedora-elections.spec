@@ -2,7 +2,7 @@
 
 Name:           fedora-elections
 Version:        2.1.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fedora elections application
 
 Group:          Development/Languages
@@ -22,6 +22,8 @@ BuildRequires:  python-openid-teams
 BuildRequires:  python-openid-cla
 BuildRequires:  python-setuptools
 BuildRequires:  python-wtforms
+BuildRequires:  python-nose
+BuildRequires:  python-coverage
 
 Requires:       python-fedora
 Requires:       python-fedora-flask
@@ -89,11 +91,10 @@ cp -r alembic \
 install -m 644 files/update_1_to_2.sql \
   $RPM_BUILD_ROOT/%{_datadir}/fedora-elections/update_1_to_2.sql
 
-
-
-%clean
-rm -rf $RPM_BUILD_ROOT
-
+## Try running the unit-tests at build time but this requires flask 0.10+ which
+## is not present in elep6
+#%check
+#./runtests.sh -v -x
 
 %files
 %defattr(-,root,root,-)
@@ -108,6 +109,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Jun 18 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.1.1-2
+- Try running unit-tests in the %%check section
+- Adjust the dependencies to include what's needed to run the tests
+
 * Tue Jun 10 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.1.1-1
 - Update to 2.1.1
 - Fix FAS integration (missing imports)
@@ -138,7 +143,7 @@ rm -rf $RPM_BUILD_ROOT
 - Remove instanciated a sqlite database
 - Install the sql upgrade script from elections v1 to elections v2
 
-* Tue Sep 02 2013 Frank Chiulli <fchiulli@fedoraproject.org> - 2-1
+* Tue Sep 03 2013 Frank Chiulli <fchiulli@fedoraproject.org> - 2-1
 - Simple voting
 
 * Sat May 04 2013 Frank Chiulli <fchiulli@fedoraproject.org> - 2-0
