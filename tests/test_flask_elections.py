@@ -672,8 +672,8 @@ class FlaskElectionstests(ModelFlasktests):
                 '/results/test_election3', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Sorry but this election is in progress, '
-                'you may not see its results already.</li>' in output.data)
+                '<li class="message">Sorry but this election is in progress,'
+                ' and you may not see its results yet.</li>' in output.data)
             self.assertTrue('<h3>Current elections</h3>' in output.data)
 
 
