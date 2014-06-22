@@ -34,7 +34,8 @@ class ElectionForm(wtf.Form):
             ('range', 'Range Voting'),
             ('simple', 'Simple Voting (choose one candidate in the list)'),
             ('range_3', 'Simplified Range Voting (max is set below)'),
-            ('select', 'Select Voting (check or not the box, maximum vote set below)'),
+            ('select', 'Select Voting (checkboxes for each candidate, '
+             'maximum number of votes set below)'),
         ],
         default='range')
 
