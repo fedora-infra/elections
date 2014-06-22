@@ -1,5 +1,5 @@
 include AUTHORS COPYING README requirements.txt
-include createdb.py
+include createdb.py runtests.sh nosetests
 recursive-include fedora_elections *
 recursive-include files *
 recursive-include tests *
