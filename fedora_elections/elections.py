@@ -60,7 +60,7 @@ def login_required(f):
 
 
 def get_valid_election(election_alias, ended=False):
-    """ Return the election if it is valid (no pending, not ended).
+    """ Return the election if it is valid (not pending, not ended).
     """
     election = models.Election.get(SESSION, alias=election_alias)
 
@@ -81,8 +81,8 @@ def get_valid_election(election_alias, ended=False):
 
     elif ended and election.status == 'In progress':
         flask.flash(
-            'Sorry but this election is in progress, you may not see its '
-            'results already.')
+            'Sorry but this election is in progress, and you may not see its '
+            'results yet.')
         return safe_redirect_back()
 
     return election
