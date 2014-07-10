@@ -197,9 +197,9 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Invalid candidate id
             data = {
-                '9': 1,
-                '5': 3,
-                '6': 2,
+                'Toshio': 1,
+                'kevin': 3,
+                'Ralph': 2,
                 'action': 'preview',
             }
 
@@ -214,9 +214,9 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Invalid candidate id
             data = {
-                '9': 1,
-                '5': 3,
-                '6': 2,
+                'Toshio': 1,
+                'Kevin': 3,
+                'Ralph': 2,
                 'action': 'preview',
                 'csrf_token': csrf_token,
             }
@@ -229,9 +229,9 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Invalid vote: too low
             data = {
-                'Toshio': -1,
-                'Kevin': 3,
-                'Ralph': 2,
+                '9': -1,
+                '6': 3,
+                '5': 2,
                 'action': 'preview',
                 'csrf_token': csrf_token,
             }
@@ -249,9 +249,9 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Invalid vote: too high
             data = {
-                'Toshio': 5,
-                'Kevin': 3,
-                'Ralph': 2,
+                '9': 5,
+                '6': 3,
+                '5': 2,
                 'action': 'preview',
                 'csrf_token': csrf_token,
             }
@@ -269,9 +269,9 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Invalid vote: Not numeric
             data = {
-                'Toshio': 'a',
-                'Kevin': 3,
-                'Ralph': 2,
+                '9': 'a',
+                '6': 3,
+                '5': 2,
                 'action': 'preview',
                 'csrf_token': csrf_token,
             }
@@ -289,9 +289,9 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Valid input
             data = {
-                'Toshio': 1,
-                'Kevin': 3,
-                'Ralph': 2,
+                '4': 1,
+                '6': 3,
+                '5': 2,
                 'action': 'preview',
                 'csrf_token': csrf_token,
             }
@@ -322,9 +322,9 @@ class FlaskElectionstests(ModelFlasktests):
         with user_set(fedora_elections.APP, user):
             # No csrf token provided
             data = {
-                '9': 1,
-                '5': 3,
-                '6': 2,
+                'Toshio': 1,
+                'Kevin': 3,
+                'Ralph': 2,
                 'action': 'submit',
             }
 
@@ -339,9 +339,9 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Invalid vote: too low
             data = {
-                'Toshio': -1,
-                'Kevin': 3,
-                'Ralph': 2,
+                '4': -1,
+                '5': 3,
+                '6': 2,
                 'action': 'submit',
                 'csrf_token': csrf_token,
             }
@@ -355,9 +355,9 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Invalid vote: too high
             data = {
-                'Toshio': 5,
-                'Kevin': 3,
-                'Ralph': 2,
+                '4': 5,
+                '5': 3,
+                '6': 2,
                 'action': 'submit',
                 'csrf_token': csrf_token,
             }
@@ -371,9 +371,9 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Invalid vote: Not numeric
             data = {
-                'Toshio': 'a',
-                'Kevin': 3,
-                'Ralph': 2,
+                '4': 'a',
+                '5': 3,
+                '6': 2,
                 'action': 'submit',
                 'csrf_token': csrf_token,
             }
@@ -387,9 +387,9 @@ class FlaskElectionstests(ModelFlasktests):
 
             # Valid input
             data = {
-                'Toshio': 1,
-                'Kevin': 3,
-                'Ralph': 2,
+                '4': 1,
+                '5': 3,
+                '6': 2,
                 'action': 'submit',
                 'csrf_token': csrf_token,
             }
