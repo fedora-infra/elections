@@ -257,7 +257,7 @@ class FlaskAdmintests(ModelFlasktests):
                 '<td class="error">There is already another election with '
                 'this summary.</td>' in output.data)
 
-            # All good
+            # All good  -  max_votes is ignored as it is not a integer
             data = {
                 'alias': 'new_election',
                 'shortdesc': 'new election shortdesc',
@@ -270,6 +270,8 @@ class FlaskAdmintests(ModelFlasktests):
                 'candidates_are_fasusers': False,
                 'embargoed': True,
                 'admin_grp': 'testers, sysadmin-main,,',
+                'lgl_voters': 'testers, packager,,',
+                'max_votes': 'wrong',
                 'csrf_token': csrf_token,
             }
 
@@ -285,6 +287,9 @@ class FlaskAdmintests(ModelFlasktests):
                 '<p>There are no candidates.</p>' in output.data)
             self.assertTrue(
                 '<li>Admin groups: sysadmin-main, testers</li>'
+                in output.data)
+            self.assertTrue(
+                '<li>Legal voters: packager, testers</li>'
                 in output.data)
 
     def test_admin_edit_election(self):
@@ -373,6 +378,7 @@ class FlaskAdmintests(ModelFlasktests):
                 'seats_elected': '2',
                 'candidates_are_fasusers': False,
                 'embargoed': False,
+                'max_votes': 'wrong',
                 'csrf_token': csrf_token,
             }
 
