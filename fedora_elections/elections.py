@@ -294,25 +294,11 @@ def vote_simple(election):
             flask.flash("Please confirm your vote!")
             next_action = 'vote'
 
-    usernamemap = {}
-    for candidate in election.candidates:
-        if (election.candidates_are_fasusers):  # pragma: no cover
-            try:
-                usernamemap[candidate.name] = \
-                    FAS2.person_by_username(candidate.name)['human_name']
-            except (KeyError, AuthError), err:
-                APP.logger.debug(err)
-                # User has their name set to private or user doesn't exist.
-                usernamemap[candidate.name] = candidate.name
-        else:
-            usernamemap[candidate.name] = candidate.name
-
     return flask.render_template(
         'vote_simple.html',
         election=election,
         form=form,
         num_candidates=num_candidates,
-        usernamemap=usernamemap,
         nextaction=next_action)
 
 
