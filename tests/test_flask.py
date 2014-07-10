@@ -255,9 +255,9 @@ class Flasktests(ModelFlasktests):
         self.assertTrue('<title>Fedora elections</title>' in output.data)
         self.assertTrue('<h2>Past Elections</h2>' in output.data)
         self.assertTrue(
-            '<td>test election 2 description</td>' in output.data)
+            '<td>test election 2 shortdesc</td>' in output.data)
         self.assertTrue(
-            '<td>test election description</td>' in output.data)
+            '<td>test election shortdesc</td>' in output.data)
         self.assertEqual(output.data.count('<a href="results/'), 2)
         self.assertEqual(output.data.count('<a href="about/'), 2)
         self.assertTrue('<a href="/login">login</a>' in output.data)
