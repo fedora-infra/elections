@@ -110,7 +110,7 @@ def admin_new_election():
             if voter_grp.strip():
                 lglvoters = models.LegalVoter(
                     election=election,
-                    group_name=voter_grp
+                    group_name=voter_grp.strip(),
                 )
                 SESSION.add(lglvoters)
 
