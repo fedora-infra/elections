@@ -129,9 +129,7 @@ def vote_range(election):
 
     num_candidates = election.candidates.count()
 
-    cand_name = {}
-    for candidate in election.candidates:
-        cand_name[candidate.name] = candidate.id
+    cand_ids = [str(cand.id) for cand in election.candidates]
     next_action = 'confirm'
 
     max_selection = num_candidates
@@ -149,11 +147,15 @@ def vote_range(election):
                 if candidate.short_name in ['csrf_token', 'action']:
                     continue
 
+                if candidate.short_name not in cand_ids:
+                    flask.flash('Invalid input submitted', 'error')
+                    return safe_redirect_back()
+
                 new_vote = models.Vote(
                     election_id=election.id,
                     voter=flask.g.fas_user.username,
                     timestamp=datetime.now(),
-                    candidate_id=cand_name[candidate.short_name],
+                    candidate_id=candidate.short_name,
                     value=candidate.data,
                 )
                 SESSION.add(new_vote)
