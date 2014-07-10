@@ -1,8 +1,8 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.1.1
-Release:        2%{?dist}
+Version:        2.2
+Release:        1%{?dist}
 Summary:        Fedora elections application
 
 Group:          Development/Languages
@@ -109,6 +109,17 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Thu Jul 10 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.2-1
+- Update to 2.2
+- Better description of the different types of election
+- Better error message from Chaoyi Zha
+- Fix FAS integration for range voting and simple voting
+- Update the logic to rely on candidate id for the field.short_name instead
+  of the candidate name as this was causing problem when the candidate name
+  had accents in it
+- Run the unit-tests against faitout only when running in jenkins
+- Adjust and improve the unit-tests suite
+
 * Wed Jun 18 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.1.1-2
 - Try running unit-tests in the %%check section
 - Adjust the dependencies to include what's needed to run the tests
