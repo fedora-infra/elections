@@ -4,7 +4,8 @@ import flask
 import wtforms
 from flask.ext import wtf
 
-from fedora_elections import SESSION
+from fedora.client import AuthError
+from fedora_elections import SESSION, FAS2
 from fedora_elections.models import Election
 
 
@@ -132,13 +133,19 @@ def get_range_voting_form(candidates, max_range):
     return RangeVoting()
 
 
-def get_simple_voting_form(candidates):
+def get_simple_voting_form(candidates, fasusers):
     class SimpleVoting(wtf.Form):
         action = wtforms.HiddenField()
 
     titles = []
     for candidate in candidates:
         title = candidate.name
+        if fasusers:
+            try:
+                title = \
+                    FAS2.person_by_username(candidate.name)['human_name']
+            except (KeyError, AuthError), err:
+                APP.logger.debug(err)
         if candidate.url:
             title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
         titles.append((str(candidate.id), title))
