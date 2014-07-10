@@ -170,11 +170,12 @@ def vote_range(election):
     if (election.candidates_are_fasusers):  # pragma: no cover
         for candidate in election.candidates:
             try:
-                usernamemap[candidate.id] = \
+                usernamemap[candidate.name] = \
                     FAS2.person_by_username(candidate.name)['human_name']
-            except (KeyError, AuthError):
+            except (KeyError, AuthError), err:
+                APP.logger.debug(err)
                 # User has their name set to private or user doesn't exist.
-                usernamemap[candidate.id] = candidate.name
+                usernamemap[candidate.name] = candidate.name
 
     return flask.render_template(
         'vote_range.html',
@@ -242,11 +243,12 @@ def vote_select(election):
     if (election.candidates_are_fasusers):  # pragma: no cover
         for candidate in election.candidates:
             try:
-                usernamemap[candidate.id] = \
+                usernamemap[candidate.name] = \
                     FAS2.person_by_username(candidate.name)['human_name']
-            except (KeyError, AuthError):
+            except (KeyError, AuthError), err:
+                APP.logger.debug(err)
                 # User has their name set to private or user doesn't exist.
-                usernamemap[candidate.id] = candidate.name
+                usernamemap[candidate.name] = candidate.name
 
     return flask.render_template(
         'vote_simple.html',
@@ -298,7 +300,8 @@ def vote_simple(election):
             try:
                 usernamemap[candidate.name] = \
                     FAS2.person_by_username(candidate.name)['human_name']
-            except (KeyError, AuthError):
+            except (KeyError, AuthError), err:
+                APP.logger.debug(err)
                 # User has their name set to private or user doesn't exist.
                 usernamemap[candidate.name] = candidate.name
         else:
