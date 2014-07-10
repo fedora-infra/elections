@@ -291,6 +291,46 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<li>Legal voters: packager, testers</li>'
                 in output.data)
+            self.assertTrue(
+                '<li>Maximum number of votes: None</li>'
+                in output.data)
+
+            # All good  -  max_votes is ignored as it is not a integer
+            data = {
+                'alias': 'new_election2',
+                'shortdesc': 'new election2 shortdesc',
+                'description': 'new election2 description',
+                'voting_type': 'simple',
+                'url': 'https://fedoraproject.org',
+                'start_date': TODAY + timedelta(days=2),
+                'end_date': TODAY + timedelta(days=4),
+                'seats_elected': 2,
+                'candidates_are_fasusers': False,
+                'embargoed': True,
+                'admin_grp': 'testers, , sysadmin-main,,',
+                'lgl_voters': 'testers, packager,,,',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post(
+                '/admin/new', data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Election "new_election2" added</li>'
+                in output.data)
+            self.assertTrue(
+                '<a href="/admin/new_election2/edit">' in output.data)
+            self.assertTrue(
+                '<p>There are no candidates.</p>' in output.data)
+            self.assertTrue(
+                '<li>Admin groups: sysadmin-main, testers</li>'
+                in output.data)
+            self.assertTrue(
+                '<li>Legal voters: packager, testers</li>'
+                in output.data)
+            self.assertTrue(
+                '<li>Maximum number of votes: None</li>'
+                in output.data)
 
     def test_admin_edit_election(self):
         """ Test the admin_edit_election function. """
