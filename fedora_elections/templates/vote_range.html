@@ -15,7 +15,7 @@
       {{ render_field_data_in_row(
           field, num_candidates=num_candidates, usernamemap=usernamemap) }}
     {% else %}
-      {{ render_field_in_row(field) }}
+        {{ render_field_in_row(field, usernamemap=usernamemap) }}
     {% endif %}
     {% endfor %}
 
