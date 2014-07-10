@@ -13,7 +13,7 @@
 
 {% macro render_field_in_row(field, usernamemap=None, after="") %}
 <tr>
-    <td>{% if usernamema %} {{ usernamemap[field.label] }} {%
+    <td>{% if usernamemap %} {{ usernamemap[field.name] }} {%
         else %} {{ field.label }} {% endif %}</td>
     <td>{{ field(**kwargs)|safe }}</td>
 {% if after %} <td>{{ after }}</td>{% endif %}
@@ -24,7 +24,7 @@
 
 {% macro render_field_data_in_row(field, num_candidates, usernamemap=None, after="") %}
 <tr>
-    <td>{% if usernamema %} {{ usernamemap[field.label] }} {%
+    <td>{% if usernamemap %} {{ usernamemap[field.name] }} {%
         else %} {{ field.label }} {% endif %}</td>
     <td>
       {% set weightpercent = (field.data | int *100) / num_candidates %}
