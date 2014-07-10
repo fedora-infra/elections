@@ -128,7 +128,7 @@ def get_range_voting_form(candidates, max_range):
             title,
             choices=[(str(item), item) for item in range(max_range + 1)]
         )
-        setattr(RangeVoting, candidate.name, field)
+        setattr(RangeVoting, str(candidate.id), field)
 
     return RangeVoting()
 

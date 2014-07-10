@@ -170,12 +170,12 @@ def vote_range(election):
     if (election.candidates_are_fasusers):  # pragma: no cover
         for candidate in election.candidates:
             try:
-                usernamemap[candidate.name] = \
+                usernamemap[str(candidate.id)] = \
                     FAS2.person_by_username(candidate.name)['human_name']
             except (KeyError, AuthError), err:
                 APP.logger.debug(err)
                 # User has their name set to private or user doesn't exist.
-                usernamemap[candidate.name] = candidate.name
+                usernamemap[str(candidate.id)] = candidate.name
 
     return flask.render_template(
         'vote_range.html',
