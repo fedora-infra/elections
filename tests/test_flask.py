@@ -95,7 +95,7 @@ class Flasktests(ModelFlasktests):
             self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
             self.assertTrue(
                 '<span class="text">logged in as </span>' in output.data)
-            self.assertFalse('Vote now!' in output.data)
+            self.assertEqual(output.data.count('Vote now!'), 1)
 
     def test_is_admin(self):
         """ Test the is_admin function. """
@@ -280,7 +280,7 @@ class Flasktests(ModelFlasktests):
         output = self.app.get('/open')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<title>Fedora elections</title>' in output.data)
-        self.assertTrue('<h3>Next 2 elections</h3>' in output.data)
+        self.assertTrue('<h3>Next 3 elections</h3>' in output.data)
         self.assertTrue('<td>test election 3 shortdesc</td>' in output.data)
         self.assertTrue('<a href="/vote/' in output.data)
         self.assertTrue('<a href="/login">login</a>' in output.data)
@@ -290,21 +290,21 @@ class Flasktests(ModelFlasktests):
             output = self.app.get('/open')
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<title>Fedora elections</title>' in output.data)
-            self.assertTrue('<h3>Next 2 elections</h3>' in output.data)
+            self.assertTrue('<h3>Next 3 elections</h3>' in output.data)
             self.assertTrue('<a href="/vote/' in output.data)
             self.assertTrue(
                 '<span class="text">logged in as </span>' in output.data)
-            self.assertTrue('Vote now!' in output.data)
+            self.assertEqual(output.data.count('Vote now!'), 3)
 
         user = FakeUser([], username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get('/open')
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<title>Fedora elections</title>' in output.data)
-            self.assertTrue('<h3>Next 2 elections</h3>' in output.data)
+            self.assertTrue('<h3>Next 3 elections</h3>' in output.data)
             self.assertTrue(
                 '<span class="text">logged in as </span>' in output.data)
-            self.assertFalse('Vote now!' in output.data)
+            self.assertEqual(output.data.count('Vote now!'), 1)
 
 
 if __name__ == '__main__':
