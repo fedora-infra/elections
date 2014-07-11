@@ -290,6 +290,20 @@ def admin_add_multi_candidate(election_alias):
         candidates_name = []
         for entry in form.candidate.data.strip().split("|"):
             candidate = entry.split("!")
+
+            if election.candidates_are_fasusers:  # pragma: no cover
+                try:
+                    FAS2.person_by_username(candidate[0])['human_name']
+                except (KeyError, AuthError), err:
+                    SESSION.rollback()
+                    flask.flash(
+                        'User `%s` does not have a FAS account.'
+                        % candidate[0], 'error')
+                    return flask.redirect(
+                        flask.url_for(
+                            'admin_add_candidate',
+                            election_alias=election_alias))
+
             # No url
             if len(candidate) == 1:
                 cand = models.Candidate(
