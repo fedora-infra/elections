@@ -29,12 +29,13 @@ from functools import wraps
 
 import flask
 from sqlalchemy.exc import SQLAlchemyError
+from fedora.client import AuthError
 
 from fedora_elections import fedmsgshim
 from fedora_elections import forms
 from fedora_elections import models
 from fedora_elections import (
-    APP, SESSION, is_authenticated, is_admin, is_election_admin,
+    APP, SESSION, FAS2, is_authenticated, is_admin, is_election_admin,
     is_safe_url, safe_redirect_back
 )
 
@@ -236,6 +237,19 @@ def admin_add_candidate(election_alias):
 
     form = forms.CandidateForm()
     if form.validate_on_submit():
+
+        if election.candidates_are_fasusers:  # pragma: no cover
+            try:
+                FAS2.person_by_username(form.name.data)['human_name']
+            except (KeyError, AuthError), err:
+                flask.flash(
+                    'User `%s` does not have a FAS account.'
+                    % form.name.data, 'error')
+                return flask.redirect(
+                    flask.url_for(
+                        'admin_add_candidate',
+                        election_alias=election_alias))
+
         candidate = models.Candidate(
             election=election,
             name=form.name.data,
