@@ -13,6 +13,7 @@
       <th>End date (UTC)</th>
       <th>Status</th>
       <th></th>
+      <th></th>
     </tr>
     {% for election in election_list %}
       <tr>
@@ -20,6 +21,11 @@
         <td>{{ election.start_date }}</td>
         <td>{{ election.end_date }}</td>
         <td>{{ election.status }}</td>
+        <td>
+          <a href="{{ url_for('vote', election_alias=election.alias) }}">
+            More information
+          </a>
+        </td>
         <td>
           {% if election.status == "In progress" %}
             {% if election not in voted %}
