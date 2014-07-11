@@ -165,6 +165,7 @@ class Electiontests(Modeltests):
             embargoed=1,
             voting_type='select',
             candidates_are_fasusers=0,
+            max_votes=1,
             fas_user='skvidal',
         )
         self.session.add(obj)
