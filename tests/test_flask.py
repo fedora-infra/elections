@@ -258,8 +258,8 @@ class Flasktests(ModelFlasktests):
             '<td>test election 2 shortdesc</td>' in output.data)
         self.assertTrue(
             '<td>test election shortdesc</td>' in output.data)
-        self.assertEqual(output.data.count('<a href="results/'), 2)
-        self.assertEqual(output.data.count('<a href="about/'), 2)
+        self.assertEqual(output.data.count('<a href="/results/'), 2)
+        self.assertEqual(output.data.count('<a href="/about/'), 2)
         self.assertTrue('<a href="/login">login</a>' in output.data)
 
     def test_open_elections(self):
