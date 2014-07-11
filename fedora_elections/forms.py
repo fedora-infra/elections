@@ -140,7 +140,8 @@ def get_simple_voting_form(candidates, fasusers):
     titles = []
     for candidate in candidates:
         title = candidate.name
-        if fasusers:
+        if fasusers:  # pragma: no cover
+            # We can't cover FAS integration
             try:
                 title = \
                     FAS2.person_by_username(candidate.name)['human_name']
