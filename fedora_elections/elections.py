@@ -147,10 +147,6 @@ def vote_range(election):
                 if candidate.short_name in ['csrf_token', 'action']:
                     continue
 
-                if candidate.short_name not in cand_ids:
-                    flask.flash('Invalid input submitted', 'error')
-                    return safe_redirect_back()
-
                 new_vote = models.Vote(
                     election_id=election.id,
                     voter=flask.g.fas_user.username,
