@@ -22,7 +22,7 @@
         <td>{{ election.end_date }}</td>
         <td>{{ election.status }}</td>
         <td>
-          <a href="{{ url_for('vote', election_alias=election.alias) }}">
+          <a href="{{ url_for('about_election', election_alias=election.alias) }}">
             More information
           </a>
         </td>
