@@ -108,7 +108,7 @@ class FlaskRangeElectionstests(ModelFlasktests):
             # Invalid vote: too low
             data = {
                 '9': -1,
-                '6': 3,
+                '6': 0,
                 '5': 2,
                 'action': 'preview',
                 'csrf_token': csrf_token,
@@ -125,7 +125,7 @@ class FlaskRangeElectionstests(ModelFlasktests):
                 output.data.count('<td class="error">Not a valid choice</td>'),
                 1)
 
-            # Invalid vote: too high
+            # Invalid vote: 2 are too high
             data = {
                 '9': 5,
                 '6': 3,
@@ -143,12 +143,12 @@ class FlaskRangeElectionstests(ModelFlasktests):
                 in output.data)
             self.assertEqual(
                 output.data.count('<td class="error">Not a valid choice</td>'),
-                1)
+                2)
 
             # Invalid vote: Not numeric
             data = {
                 '9': 'a',
-                '6': 3,
+                '6': 0,
                 '5': 2,
                 'action': 'preview',
                 'csrf_token': csrf_token,
@@ -168,7 +168,7 @@ class FlaskRangeElectionstests(ModelFlasktests):
             # Valid input
             data = {
                 '4': 1,
-                '6': 3,
+                '6': 0,
                 '5': 2,
                 'action': 'preview',
                 'csrf_token': csrf_token,
@@ -182,7 +182,7 @@ class FlaskRangeElectionstests(ModelFlasktests):
                 '<input type="hidden" name="action" value="submit" />'
                 in output.data)
             self.assertTrue('<div class="vtmedcool">' in output.data)
-            self.assertTrue('<div class="vthot">' in output.data)
+            self.assertTrue('<div class="vtcold">' in output.data)
             self.assertTrue('<div class="vtmedwarm">' in output.data)
 
     def test_vote_range_process(self):
@@ -215,10 +215,24 @@ class FlaskRangeElectionstests(ModelFlasktests):
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
+            # Invalid vote: invalid username
+            data = {
+                'Toshio': 1,
+                'Kevin': 3,
+                'Ralph': 2,
+                'action': 'submit',
+            }
+
+            output = self.app.post('/vote/test_election3', data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertEqual(
+                output.data.count('<td class="error">Not a valid choice</td>'),
+                3)
+
             # Invalid vote: too low
             data = {
                 '4': -1,
-                '5': 3,
+                '5': 0,
                 '6': 2,
                 'action': 'submit',
                 'csrf_token': csrf_token,
@@ -231,7 +245,7 @@ class FlaskRangeElectionstests(ModelFlasktests):
                 output.data.count('<td class="error">Not a valid choice</td>'),
                 1)
 
-            # Invalid vote: too high
+            # Invalid vote: 2 are too high
             data = {
                 '4': 5,
                 '5': 3,
@@ -245,12 +259,12 @@ class FlaskRangeElectionstests(ModelFlasktests):
             self.assertEqual(output.status_code, 200)
             self.assertEqual(
                 output.data.count('<td class="error">Not a valid choice</td>'),
-                1)
+                2)
 
             # Invalid vote: Not numeric
             data = {
                 '4': 'a',
-                '5': 3,
+                '5': 0,
                 '6': 2,
                 'action': 'submit',
                 'csrf_token': csrf_token,
@@ -266,7 +280,7 @@ class FlaskRangeElectionstests(ModelFlasktests):
             # Valid input
             data = {
                 '4': 1,
-                '5': 3,
+                '5': 0,
                 '6': 2,
                 'action': 'submit',
                 'csrf_token': csrf_token,
