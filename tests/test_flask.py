@@ -43,6 +43,22 @@ from tests import ModelFlasktests, FakeUser, user_set
 class Flasktests(ModelFlasktests):
     """ Flask application tests. """
 
+    def test_is_safe_url(self):
+        """ Test the is_safe_url function. """
+        app = flask.Flask('elections')
+
+        with app.test_request_context():
+            self.assertTrue(
+                fedora_elections.is_safe_url('http://localhost'))
+            self.assertTrue(
+                fedora_elections.is_safe_url('https://localhost'))
+            self.assertTrue(
+                fedora_elections.is_safe_url('http://localhost/test'))
+            self.assertFalse(
+                fedora_elections.is_safe_url('http://fedoraproject.org/'))
+            self.assertFalse(
+                fedora_elections.is_safe_url('https://fedoraproject.org/'))
+
     def test_index_empty(self):
         """ Test the index function. """
         output = self.app.get('/')
