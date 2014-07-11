@@ -153,6 +153,24 @@ class Electiontests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
+        # Election - select voting - Open
+        obj = models.Election(  # id:6
+            shortdesc='test election 6 shortdesc',
+            alias='test_election6',
+            description='test election 6 description',
+            url='https://fedoraproject.org',
+            start_date=TODAY - timedelta(days=1),
+            end_date=TODAY + timedelta(days=3),
+            seats_elected=1,
+            embargoed=1,
+            voting_type='select',
+            candidates_are_fasusers=0,
+            fas_user='skvidal',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
     def test_get_election(self):
         """ Test the Election.get function. """
         self.test_init_election()
@@ -218,19 +236,21 @@ class Electiontests(Modeltests):
             self.session, fas_user='skvidal')
         self.assertNotEqual(obj, None)
         self.assertNotEqual(obj, [])
-        self.assertEqual(len(obj), 2)
+        self.assertEqual(len(obj), 3)
         self.assertEqual(obj[0].description, 'test election 4 description')
         self.assertEqual(obj[1].description, 'test election 5 description')
+        self.assertEqual(obj[2].description, 'test election 6 description')
 
         obj = models.Election.search(self.session)
         self.assertNotEqual(obj, None)
         self.assertNotEqual(obj, [])
-        self.assertEqual(len(obj), 5)
+        self.assertEqual(len(obj), 6)
         self.assertEqual(obj[0].description, 'test election 4 description')
         self.assertEqual(obj[1].description, 'test election 5 description')
-        self.assertEqual(obj[2].description, 'test election 3 description')
-        self.assertEqual(obj[3].description, 'test election 2 description')
-        self.assertEqual(obj[4].description, 'test election description')
+        self.assertEqual(obj[2].description, 'test election 6 description')
+        self.assertEqual(obj[3].description, 'test election 3 description')
+        self.assertEqual(obj[4].description, 'test election 2 description')
+        self.assertEqual(obj[5].description, 'test election description')
 
     def test_get_older_election(self):
         """ Test the Election.get_older_election function. """
@@ -248,9 +268,10 @@ class Electiontests(Modeltests):
         obj = models.Election.get_open_election(self.session, limit=TODAY)
         self.assertNotEqual(obj, None)
         self.assertNotEqual(obj, [])
-        self.assertEqual(len(obj), 2)
+        self.assertEqual(len(obj), 3)
         self.assertEqual(obj[0].shortdesc, 'test election 5 shortdesc')
-        self.assertEqual(obj[1].shortdesc, 'test election 3 shortdesc')
+        self.assertEqual(obj[1].shortdesc, 'test election 6 shortdesc')
+        self.assertEqual(obj[2].shortdesc, 'test election 3 shortdesc')
 
     def test_get_next_election(self):
         """ Test the Election.get_next_election function. """
