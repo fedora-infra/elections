@@ -18,10 +18,15 @@
         <td>{{election.start_date}}</td>
         <td>{{election.end_date}}</td>
         <td>
-          <a href="about/{{ election.alias }}">More information</a>
+          <a href="{{ url_for('vote', election_alias=election.alias) }}">
+            More information
+          </a>
         </td>
         <td>
-          <a href="results/{{ election.alias }}">Results</a>
+          <a href="{{ url_for('election_results',
+            election_alias=election.alias) }}">
+            Results
+          </a>
         </td>
       </tr>
     {% endfor %}
