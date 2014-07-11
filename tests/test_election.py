@@ -102,6 +102,7 @@ class Electiontests(Modeltests):
             embargoed=1,
             voting_type='range',
             candidates_are_fasusers=0,
+            max_votes=2,
             fas_user='pingou',
         )
         self.session.add(obj)
