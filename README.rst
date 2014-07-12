@@ -29,6 +29,7 @@ Before launching fedora-elections, the following packages should be installed:
  - python-flask
  - python-flask-sqlalchemy
  - python-flask-wtf
+ - python-flask-script
  - python-jinja2
  - python-kitchen
  - python-lxml
@@ -70,7 +71,7 @@ Run:
 
   ::
 
-      python createdb.py
+      python runserver.py create_database
 
 
 Starting the Application
@@ -85,36 +86,19 @@ There are 2 ways to start the application:
 
    ::
 
-    ./runserver
+    python runserver.py run
 
 
 * How to start with http
 
-  Next copy the file ``fedora-elections.conf`` file to your apache conf.d
-  directory:
-
     ::
 
-      sudo cp files/fedora-elections.conf /etc/httpd/conf.d/.
+      python runserver.py deploy_apache
 
-  Place the file ``fedora-elections.wsgi`` for example in /var/www
 
-  ::
-
-      sudo cp files/fedora-elections.wsgi /var/www
-
-  Adjust the apache configuration file to point to it
+  Adjust the apache configuration file to point ``fedora-elections.wsgi`` to /var/www
 
   Adjust the wsgi file installed in /var/www to point to fedora_elections
-
-
-  Place the fedora-elections configuration file in
-  ``/etc/fedora-elections/fedora-elections.cfg``
-
-  ::
-
-    sudo mkdir -p /etc/fedora-elections/
-    sudo cp files/fedora-elections.cfg /etc/fedora-elections/
 
   Restart apache:
 
