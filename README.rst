@@ -91,31 +91,14 @@ There are 2 ways to start the application:
 
 * How to start with http
 
-  Next copy the file ``fedora-elections.conf`` file to your apache conf.d
-  directory:
-
     ::
 
-      sudo cp files/fedora-elections.conf /etc/httpd/conf.d/.
+      python runserver.py deploy_apache
 
-  Place the file ``fedora-elections.wsgi`` for example in /var/www
-
-  ::
-
-      sudo cp files/fedora-elections.wsgi /var/www
 
   Adjust the apache configuration file to point to it
 
   Adjust the wsgi file installed in /var/www to point to fedora_elections
-
-
-  Place the fedora-elections configuration file in
-  ``/etc/fedora-elections/fedora-elections.cfg``
-
-  ::
-
-    sudo mkdir -p /etc/fedora-elections/
-    sudo cp files/fedora-elections.cfg /etc/fedora-elections/
 
   Restart apache:
 
