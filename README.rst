@@ -29,6 +29,7 @@ Before launching fedora-elections, the following packages should be installed:
  - python-flask
  - python-flask-sqlalchemy
  - python-flask-wtf
+ - python-flask-script
  - python-jinja2
  - python-kitchen
  - python-lxml
@@ -70,7 +71,7 @@ Run:
 
   ::
 
-      python createdb.py
+      python runserver.py create_database
 
 
 Starting the Application
@@ -85,7 +86,7 @@ There are 2 ways to start the application:
 
    ::
 
-    ./runserver
+    python runserver.py run
 
 
 * How to start with http
