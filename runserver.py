@@ -5,7 +5,7 @@ __main__.__requires__ = ['SQLAlchemy >= 0.7']
 import pkg_resources
 
 from fedora_elections import APP
-from flask.ext.script import Manager
+from flask.ext.script import Manager, prompt_bool
 from fedora_elections.models import create_tables
 
 manager = Manager(APP)
@@ -21,6 +21,13 @@ def create_database():
 def run_tests():
     """ Run application tests"""
     os.system('/bin/bash runtests.sh')
+
+
+@manager.command
+def deploy_apache():
+    """ Deploy in apache"""
+    if prompt_bool("I need sudo privileges for deploy the application, Run?"):
+        os.system('sudo /bin/bash apache_deploy.sh')
 
 
 @manager.command
