@@ -96,7 +96,7 @@ There are 2 ways to start the application:
       python runserver.py deploy_apache
 
 
-  Adjust the apache configuration file to point to it
+  Adjust the apache configuration file to point ``fedora-elections.wsgi`` to /var/www
 
   Adjust the wsgi file installed in /var/www to point to fedora_elections
 
