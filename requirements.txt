@@ -1,6 +1,7 @@
 # Used for when working from a virtualenv.
 # Use this file by running "$ pip install -r requirements.txt"
 Flask>=0.10
+Flask-Script
 Flask-wtf
 kitchen
 python-fedora
