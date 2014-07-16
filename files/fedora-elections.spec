@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.2
+Version:        2.3
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -109,6 +109,14 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Wed Jul 16 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.3-1
+- Update to 2.3
+- Restrict the groups asked upon login (Allows Dennis to log in)
+- Check that candidates are FAS user when adding them to an election that
+  turned on the option
+- More links to the about page
+- Improved unit-tests suite
+
 * Thu Jul 10 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.2-1
 - Update to 2.2
 - Better description of the different types of election
