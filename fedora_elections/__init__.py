@@ -259,7 +259,11 @@ def auth_login():
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         return safe_redirect_back(next_url)
     else:
-        return FAS.login(return_url=next_url)
+        groups = APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'][:]
+        if isinstance(groups, basestring):
+            groups = [groups]
+        groups.extend(models.get_groups(SESSION))
+        return FAS.login(return_url=next_url, groups=groups)
 
 
 @APP.route('/logout')

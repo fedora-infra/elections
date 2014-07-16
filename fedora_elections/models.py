@@ -415,3 +415,21 @@ class Vote(BASE):
         stats['n_candidates'] = cnt
 
         return stats
+
+
+def get_groups(session):
+    """ Return the list of groups of interest.
+
+    These groups are the groups used to find out the admins or the legal
+    voters of all the elections.
+    """
+
+    voters = [item[0] for item in session.query(
+        sa.distinct(LegalVoter.group_name)
+    ).order_by(LegalVoter.group_name).all()]
+
+    admins = [item[0] for item in session.query(
+        sa.distinct(ElectionAdminGroup.group_name)
+    ).order_by(ElectionAdminGroup.group_name).all()]
+
+    return voters + admins
