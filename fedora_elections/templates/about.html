@@ -7,7 +7,8 @@
     <p><a href="{{ election.url }}">[More Information]</a></p>
   {% endif %}
   {% if election.status == 'Ended' %}
-    <a href="/results/{{ election.alias }}">Show Results!</a>
+    <a href="{{ url_for('election_results',
+            election_alias=election.alias) }}">Show Results!</a>
   {% endif %}
   <table border="1" cellpadding="1">
     {% for candidate in election.candidates %}
