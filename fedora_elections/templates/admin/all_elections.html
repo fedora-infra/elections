@@ -30,8 +30,8 @@
           {{ election.shortdesc }}
         </a>
       </td>
-      <td>{{ election.start_date }}</td>
-      <td>{{ election.end_date }}</td>
+      <td>{{ election.start_date.strftime('%Y-%m-%d') }} 00:00 </td>
+      <td>{{ election.end_date.strftime('%Y-%m-%d') }} 23:59 </td>
       <td>{{ election.status }}</td>
     </tr>
     {% endfor %}

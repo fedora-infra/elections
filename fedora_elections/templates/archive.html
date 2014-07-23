@@ -15,8 +15,8 @@
     {% for election in elections %}
       <tr>
         <td>{{election.shortdesc}}</td>
-        <td>{{election.start_date}}</td>
-        <td>{{election.end_date}}</td>
+        <td>{{ election.start_date.strftime('%Y-%m-%d') }} 00:00 </td>
+        <td>{{ election.end_date.strftime('%Y-%m-%d') }} 23:59 </td>
         <td>
           <a href="{{ url_for('about_election', election_alias=election.alias) }}">
             More information

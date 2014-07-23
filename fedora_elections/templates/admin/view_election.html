@@ -11,8 +11,8 @@
     </a>
   </p>
   <ul>
-    <li>Start date: {{ election.start_date }}</li>
-    <li>End date: {{ election.end_date }}</li>
+    <li>Start date: {{ election.start_date.strftime('%Y-%m-%d') }} 00:00 </li>
+    <li>End date: {{ election.end_date.strftime('%Y-%m-%d') }} 23:59 </li>
     <li>Number elected: {{ election.seats_elected }}</li>
     <li>Election type: {{ election.voting_type }}</li>
     <li>Maximum number of votes: {{ election.max_votes }}</li>
