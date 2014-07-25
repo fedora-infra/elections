@@ -348,3 +348,37 @@ def election_results(election_alias):
         usernamemap=usernamemap,
         stats=stats,
     )
+
+@APP.route('/results/<election_alias>/text')
+def election_results_text(election_alias):
+    election = get_valid_election(election_alias, ended=True)
+
+    if not isinstance(election, models.Election):  # pragma: no cover
+        return election
+
+    elif election.embargoed and (
+            not is_admin(flask.g.fas_user)
+            or not is_election_admin(flask.g.fas_user, election.id)):
+        flask.flash(
+            "The text results are only available to admins when the election"
+            " is under embargo")
+        return safe_redirect_back()
+
+    usernamemap = {}
+    if (election.candidates_are_fasusers):  # pragma: no cover
+        for candidate in election.candidates:
+            try:
+                usernamemap[candidate.id] = \
+                    FAS2.person_by_username(candidate.name)['human_name']
+            except (KeyError, AuthError):
+                # User has their name set to private or user doesn't exist.
+                usernamemap[candidate.id] = candidate.name
+
+    stats = models.Vote.get_election_stats(SESSION, election.id)
+
+    return flask.render_template(
+        'results_text.html',
+        election=election,
+        usernamemap=usernamemap,
+        stats=stats,
+    )
