@@ -330,6 +330,14 @@ def election_results(election_alias):
                     "embargoed pending formal announcement.")
                 return safe_redirect_back()
 
+    if is_admin(flask.g.fas_user) \
+            or is_election_admin(flask.g.fas_user, election.id):
+        flask.flash(
+            "Check out the <a href='%s'>Text version</a> "
+            "to send the annoucement" % flask.url_for(
+                'election_results_text', election_alias=election.alias)
+            )
+
     usernamemap = {}
     if (election.candidates_are_fasusers):  # pragma: no cover
         for candidate in election.candidates:
