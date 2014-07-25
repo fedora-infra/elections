@@ -364,8 +364,8 @@ def election_results_text(election_alias):
     if not isinstance(election, models.Election):  # pragma: no cover
         return election
 
-    if not is_authenticated() or not is_admin(flask.g.fas_user) \
-            or not is_election_admin(flask.g.fas_user, election.id):
+    if not (is_authenticated() and is_admin(flask.g.fas_user)
+            and is_election_admin(flask.g.fas_user, election.id)):
         flask.flash(
             "The text results are only available to the admins", "error")
         return safe_redirect_back()
