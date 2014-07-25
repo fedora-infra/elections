@@ -330,8 +330,8 @@ def election_results(election_alias):
                     "embargoed pending formal announcement.")
                 return safe_redirect_back()
 
-    if is_admin(flask.g.fas_user) \
-            or is_election_admin(flask.g.fas_user, election.id):
+    if is_authenticated() and (is_admin(flask.g.fas_user) \
+            or is_election_admin(flask.g.fas_user, election.id)):
         flask.flash(
             "Check out the <a href='%s'>Text version</a> "
             "to send the annoucement" % flask.url_for(
