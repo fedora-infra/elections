@@ -238,6 +238,88 @@ class FlaskElectionstests(ModelFlasktests):
                 ' and you may not see its results yet.</li>' in output.data)
             self.assertTrue('<h3>Current elections</h3>' in output.data)
 
+    def test_election_results_text(self):
+        """ Test the election_results_text function - the preview part. """
+        output = self.app.get(
+            '/results/test_election/text', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            'class="message">The election, test_election, does not exist.</'
+            in output.data)
+
+        self.setup_db()
+
+        output = self.app.get(
+            '/results/test_election/text', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            'class="error">The text results are only available to the '
+            'admins</li>' in output.data)
+        self.assertTrue('<h2>Elections</h2>' in output.data)
+
+        user = FakeUser(['packager'], username='toshio')
+        with user_set(fedora_elections.APP, user):
+            output = self.app.get(
+                '/results/test_election2/text', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                'class="error">The text results are only available to the '
+                'admins</li>' in output.data)
+            self.assertTrue('<h2>Elections</h2>' in output.data)
+
+        user = FakeUser(
+            fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
+            username='toshio')
+        with user_set(fedora_elections.APP, user):
+            output = self.app.get(
+                '/results/test_election2/text', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            exp = """<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Fedora elections</title>
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon"
+        href="//fedoraproject.org/static/images/favicon.ico"/>
+  </head>
+  <body>
+<pre>
+Greetings, all!
+
+The elections for test election 2 shortdesc have concluded, and the results
+are shown below.
+
+XXX is electing 1 seats this time.
+A total of 0 ballots were cast, meaning a candidate
+could accumulate up to 0 votes (0 * 0).
+
+The results for the elections are as follows:
+
+  # votes |  name
+- --------+----------------------
+
+
+Congratulations to the winning candidates, and thank you all
+candidates for running this elections!
+</pre>
+
+</body>
+</html>"""
+
+            self.assertEqual(output.data, exp)
+
+        user = FakeUser(['gitr2spec'], username='kevin')
+        with user_set(fedora_elections.APP, user):
+            output = self.app.get(
+                '/results/test_election3/text', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Sorry but this election is in progress,'
+                ' and you may not see its results yet.</li>' in output.data)
+            self.assertTrue('<h3>Current elections</h3>' in output.data)
+
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskElectionstests)
