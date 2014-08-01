@@ -309,26 +309,27 @@ def election_results(election_alias):
         return election
 
     elif election.embargoed:
-        if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
+        if is_authenticated() and (
+                is_admin(flask.g.fas_user)
+                or is_election_admin(flask.g.fas_user, election.id)):
+            flask.flash("You are only seeing this page because you are "
+                        "an admin.", "warning")
+            flask.flash("The results for this election are currently "
+                        "embargoed pending formal announcement.",
+                        "warning")
+        else:
             flask.flash("We are sorry.  The results for this election "
                         "cannot be viewed because they are currently "
                         "embargoed pending formal announcement.")
             return safe_redirect_back()
-        else:
-            if is_admin(flask.g.fas_user) \
-                    or is_election_admin(flask.g.fas_user, election.id):
-                flask.flash("You are only seeing this page because you are "
-                            "an admin.", "warning")
-                flask.flash("The results for this election are currently "
-                            "embargoed pending formal announcement.",
-                            "warning")
-                pass
-            else:
-                flask.flash(
-                    "We are sorry.  The results for this election "
-                    "cannot be viewed because they are currently "
-                    "embargoed pending formal announcement.")
-                return safe_redirect_back()
+
+    if is_authenticated() and (is_admin(flask.g.fas_user) \
+            or is_election_admin(flask.g.fas_user, election.id)):
+        flask.flash(
+            "Check out the <a href='%s'>Text version</a> "
+            "to send the annoucement" % flask.url_for(
+                'election_results_text', election_alias=election.alias)
+            )
 
     usernamemap = {}
     if (election.candidates_are_fasusers):  # pragma: no cover
@@ -344,6 +345,38 @@ def election_results(election_alias):
 
     return flask.render_template(
         'results.html',
+        election=election,
+        usernamemap=usernamemap,
+        stats=stats,
+    )
+
+@APP.route('/results/<election_alias>/text')
+def election_results_text(election_alias):
+    election = get_valid_election(election_alias, ended=True)
+
+    if not isinstance(election, models.Election):  # pragma: no cover
+        return election
+
+    if not (is_authenticated() and (is_admin(flask.g.fas_user)
+            or is_election_admin(flask.g.fas_user, election.id))):
+        flask.flash(
+            "The text results are only available to the admins", "error")
+        return safe_redirect_back()
+
+    usernamemap = {}
+    if (election.candidates_are_fasusers):  # pragma: no cover
+        for candidate in election.candidates:
+            try:
+                usernamemap[candidate.id] = \
+                    FAS2.person_by_username(candidate.name)['human_name']
+            except (KeyError, AuthError):
+                # User has their name set to private or user doesn't exist.
+                usernamemap[candidate.id] = candidate.name
+
+    stats = models.Vote.get_election_stats(SESSION, election.id)
+
+    return flask.render_template(
+        'results_text.html',
         election=election,
         usernamemap=usernamemap,
         stats=stats,

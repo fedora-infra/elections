@@ -152,6 +152,12 @@ def inject_variables():
     return dict(is_admin=is_admin(user),
                 version=__version__)
 
+@APP.template_filter('rjust')
+def rjust_filter(text, length):
+    """ Run a rjust command on the text for the given length
+    """
+    return str(text).rjust(length)
+
 
 # LIST VIEWS #############################################
 
