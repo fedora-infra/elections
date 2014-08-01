@@ -309,26 +309,19 @@ def election_results(election_alias):
         return election
 
     elif election.embargoed:
-        if not is_authenticated():
+        if is_authenticated() and (
+                is_admin(flask.g.fas_user)
+                or is_election_admin(flask.g.fas_user, election.id)):
+            flask.flash("You are only seeing this page because you are "
+                        "an admin.", "warning")
+            flask.flash("The results for this election are currently "
+                        "embargoed pending formal announcement.",
+                        "warning")
+        else:
             flask.flash("We are sorry.  The results for this election "
                         "cannot be viewed because they are currently "
                         "embargoed pending formal announcement.")
             return safe_redirect_back()
-        else:
-            if is_admin(flask.g.fas_user) \
-                    or is_election_admin(flask.g.fas_user, election.id):
-                flask.flash("You are only seeing this page because you are "
-                            "an admin.", "warning")
-                flask.flash("The results for this election are currently "
-                            "embargoed pending formal announcement.",
-                            "warning")
-                pass
-            else:
-                flask.flash(
-                    "We are sorry.  The results for this election "
-                    "cannot be viewed because they are currently "
-                    "embargoed pending formal announcement.")
-                return safe_redirect_back()
 
     if is_authenticated() and (is_admin(flask.g.fas_user) \
             or is_election_admin(flask.g.fas_user, election.id)):
