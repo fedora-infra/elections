@@ -272,6 +272,47 @@ class FlaskElectionstests(ModelFlasktests):
             username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
+                '/results/test_election/text', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            exp = """<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Fedora elections</title>
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon"
+        href="//fedoraproject.org/static/images/favicon.ico"/>
+  </head>
+  <body>
+<pre>
+Greetings, all!
+
+The elections for test election shortdesc have concluded, and the results
+are shown below.
+
+XXX is electing 1 seats this time.
+A total of 2 ballots were cast, meaning a candidate
+could accumulate up to 6 votes (2 * 3).
+
+The results for the elections are as follows:
+
+  # votes |  name
+- --------+----------------------
+       8  | Kevin
+- --------+----------------------
+       7  | Ralph
+       6  | Toshio
+
+
+Congratulations to the winning candidates, and thank you all
+candidates for running this elections!
+</pre>
+
+</body>
+</html>"""
+            self.assertEqual(output.data, exp)
+
+            output = self.app.get(
                 '/results/test_election2/text', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             exp = """<!DOCTYPE html>
