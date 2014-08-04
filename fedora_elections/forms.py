@@ -37,6 +37,7 @@ class ElectionForm(wtf.Form):
             ('range_3', 'Simplified Range Voting (max is set below)'),
             ('select', 'Select Voting (checkboxes for each candidate, '
              'maximum number of votes set below)'),
+            ('for_abstain_against', 'For - Abstain - Against (+1, neutral, -1)'),
         ],
         default='range')
 
@@ -157,6 +158,38 @@ def get_simple_voting_form(candidates, fasusers):
     setattr(SimpleVoting, 'candidate', field)
 
     return SimpleVoting()
+
+
+def get_for_abstain_against_voting_form(candidates, fasusers):
+    class ForAbstainAgainstVoting(wtf.Form):
+        action = wtforms.HiddenField()
+        titles = []
+        candidate_ids = []
+    fields = []
+    for candidate in candidates:
+        title = candidate.name
+        if fasusers:  # pragma: no cover
+            # We can't cover FAS integration
+            try:
+               title = \
+                   FAS2.person_by_username(candidate.name)['human_name']
+            except (KeyError, AuthError), err:
+                APP.logger.debug(err)
+        if candidate.url:
+            title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
+        ForAbstainAgainstVoting.titles.append((str(candidate.id), title))
+        ForAbstainAgainstVoting.candidate_ids.append(str(candidate.id))
+        fields.append(wtforms.SelectField(
+            candidate.name,
+            choices=[('0',0),('1',1),('-1',-1)]
+        ))
+        def validate_field(form, field):
+           if field.data != '1' and field.data != '-1' and field.data != '0':
+               raise wtforms.ValidationError(
+                   'Not a valid integer value for vote.')
+    for i,field in enumerate(fields):
+        setattr(ForAbstainAgainstVoting,'candidate'+str(i),field)
+    return ForAbstainAgainstVoting()
 
 
 def get_select_voting_form(candidates, max_selection):

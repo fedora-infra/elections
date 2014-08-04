@@ -117,6 +117,8 @@ def vote(election_alias):
         return vote_simple(election)
     elif election.voting_type == 'select':
         return vote_select(election)
+    elif election.voting_type == 'for_abstain_against':
+        return vote_for_abstain_against(election)
     else:  # pragma: no cover
         flask.flash(
             'Unknown election voting type: %s' % election.voting_type)
@@ -286,6 +288,47 @@ def vote_simple(election):
                 SESSION.add(new_vote)
             SESSION.commit()
 
+            flask.flash("Your vote has been recorded.  Thank you!")
+            return safe_redirect_back()
+
+        if form.action.data == 'preview':
+            flask.flash("Please confirm your vote!")
+            next_action = 'vote'
+
+    return flask.render_template(
+        'vote_simple.html',
+        election=election,
+        form=form,
+        num_candidates=num_candidates,
+        nextaction=next_action)
+
+
+def vote_for_abstain_against(election):
+    votes = models.Vote.of_user_on_election(
+        SESSION, flask.g.fas_user.username, election.id, count=True)
+
+    num_candidates = election.candidates.count()
+
+    next_action = 'confirm'
+    form=forms.get_for_abstain_against_voting_form(
+               candidates=election.candidates,
+               fasusers=election.candidates_are_fasusers)
+    if form.validate_on_submit():
+        if form.action.data == 'submit':
+            i=0
+            for candidate in form:
+                if candidate.short_name in ['csrf_token', 'action']:
+                    continue
+                new_vote = models.Vote(
+                    election_id=election.id,
+                    voter=flask.g.fas_user.username,
+                    timestamp=datetime.now(),
+                    candidate_id=form.candidate_ids[i-1],
+                    value=candidate.data,
+                )
+                i += 1
+                SESSION.add(new_vote)
+            SESSION.commit()
             flask.flash("Your vote has been recorded.  Thank you!")
             return safe_redirect_back()
 
