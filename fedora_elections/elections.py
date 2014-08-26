@@ -315,18 +315,17 @@ def vote_for_abstain_against(election):
                fasusers=election.candidates_are_fasusers)
     if form.validate_on_submit():
         if form.action.data == 'submit':
-            i=0
             for candidate in form:
                 if candidate.short_name in ['csrf_token', 'action']:
                     continue
+                cand_id = candidate.short_name.replace('candidate_', '')
                 new_vote = models.Vote(
                     election_id=election.id,
                     voter=flask.g.fas_user.username,
                     timestamp=datetime.now(),
-                    candidate_id=form.candidate_ids[i-1],
+                    candidate_id=cand_id,
                     value=candidate.data,
                 )
-                i += 1
                 SESSION.add(new_vote)
             SESSION.commit()
             flask.flash("Your vote has been recorded.  Thank you!")
