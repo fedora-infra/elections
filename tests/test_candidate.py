@@ -187,6 +187,28 @@ class Candidatetests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
+        #
+        # Election #7
+        #
+
+        obj = models.Candidate(  # id:14
+            election_id=7,
+            name='Toshio',
+            url='https://fedoraproject.org/wiki/User:Toshio',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = models.Candidate(  # id:15
+            election_id=7,
+            name='Kevin',
+            url='https://fedoraproject.org/wiki/User:Kevin',
+        )
+        self.session.add(obj)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
     def test_to_json(self):
         """ Test the Candidate.to_json function. """
         self.test_init_candidate()
