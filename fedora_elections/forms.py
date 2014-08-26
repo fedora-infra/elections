@@ -37,6 +37,7 @@ class ElectionForm(wtf.Form):
             ('range_3', 'Simplified Range Voting (max is set below)'),
             ('select', 'Select Voting (checkboxes for each candidate, '
              'maximum number of votes set below)'),
+            ('irc', '+1/0/-1 voting'),
         ],
         default='range')
 
@@ -157,6 +158,20 @@ def get_simple_voting_form(candidates, fasusers):
     setattr(SimpleVoting, 'candidate', field)
 
     return SimpleVoting()
+
+
+def get_irc_voting_form(candidates, fasusers):
+    class IrcVoting(wtf.Form):
+        action = wtforms.HiddenField()
+
+    for candidate in candidates:
+        field = wtforms.SelectField(
+            candidate.name,
+            choices=[('0',0),('1',1),('-1',-1)]
+        )
+        setattr(IrcVoting, candidate.name, field)
+
+    return IrcVoting()
 
 
 def get_select_voting_form(candidates, max_selection):
