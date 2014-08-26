@@ -41,8 +41,8 @@ from tests import ModelFlasktests, Modeltests, TODAY, FakeUser, user_set
 
 
 # pylint: disable=R0904
-class FlaskSimpleElectionstests(ModelFlasktests):
-    """ Flask application tests range voting. """
+class FlaskIrcElectionstests(ModelFlasktests):
+    """ Flask application tests irc voting. """
 
     def test_vote_for_abstain_against(self):
         """ Test the vote_for_abstain_against function - the preview part. """
@@ -153,5 +153,5 @@ class FlaskSimpleElectionstests(ModelFlasktests):
 
 
 if __name__ == '__main__':
-    SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskSimpleElectionstests)
+    SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskIrcElectionstests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)

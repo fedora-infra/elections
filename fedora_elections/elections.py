@@ -117,8 +117,8 @@ def vote(election_alias):
         return vote_simple(election)
     elif election.voting_type == 'select':
         return vote_select(election)
-    elif election.voting_type == 'for_abstain_against':
-        return vote_for_abstain_against(election)
+    elif election.voting_type == 'irc':
+        return vote_irc(election)
     else:  # pragma: no cover
         flask.flash(
             'Unknown election voting type: %s' % election.voting_type)
@@ -303,7 +303,7 @@ def vote_simple(election):
         nextaction=next_action)
 
 
-def vote_for_abstain_against(election):
+def vote_irc(election):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
 
@@ -314,7 +314,7 @@ def vote_for_abstain_against(election):
     num_candidates = election.candidates.count()
 
     next_action = 'confirm'
-    form=forms.get_for_abstain_against_voting_form(
+    form=forms.get_irc_voting_form(
                candidates=election.candidates,
                fasusers=election.candidates_are_fasusers)
     if form.validate_on_submit():

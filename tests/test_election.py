@@ -182,7 +182,7 @@ class Electiontests(Modeltests):
             end_date=TODAY + timedelta(days=3),
             seats_elected=1,
             embargoed=1,
-            voting_type='for_abstain_against',
+            voting_type='irc',
             candidates_are_fasusers=0,
             max_votes=1,
             fas_user='nerdsville',

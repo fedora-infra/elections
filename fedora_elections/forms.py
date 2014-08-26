@@ -37,7 +37,7 @@ class ElectionForm(wtf.Form):
             ('range_3', 'Simplified Range Voting (max is set below)'),
             ('select', 'Select Voting (checkboxes for each candidate, '
              'maximum number of votes set below)'),
-            ('for_abstain_against', '+1/0/-1 voting'),
+            ('irc', '+1/0/-1 voting'),
         ],
         default='range')
 
@@ -160,8 +160,8 @@ def get_simple_voting_form(candidates, fasusers):
     return SimpleVoting()
 
 
-def get_for_abstain_against_voting_form(candidates, fasusers):
-    class ForAbstainAgainstVoting(wtf.Form):
+def get_irc_voting_form(candidates, fasusers):
+    class IrcVoting(wtf.Form):
         action = wtforms.HiddenField()
 
     for candidate in candidates:
@@ -169,9 +169,9 @@ def get_for_abstain_against_voting_form(candidates, fasusers):
             candidate.name,
             choices=[('0',0),('1',1),('-1',-1)]
         )
-        setattr(ForAbstainAgainstVoting, candidate.name, field)
+        setattr(IrcVoting, candidate.name, field)
 
-    return ForAbstainAgainstVoting()
+    return IrcVoting()
 
 
 def get_select_voting_form(candidates, max_selection):

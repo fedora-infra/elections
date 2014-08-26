@@ -420,7 +420,7 @@ class Vote(BASE):
                 stats['max_vote'] = election.max_votes
         elif election.voting_type == 'simple':
             stats['max_vote'] = 1
-        elif election.voting_type == 'for_abstain_against':
+        elif election.voting_type == 'irc':
             stats['max_vote'] = 1
 
         return stats
