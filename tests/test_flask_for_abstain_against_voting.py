@@ -85,9 +85,11 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h2>test election 7 shortdesc</h2>' in output.data)
+
             # Valid input
             data = {
                 'Kevin': -1,
+                'Toshio': '0',
                 'action': 'preview',
                 'csrf_token': csrf_token,
             }
@@ -132,7 +134,8 @@ class FlaskSimpleElectionstests(ModelFlasktests):
 
             # Valid input
             data = {
-                'Toshio': True,
+                'Toshio': '0',
+                'Kevin': '1',
                 'action': 'submit',
                 'csrf_token': csrf_token,
             }
