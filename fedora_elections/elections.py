@@ -307,6 +307,10 @@ def vote_for_abstain_against(election):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
 
+    cand_name = {}
+    for candidate in election.candidates:
+        cand_name[candidate.name] = candidate.id
+
     num_candidates = election.candidates.count()
 
     next_action = 'confirm'
@@ -318,12 +322,11 @@ def vote_for_abstain_against(election):
             for candidate in form:
                 if candidate.short_name in ['csrf_token', 'action']:
                     continue
-                cand_id = candidate.short_name.replace('candidate_', '')
                 new_vote = models.Vote(
                     election_id=election.id,
                     voter=flask.g.fas_user.username,
                     timestamp=datetime.now(),
-                    candidate_id=cand_id,
+                    candidate_id=cand_name[candidate.short_name],
                     value=candidate.data,
                 )
                 SESSION.add(new_vote)

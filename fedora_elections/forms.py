@@ -164,15 +164,12 @@ def get_for_abstain_against_voting_form(candidates, fasusers):
     class ForAbstainAgainstVoting(wtf.Form):
         action = wtforms.HiddenField()
 
-    fields = []
     for candidate in candidates:
-        fields.append(wtforms.SelectField(
+        field = wtforms.SelectField(
             candidate.name,
             choices=[('0',0),('1',1),('-1',-1)]
-        ))
-
-    for i,field in enumerate(fields):
-        setattr(ForAbstainAgainstVoting,'candidate_'+str(i),field)
+        )
+        setattr(ForAbstainAgainstVoting, candidate.name, field)
 
     return ForAbstainAgainstVoting()
 
