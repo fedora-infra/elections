@@ -44,8 +44,8 @@ from tests import ModelFlasktests, Modeltests, TODAY, FakeUser, user_set
 class FlaskIrcElectionstests(ModelFlasktests):
     """ Flask application tests irc voting. """
 
-    def test_vote_for_abstain_against(self):
-        """ Test the vote_for_abstain_against function - the preview part. """
+    def test_vote_irc(self):
+        """ Test the vote_irc function - the preview part. """
         output = self.app.get(
             '/vote/test_election', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
@@ -105,8 +105,8 @@ class FlaskIrcElectionstests(ModelFlasktests):
                 '<li class="message">Please confirm your vote!</li>'
                 in output.data)
 
-    def test_vote_for_abstain_against_process(self):
-        """ Test the vote_for_abstain_against function - the voting part. """
+    def test_vote_irc_process(self):
+        """ Test the vote_irc function - the voting part. """
         output = self.app.get(
             '/vote/test_election', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
