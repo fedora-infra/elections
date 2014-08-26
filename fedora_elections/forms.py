@@ -37,7 +37,7 @@ class ElectionForm(wtf.Form):
             ('range_3', 'Simplified Range Voting (max is set below)'),
             ('select', 'Select Voting (checkboxes for each candidate, '
              'maximum number of votes set below)'),
-            ('for_abstain_against', 'For - Abstain - Against (+1, neutral, -1)'),
+            ('for_abstain_against', '+1/0/-1 voting'),
         ],
         default='range')
 
