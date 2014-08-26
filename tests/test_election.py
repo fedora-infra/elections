@@ -172,7 +172,7 @@ class Electiontests(Modeltests):
         self.session.add(obj)
         self.session.commit()
         self.assertNotEqual(obj, None)
-        # Election - forAbstainAgainst voting - Open
+        # Election - IRC voting - Open
         obj = models.Election(  # id:7
             shortdesc='test election 7 shortdesc',
             alias='test_election7',
