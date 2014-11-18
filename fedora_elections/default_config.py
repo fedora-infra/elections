@@ -22,3 +22,10 @@ FAS_BASE_URL = 'https://admin.stg.fedoraproject.org/accounts/'
 FAS_USERNAME = ''
 FAS_PASSWORD = ''
 FAS_CHECK_CERT = False
+
+DOGPILE_CACHE = {
+    'backend': 'dogpile.cache.dbm',
+    'arguments': {
+        'filename': '/var/tmp/elections-cache.dbm',
+    },
+}

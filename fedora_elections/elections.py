@@ -37,6 +37,7 @@ from fedora_elections import (
     APP, SESSION, FAS2, is_authenticated, is_admin, is_election_admin,
     is_safe_url, safe_redirect_back,
 )
+from fedora_elections.utils import build_name_map
 
 
 def login_required(f):
@@ -166,16 +167,7 @@ def vote_range(election):
             flask.flash("Please confirm your vote!")
             next_action = 'vote'
 
-    usernamemap = {}
-    if (election.candidates_are_fasusers):  # pragma: no cover
-        for candidate in election.candidates:
-            try:
-                usernamemap[str(candidate.id)] = \
-                    FAS2.person_by_username(candidate.name)['human_name']
-            except (KeyError, AuthError), err:
-                APP.logger.debug(err)
-                # User has their name set to private or user doesn't exist.
-                usernamemap[str(candidate.id)] = candidate.name
+    usernamemap = build_name_map(election)
 
     return flask.render_template(
         'vote_range.html',
@@ -239,16 +231,7 @@ def vote_select(election):
                 flask.flash("Please confirm your vote!")
                 next_action = 'vote'
 
-    usernamemap = {}
-    if (election.candidates_are_fasusers):  # pragma: no cover
-        for candidate in election.candidates:
-            try:
-                usernamemap[candidate.name] = \
-                    FAS2.person_by_username(candidate.name)['human_name']
-            except (KeyError, AuthError), err:
-                APP.logger.debug(err)
-                # User has their name set to private or user doesn't exist.
-                usernamemap[candidate.name] = candidate.name
+    usernamemap = build_name_map(election)
 
     return flask.render_template(
         'vote_simple.html',
@@ -376,15 +359,7 @@ def election_results(election_alias):
                 'election_results_text', election_alias=election.alias)
             )
 
-    usernamemap = {}
-    if (election.candidates_are_fasusers):  # pragma: no cover
-        for candidate in election.candidates:
-            try:
-                usernamemap[candidate.id] = \
-                    FAS2.person_by_username(candidate.name)['human_name']
-            except (KeyError, AuthError):
-                # User has their name set to private or user doesn't exist.
-                usernamemap[candidate.id] = candidate.name
+    usernamemap = build_name_map(election)
 
     stats = models.Vote.get_election_stats(SESSION, election.id)
 
@@ -408,15 +383,7 @@ def election_results_text(election_alias):
             "The text results are only available to the admins", "error")
         return safe_redirect_back()
 
-    usernamemap = {}
-    if (election.candidates_are_fasusers):  # pragma: no cover
-        for candidate in election.candidates:
-            try:
-                usernamemap[candidate.id] = \
-                    FAS2.person_by_username(candidate.name)['human_name']
-            except (KeyError, AuthError):
-                # User has their name set to private or user doesn't exist.
-                usernamemap[candidate.id] = candidate.name
+    usernamemap = build_name_map(election)
 
     stats = models.Vote.get_election_stats(SESSION, election.id)
 

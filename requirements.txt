@@ -9,3 +9,4 @@ python-openid-cla
 python-openid-teams
 SQLAlchemy
 wtforms
+dogpile.cache

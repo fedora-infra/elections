@@ -38,6 +38,8 @@ from fedora.client import AuthError, AppError
 from fedora.client.fas2 import AccountSystem
 from flask.ext.fas_openid import FAS
 
+import dogpile.cache
+
 import fedora_elections.fedmsgshim
 import fedora_elections.proxy
 
@@ -63,6 +65,9 @@ FAS2 = AccountSystem(
 from fedora_elections import models
 SESSION = models.create_session(APP.config['DB_URL'])
 from fedora_elections import forms
+
+cache = dogpile.cache.make_region()
+cache.configure(**APP.config['DOGPILE_CACHE'])
 
 
 def is_authenticated():
