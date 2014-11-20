@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.4
+Version:        2.4.1
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -111,6 +111,15 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Thu Nov 20 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.4.1-1
+- Update to 2.4.1
+- Adjust the election form to inform the user that cla_done is always required
+  to vote (Patrick Uiterwijk)
+- Fix the display of the name retrieved from FAS in the result page
+- Make the about page rely on the cached information
+- Add blinker to the list of deps in the requirements.txt for the unit-tests
+  to pass on jenkins
+
 * Thu Nov 20 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.4-1
 - Update to 2.4
 - Fix the election creation/edit page to show all the labels
@@ -120,7 +129,7 @@ install -m 644 files/update_1_to_2.sql \
   email with the results
 - Add new election type: IRC allowing users to do +1/0/-1 votes
 - Add session time-out
-- Add caching for the information retrieved from FAS
+- Add caching for the information retrieved from FAS (Ralph Bean)
 - Add python-dogpile-cache as BR and R
 
 * Wed Jul 16 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.3-1
