@@ -38,7 +38,7 @@
     <tr class="{% if lastrow == True %}firstout{% endif %} {{ loop.cycle('row_odd', 'row_even') }}">
         <td>
           {% if election.candidates_are_fasusers %}
-            {{ usernamemap[candidate.id] }}
+            {{ usernamemap['%s' % candidate.id] }}
           {% else %}
             {{candidate.name}}
           {% endif %}
