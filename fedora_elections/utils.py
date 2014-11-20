@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import fedora_elections
 
 from fedora.client import AuthError
