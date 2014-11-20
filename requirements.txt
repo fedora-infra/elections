@@ -10,3 +10,4 @@ python-openid-teams
 SQLAlchemy
 wtforms
 dogpile.cache
+blinker # required by Flask for the unit-tests (for signaling)
