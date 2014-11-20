@@ -15,7 +15,7 @@
       <tr>
         <td>
           {% if election.candidates_are_fasusers %}
-            {{ usernamemap[candidate.id] }}
+            {{ usernamemap['%s' % candidate.id] }}
           {% else %}
             {{ candidate.name }}
           {% endif %}

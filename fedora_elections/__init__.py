@@ -68,6 +68,7 @@ from fedora_elections import forms
 
 cache = dogpile.cache.make_region()
 cache.configure(**APP.config['DOGPILE_CACHE'])
+from fedora_elections.utils import build_name_map
 
 
 def is_authenticated():
@@ -208,15 +209,7 @@ def about_election(election_alias):
         flask.flash('The election, %s,  does not exist.' % election_alias)
         return safe_redirect_back()
 
-    usernamemap = {}
-    if (election.candidates_are_fasusers):  # pragma: no cover
-        for candidate in election.candidates:
-            try:
-                usernamemap[candidate.id] = \
-                    FAS2.person_by_username(candidate.name)['human_name']
-            except (KeyError, AuthError):
-                # User has their name set to private or user doesn't exist.
-                usernamemap[candidate.id] = candidate.name
+    usernamemap = build_name_map(election)
 
     return flask.render_template(
         'about.html',
