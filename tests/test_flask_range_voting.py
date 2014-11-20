@@ -298,5 +298,6 @@ class FlaskRangeElectionstests(ModelFlasktests):
 
 
 if __name__ == '__main__':
-    SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskRangeElectionstests)
+    SUITE = unittest.TestLoader().loadTestsFromTestCase(
+        FlaskRangeElectionstests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)

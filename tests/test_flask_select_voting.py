@@ -170,5 +170,6 @@ class FlaskSimpleElectionstests(ModelFlasktests):
 
 
 if __name__ == '__main__':
-    SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskSimpleElectionstests)
+    SUITE = unittest.TestLoader().loadTestsFromTestCase(
+        FlaskSimpleElectionstests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)

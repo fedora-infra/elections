@@ -297,9 +297,9 @@ def vote_irc(election):
     num_candidates = election.candidates.count()
 
     next_action = 'confirm'
-    form=forms.get_irc_voting_form(
-               candidates=election.candidates,
-               fasusers=election.candidates_are_fasusers)
+    form = forms.get_irc_voting_form(
+        candidates=election.candidates,
+        fasusers=election.candidates_are_fasusers)
     if form.validate_on_submit():
         if form.action.data == 'submit':
             for candidate in form:
@@ -351,7 +351,8 @@ def election_results(election_alias):
                         "embargoed pending formal announcement.")
             return safe_redirect_back()
 
-    if is_authenticated() and (is_admin(flask.g.fas_user) \
+    if is_authenticated() and (
+            is_admin(flask.g.fas_user)
             or is_election_admin(flask.g.fas_user, election.id)):
         flask.flash(
             "Check out the <a href='%s'>Text version</a> "
@@ -369,6 +370,7 @@ def election_results(election_alias):
         usernamemap=usernamemap,
         stats=stats,
     )
+
 
 @APP.route('/results/<election_alias>/text')
 def election_results_text(election_alias):

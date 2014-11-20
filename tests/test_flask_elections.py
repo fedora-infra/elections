@@ -361,7 +361,6 @@ candidates for running this elections!
             self.assertTrue('<h3>Current elections</h3>' in output.data)
 
 
-
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskElectionstests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)

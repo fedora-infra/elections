@@ -167,7 +167,7 @@ def get_irc_voting_form(candidates, fasusers):
     for candidate in candidates:
         field = wtforms.SelectField(
             candidate.name,
-            choices=[('0',0),('1',1),('-1',-1)]
+            choices=[('0', 0), ('1', 1), ('-1', -1)]
         )
         setattr(IrcVoting, candidate.name, field)
 

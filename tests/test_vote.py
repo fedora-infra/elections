@@ -178,11 +178,11 @@ class Votetests(Modeltests):
 
         # Election 7
 
-        obj = models.Vote( #id:1
-             election_id=7,
-             voter='toshio',
-             candidate_id=12,
-             value='1',
+        obj = models.Vote(  # id:1
+            election_id=7,
+            voter='toshio',
+            candidate_id=12,
+            value='1',
         )
         self.session.add(obj)
         self.session.commit()
