@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.3
+Version:        2.4
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -24,6 +24,7 @@ BuildRequires:  python-setuptools
 BuildRequires:  python-wtforms
 BuildRequires:  python-nose
 BuildRequires:  python-coverage
+BuildRequires:  python-dogpile-cache
 
 Requires:       python-fedora
 Requires:       python-fedora-flask
@@ -33,6 +34,7 @@ Requires:       python-openid
 Requires:       python-openid-teams
 Requires:       python-openid-cla
 Requires:       python-wtforms
+Requires:       python-dogpile-cache
 
 # EPEL6
 %if ( 0%{?rhel} && 0%{?rhel} == 6 )
@@ -109,6 +111,18 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Thu Nov 20 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.4-1
+- Update to 2.4
+- Fix the election creation/edit page to show all the labels
+- Display the start and end time for the date fields in the create/edit
+  election pages
+- Add a text result page that can be used as basis to send the announcement
+  email with the results
+- Add new election type: IRC allowing users to do +1/0/-1 votes
+- Add session time-out
+- Add caching for the information retrieved from FAS
+- Add python-dogpile-cache as BR and R
+
 * Wed Jul 16 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.3-1
 - Update to 2.3
 - Restrict the groups asked upon login (Allows Dennis to log in)
