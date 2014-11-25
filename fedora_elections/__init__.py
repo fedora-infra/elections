@@ -50,6 +50,21 @@ if 'FEDORA_ELECTIONS_CONFIG' in os.environ:  # pragma: no cover
 
 # set up FAS
 FAS = FAS(APP)
+
+# Set up the logging
+if not APP.debug:
+    APP.logger.addHandler(anitya.mail_logging.get_mail_handler(
+        smtp_server=APP.config.get('SMTP_SERVER', '127.0.0.1'),
+        mail_admin=APP.config.get('MAIL_ADMIN', 'admin@fedoraproject.org')
+    ))
+
+# Log to stderr as well
+STDERR_LOG = logging.StreamHandler(sys.stderr)
+STDERR_LOG.setLevel(logging.INFO)
+APP.logger.addHandler(STDERR_LOG)
+
+LOG = APP.logger
+
 APP.wsgi_app = fedora_elections.proxy.ReverseProxied(APP.wsgi_app)
 
 # FAS for usernames.
