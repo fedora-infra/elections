@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.4.1
+Version:        2.4.2
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -111,6 +111,11 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Tue Nov 25 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.4.2-1
+- Update to 2.4.2
+- Fix logging so that we log into apache's logs and email when having an
+  error
+
 * Thu Nov 20 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.4.1-1
 - Update to 2.4.1
 - Adjust the election form to inform the user that cla_done is always required
