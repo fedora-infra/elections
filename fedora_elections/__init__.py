@@ -26,7 +26,9 @@
 
 __version__ = '2.4.1'
 
+import logging
 import os
+import sys
 
 from datetime import datetime, time
 from functools import wraps
@@ -41,6 +43,7 @@ from flask.ext.fas_openid import FAS
 import dogpile.cache
 
 import fedora_elections.fedmsgshim
+import fedora_elections.mail_logging
 import fedora_elections.proxy
 
 APP = flask.Flask(__name__)
@@ -53,7 +56,7 @@ FAS = FAS(APP)
 
 # Set up the logging
 if not APP.debug:
-    APP.logger.addHandler(anitya.mail_logging.get_mail_handler(
+    APP.logger.addHandler(fedora_elections.mail_logging.get_mail_handler(
         smtp_server=APP.config.get('SMTP_SERVER', '127.0.0.1'),
         mail_admin=APP.config.get('MAIL_ADMIN', 'admin@fedoraproject.org')
     ))
