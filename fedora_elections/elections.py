@@ -367,7 +367,7 @@ def election_results(election_alias):
     cnt = 1
     evolution_lbl = []
     evolution_data = []
-    for delta in range((election.end_date - election.start_date).days):
+    for delta in range((election.end_date - election.start_date).days + 1):
         day = (
             election.start_date + timedelta(days=delta)
         ).strftime('%d-%m-%Y')
