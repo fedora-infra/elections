@@ -51,6 +51,7 @@
     {% endfor %}
   </table>
 
+
   <section class="stats">
       <h3>Some statistics about this election</h3>
       <table>
@@ -89,5 +90,90 @@
           {% endfor %}
           {% endif %}
       </table>
+
+      <h3>Evolution of the number of voters during this election</h3>
+      <div class="evolution-container">
+        <div id="placeholder" class="evolution-placeholder"></div>
+      </div>
+
   </section>
+{% endblock %}
+
+
+
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript" src="{{
+    url_for('static', filename='jquery-1.10.2.min.js') }}"> </script>
+<script type="text/javascript" src="{{
+    url_for('static', filename='jquery-ui-1.9.2.custom.min.js') }}"> </script>
+<script language="javascript" type="text/javascript"
+        src="{{ url_for('static', filename='jquery.flot.js') }}"></script>
+<script language="javascript" type="text/javascript"
+    src="{{ url_for('static', filename='jquery.flot.categories.js') }}"></script>
+
+
+<script type="text/javascript">
+
+    {% autoescape false %}
+    var data = [{'color': '#1F77B4',
+                'data': {{ evolution_data }},
+                'bars': {'order': 1, 'barWidth': 0.8, 'show': 1},
+                'label': 'Evolution of the voters during the election',
+                'ticks': {{ evolution_lbl }},
+                }];
+    {% endautoescape %}
+
+    $(function() {
+        var plot = $.plot("#placeholder", data, {
+            series: {
+                clickable: true,
+                hoverable: true
+            },
+            grid: { hoverable: true, clickable: true },
+            xaxis: {
+                mode: "categories",
+                points: { show: true },
+                lines: { show: true },
+                tickLength: 0,
+                //show: false
+            }
+        });
+
+        // show the tooltip
+        function showTooltip(x, y, contents) {
+            $('<div id="tooltip">' + contents + '</div>').css( {
+                position: 'absolute',
+                display: 'none',
+                top: y + 5,
+                left: x + 5,
+                border: '1px solid #fdd',
+                padding: '2px',
+                'background-color': '#fee',
+                opacity: 0.80
+            }).appendTo("body").fadeIn(200);
+        }
+
+        $("#placeholder").bind("plothover", function (event, pos, item) {
+            $("#x").text(pos.x);
+            $("#y").text(pos.y);
+
+            if (item) {
+                $("#tooltip").remove();
+                var x = item.datapoint[0],
+                    y = item.datapoint[1];
+
+                if (item.series.label ==
+                        'Evolution of the voters during the election') {
+                    showTooltip(item.pageX, item.pageY,
+                                data[0].ticks[item.dataIndex][1]);
+                }
+            } else {
+                document.body.style.cursor = 'default';
+                $("#tooltip").remove();
+            }
+        });
+    });
+</script>
+
 {% endblock %}
