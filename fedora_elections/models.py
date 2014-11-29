@@ -428,7 +428,8 @@ class Vote(BASE):
         ).filter(
             Vote.election_id == election_id
         ).group_by(
-            Vote.voter
+            Vote.voter,
+            Vote.timestamp
         ).all()
 
         stats['dates'] = [
