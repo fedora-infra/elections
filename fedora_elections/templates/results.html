@@ -154,6 +154,17 @@
             }).appendTo("body").fadeIn(200);
         }
 
+        // Add 'details' label to the charts.
+        var placeHolderCanvas;
+        var placeHolderCanvasContext;
+        placeHolderCanvas = $("#placeholder canvas")[0];
+        if(placeHolderCanvas != null){
+            placeHolderCanvasContext = placeHolderCanvas.getContext("2d")
+            placeHolderCanvasContext.fillStyle = "#545454";
+            placeHolderCanvasContext.font = "8pt Arial";
+            placeHolderCanvasContext.fillText("Hover Over A Bar For Additional Details", 25, 30);
+        };
+
         $("#placeholder").bind("plothover", function (event, pos, item) {
             $("#x").text(pos.x);
             $("#y").text(pos.y);
