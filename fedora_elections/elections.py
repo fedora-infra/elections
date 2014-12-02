@@ -372,7 +372,7 @@ def election_results(election_alias):
             election.start_date + timedelta(days=delta)
         ).strftime('%d-%m-%Y')
         evolution_label.append([cnt, day])
-        evolution_data.append([cnt, stats['dates'].count(day)])
+        evolution_data.append([cnt, stats['vote_timestamps'].count(day)])
         cnt += 1
 
     return flask.render_template(

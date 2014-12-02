@@ -432,7 +432,7 @@ class Vote(BASE):
             Vote.timestamp
         ).all()
 
-        stats['dates'] = [
+        stats['vote_timestamps'] = [
             date[0].strftime('%d-%m-%Y')
             for date in dates
         ]
