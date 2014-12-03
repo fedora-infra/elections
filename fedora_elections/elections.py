@@ -24,7 +24,7 @@
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
 
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from functools import wraps
 
 import flask
@@ -364,11 +364,24 @@ def election_results(election_alias):
 
     stats = models.Vote.get_election_stats(SESSION, election.id)
 
+    cnt = 1
+    evolution_label = []
+    evolution_data = []
+    for delta in range((election.end_date - election.start_date).days + 1):
+        day = (
+            election.start_date + timedelta(days=delta)
+        ).strftime('%d-%m-%Y')
+        evolution_label.append([cnt, day])
+        evolution_data.append([cnt, stats['vote_timestamps'].count(day)])
+        cnt += 1
+
     return flask.render_template(
         'results.html',
         election=election,
         usernamemap=usernamemap,
         stats=stats,
+        evolution_label=evolution_label,
+        evolution_data=evolution_data,
     )
 
 

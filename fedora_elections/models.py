@@ -423,6 +423,20 @@ class Vote(BASE):
         elif election.voting_type == 'irc':
             stats['max_vote'] = 1
 
+        dates = election = session.query(
+            Vote.timestamp
+        ).filter(
+            Vote.election_id == election_id
+        ).group_by(
+            Vote.voter,
+            Vote.timestamp
+        ).all()
+
+        stats['vote_timestamps'] = [
+            date[0].strftime('%d-%m-%Y')
+            for date in dates
+        ]
+
         return stats
 
 

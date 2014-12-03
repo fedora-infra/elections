@@ -217,3 +217,18 @@ a:visited.large_button {
 body#index h3 {
     padding-top: 1em;
 }
+
+.evolution-container {
+    box-sizing: border-box;
+    width: 835px;
+    height: 325px;
+    padding: 10px 10px 15px 10px;
+    margin: 15px auto 30px auto;
+}
+
+.evolution-placeholder {
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+    line-height: 1.2em;
+}
