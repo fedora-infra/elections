@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.4.2
+Version:        2.5.0
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -111,6 +111,11 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Thu Feb 12 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.5.0-1
+- Update to 2.5.0
+- Improve the result page by including in it a graph of the evolution of the
+  votes during the voting period
+
 * Tue Nov 25 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.4.2-1
 - Update to 2.4.2
 - Fix logging so that we log into apache's logs and email when having an
