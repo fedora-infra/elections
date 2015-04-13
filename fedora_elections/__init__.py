@@ -191,6 +191,13 @@ def set_session():
     flask.session.permanent = True
 
 
+# pylint: disable=W0613
+@APP.teardown_request
+def shutdown_session(exception=None):
+    """ Remove the DB session at the end of each request. """
+    SESSION.remove()
+
+
 # LIST VIEWS #############################################
 
 @APP.route('/')
