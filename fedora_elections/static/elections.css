@@ -14,6 +14,22 @@
     color: #FF8000;
 }
 
+input {
+    font-size: 100%;
+}
+
+textarea {
+    font-size: 100%;
+}
+
+button {
+    font-size: 100%;
+}
+
+select {
+    font-size: 100%;
+}
+
 #galleria{
     height: 250px;
 }
