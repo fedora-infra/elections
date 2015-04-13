@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2012  Red Hat, Inc.
+# Copyright © 2012-2015  Red Hat, Inc.
 # Copyright © 2012  Ian Weller <ianweller@fedoraproject.org>
 # Copyright © 2012  Toshio Kuratomi <tkuratom@redhat.com>
 # Copyright © 2012  Frank Chiulli <fchiulli@fedoraproject.org>
@@ -24,7 +24,7 @@
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
 
-__version__ = '2.5.0'
+__version__ = '2.5.1'
 
 import logging
 import os
