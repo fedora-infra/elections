@@ -112,7 +112,7 @@ def vote(election_alias):
         flask.flash('You have already voted in the election!')
         return safe_redirect_back()
 
-    if election.voting_type == 'range':
+    if election.voting_type.startswith('range'):
         return vote_range(election)
     elif election.voting_type == 'simple':
         return vote_simple(election)
