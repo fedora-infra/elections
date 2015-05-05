@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.5.2
+Version:        2.5.3
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -111,6 +111,10 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Tue May 05 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.5.3-1
+- Update to 2.5.3
+- Fix the simplified range voting
+
 * Wed Apr 29 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.5.2-1
 - Update to 2.5.2
 - Make elections prettier on high resolution displays
