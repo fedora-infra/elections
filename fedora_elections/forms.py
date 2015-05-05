@@ -34,7 +34,7 @@ class ElectionForm(wtf.Form):
         choices=[
             ('range', 'Range Voting'),
             ('simple', 'Simple Voting (choose one candidate in the list)'),
-            ('range_3', 'Simplified Range Voting (max is set below)'),
+            ('range_simple', 'Simplified Range Voting (max is set below)'),
             ('select', 'Select Voting (checkboxes for each candidate, '
              'maximum number of votes set below)'),
             ('irc', '+1/0/-1 voting'),
