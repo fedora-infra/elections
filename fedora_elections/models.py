@@ -414,14 +414,12 @@ class Vote(BASE):
         stats['candidate_voters'] = candidate_voters
         stats['n_candidates'] = cnt
 
-        if election.voting_type in ['range', 'select']:
+        stats['max_vote'] = 1
+        if election.voting_type == 'select' \
+                or election.voting_type.startswith('range'):
             stats['max_vote'] = cnt
             if election.max_votes:
                 stats['max_vote'] = election.max_votes
-        elif election.voting_type == 'simple':
-            stats['max_vote'] = 1
-        elif election.voting_type == 'irc':
-            stats['max_vote'] = 1
 
         dates = election = session.query(
             Vote.timestamp
