@@ -24,7 +24,7 @@
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
 
-__version__ = '2.5.3'
+__version__ = '2.5.4'
 
 import logging
 import os
