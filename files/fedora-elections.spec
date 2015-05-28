@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.5.3
+Version:        2.5.4
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -111,6 +111,11 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Thu May 28 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.5.4-1
+- Update to 2.5.4
+- Fix displaying information about the simplified range voting method
+- Fix setting the max_vote value in the stats dict for the results page
+
 * Tue May 05 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.5.3-1
 - Update to 2.5.3
 - Fix the simplified range voting
