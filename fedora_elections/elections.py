@@ -145,7 +145,9 @@ def vote_range(election, revote):
             for candidate in form:
                 if revote:
                     vote = update(models.Vote).\
-                    where(models.Vote.candidate_id == candidate.short_name and models.Vote.voter == flask.g.fas_user.username).\
+                    where(models.Vote.candidate_id == candidate.short_name
+                    and models.Vote.voter == flask.g.fas_user.username
+                    and models.Vote.election == election.id).\
                     values(value = candidate.data)
                     SESSION.execute(vote)
                     #break out of candidate loop
