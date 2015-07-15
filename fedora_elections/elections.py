@@ -108,12 +108,10 @@ def vote(election_alias):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
 
-    if votes > 0:
-        flask.flash('You have already voted in the election!')
-        return safe_redirect_back()
+    revote = True if votes > 0 else False
 
     if election.voting_type.startswith('range'):
-        return vote_range(election)
+        return vote_range(election, revote)
     elif election.voting_type == 'simple':
         return vote_simple(election)
     elif election.voting_type == 'select':
@@ -125,8 +123,7 @@ def vote(election_alias):
             'Unknown election voting type: %s' % election.voting_type)
         return safe_redirect_back()
 
-
-def vote_range(election):
+def vote_range(election, revote):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
 
@@ -144,9 +141,20 @@ def vote_range(election):
         max_range=max_selection)
 
     if form.validate_on_submit():
-
         if form.action.data == 'submit':
+            if revote:
+                old_votes = models.Vote.of_user_on_election(SESSION, flask.g.fas_user.username, election.id)
             for candidate in form:
+                if revote:
+                    #TODO: this could probably be done in a more efficient manner
+                    for vote in old_votes:
+                        if vote.candidate_id == candidate.short_name:
+                            vote.value = candidate.data
+                            SESSION.commit()
+                            #break out of this loop
+                            continue
+                    #break out of candidate loop
+                    continue
                 if candidate.short_name in ['csrf_token', 'action']:
                     continue
 
