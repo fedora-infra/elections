@@ -142,12 +142,10 @@ def vote_range(election, revote):
 
     if form.validate_on_submit():
         if form.action.data == 'submit':
-            if revote:
-                old_votes = models.Vote.of_user_on_election(SESSION, flask.g.fas_user.username, election.id)
             for candidate in form:
                 if revote:
                     vote = update(models.Vote).\
-                    where(models.Vote.candidate_id == candidate.short_name).\
+                    where(models.Vote.candidate_id == candidate.short_name and models.Vote.voter == flask.g.fas_user.username).\
                     values(value = candidate.data)
                     SESSION.execute(vote)
                     #break out of candidate loop
