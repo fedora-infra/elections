@@ -125,7 +125,9 @@ def vote(election_alias):
 
 def vote_range(election, revote):
     votes = models.Vote.of_user_on_election(
-        SESSION, flask.g.fas_user.username, election.id, count=True)
+        SESSION, flask.g.fas_user.username, election.id)
+
+    sorted_votes = sorted(votes, key=lambda candidate: candidate.candidate_id)
 
     num_candidates = election.candidates.count()
 
@@ -142,27 +144,27 @@ def vote_range(election, revote):
 
     if form.validate_on_submit():
         if form.action.data == 'submit':
-            for candidate in form:
-                if candidate.short_name in ['csrf_token', 'action']:
-                    continue
-                if revote:
-                    vote = update(models.Vote).\
-                    where(models.Vote.candidate_id == candidate.short_name
-                    and models.Vote.voter == flask.g.fas_user.username
-                    and models.Vote.election == election.id).\
-                    values(value = candidate.data)
-                    SESSION.execute(vote)
-                    #break out of candidate loop
-                    continue
+            candidate_filter = lambda item: item.short_name not in ['csrf_token', 'action']
+            candidates =  filter(lambda candidate: candidate_filter(candidate), form)
+            sorted_form = sorted(candidates, key=lambda candidate: candidate.short_name)
+            iter = 0
+            for candidate in sorted_form:
 
-                new_vote = models.Vote(
+                if revote:
+                    vote = sorted_votes[iter]
+                    vote.value = candidate.data
+                    SESSION.add(vote)
+                    iter += 1
+
+                else:
+                    new_vote = models.Vote(
                     election_id=election.id,
                     voter=flask.g.fas_user.username,
                     timestamp=datetime.now(),
                     candidate_id=candidate.short_name,
                     value=candidate.data,
-                )
-                SESSION.add(new_vote)
+                    )
+                    SESSION.add(new_vote)
             SESSION.commit()
 
             flask.flash("Your vote has been recorded.  Thank you!")
