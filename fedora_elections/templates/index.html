@@ -32,6 +32,10 @@
               <a href="{{ url_for('vote', election_alias=election.alias) }}">
               Vote now!
               </a>
+            {% else %}
+              <a href="{{ url_for('vote', election_alias=election.alias) }}">
+              Revote!
+              </a>
             {% endif %}
           {% endif %}
         </td>
