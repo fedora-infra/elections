@@ -143,6 +143,8 @@ def vote_range(election, revote):
     if form.validate_on_submit():
         if form.action.data == 'submit':
             for candidate in form:
+                if candidate.short_name in ['csrf_token', 'action']:
+                    continue
                 if revote:
                     vote = update(models.Vote).\
                     where(models.Vote.candidate_id == candidate.short_name
@@ -151,8 +153,6 @@ def vote_range(election, revote):
                     values(value = candidate.data)
                     SESSION.execute(vote)
                     #break out of candidate loop
-                    continue
-                if candidate.short_name in ['csrf_token', 'action']:
                     continue
 
                 new_vote = models.Vote(
