@@ -38,7 +38,7 @@ from fedora_elections import (
     is_safe_url, safe_redirect_back,
 )
 from fedora_elections.utils import build_name_map
-
+from sqlalchemy import update
 
 def login_required(f):
     @wraps(f)
@@ -108,12 +108,10 @@ def vote(election_alias):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
 
-    if votes > 0:
-        flask.flash('You have already voted in the election!')
-        return safe_redirect_back()
+    revote = True if votes > 0 else False
 
     if election.voting_type.startswith('range'):
-        return vote_range(election)
+        return vote_range(election, revote)
     elif election.voting_type == 'simple':
         return vote_simple(election)
     elif election.voting_type == 'select':
@@ -125,8 +123,7 @@ def vote(election_alias):
             'Unknown election voting type: %s' % election.voting_type)
         return safe_redirect_back()
 
-
-def vote_range(election):
+def vote_range(election, revote):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id, count=True)
 
@@ -144,9 +141,17 @@ def vote_range(election):
         max_range=max_selection)
 
     if form.validate_on_submit():
-
         if form.action.data == 'submit':
             for candidate in form:
+                if revote:
+                    vote = update(models.Vote).\
+                    where(models.Vote.candidate_id == candidate.short_name
+                    and models.Vote.voter == flask.g.fas_user.username
+                    and models.Vote.election == election.id).\
+                    values(value = candidate.data)
+                    SESSION.execute(vote)
+                    #break out of candidate loop
+                    continue
                 if candidate.short_name in ['csrf_token', 'action']:
                     continue
 
