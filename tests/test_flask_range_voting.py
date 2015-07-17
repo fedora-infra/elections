@@ -312,7 +312,9 @@ class FlaskRangeElectionstests(ModelFlasktests):
             self.assertEqual(sorted_votes[0].value, 1)
             self.assertEqual(sorted_votes[1].value, 0)
             self.assertEqual(sorted_votes[2].value, 2)
-        #Let's not do repetition of what is tested above we aren't testing the functionality of voting as that has already been asserted
+        #Let's not do repetition of what is tested above we aren't testing the
+        #functionality of voting as that has already been asserted
+
         #Next, we need to try revoting
             newdata = {
                 '4': 2,
