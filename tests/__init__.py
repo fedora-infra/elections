@@ -49,7 +49,8 @@ from fedora_elections import models
 
 
 DB_PATH = 'sqlite:///:memory:'
-FAITOUT_URL = 'http://209.132.184.152/faitout/'
+FAITOUT_URL = 'http://faitout.fedorainfracloud.org/'
+
 if os.environ.get('BUILD_ID'):
     try:
         import requests
