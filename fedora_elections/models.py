@@ -356,7 +356,7 @@ class Vote(BASE):
         ).filter(
             cls.voter == user
         ).order_by(
-            cls.timestamp
+            cls.candidate_id
         )
 
         if count:
