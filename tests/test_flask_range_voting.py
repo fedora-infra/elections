@@ -307,11 +307,10 @@ class FlaskRangeElectionstests(ModelFlasktests):
             }
             self.app.post('/vote/test_election3', data=data, follow_redirects=True)
             vote = fedora_elections.models.Vote
-            votes = self.session.query(vote).filter(vote.voter == 'nerdsville')
-            sorted_votes = sorted(votes, key=lambda vote: vote.candidate_id)
-            self.assertEqual(sorted_votes[0].value, 1)
-            self.assertEqual(sorted_votes[1].value, 0)
-            self.assertEqual(sorted_votes[2].value, 2)
+            votes = vote.of_user_on_election(self.session, "nerdsville", '3')
+            self.assertEqual(votes[0].value, 1)
+            self.assertEqual(votes[1].value, 0)
+            self.assertEqual(votes[2].value, 2)
         #Let's not do repetition of what is tested above we aren't testing the
         #functionality of voting as that has already been asserted
 
@@ -332,11 +331,11 @@ class FlaskRangeElectionstests(ModelFlasktests):
             self.assertTrue('<h3>Current elections</h3>' in output.data)
             self.assertTrue('<h3>Next 1 elections</h3>' in output.data)
             self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
-            votes = self.session.query(vote).filter(vote.voter == 'nerdsville')
-            sorted_votes = sorted(votes, key=lambda vote: vote.candidate_id)
-            self.assertEqual(sorted_votes[0].value, 2)
-            self.assertEqual(sorted_votes[1].value, 1)
-            self.assertEqual(sorted_votes[2].value, 1)
+            vote = fedora_elections.models.Vote
+            votes = vote.of_user_on_election(self.session, "nerdsville", '3')
+            self.assertEqual(votes[0].value, 2)
+            self.assertEqual(votes[1].value, 1)
+            self.assertEqual(votes[2].value, 1)
         #If we haven't failed yet, HOORAY!
 
 
