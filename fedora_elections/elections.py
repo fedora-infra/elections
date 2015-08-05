@@ -148,14 +148,12 @@ def vote_range(election, revote):
             candidates =  filter(lambda candidate: candidate_filter(candidate), form)
             sorted_form = sorted(candidates, key=lambda candidate: candidate.short_name)
             iter = 0
-            for candidate in sorted_form:
-
+            for index in range(len(sorted_form)):
+                candidate = sorted_form[index]
                 if revote:
-                    vote = sorted_votes[iter]
+                    vote = sorted_votes[index]
                     vote.value = candidate.data
                     SESSION.add(vote)
-                    iter += 1
-
                 else:
                     new_vote = models.Vote(
                     election_id=election.id,
