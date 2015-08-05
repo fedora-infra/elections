@@ -38,7 +38,6 @@ from fedora_elections import (
     is_safe_url, safe_redirect_back,
 )
 from fedora_elections.utils import build_name_map
-from sqlalchemy import update
 
 def login_required(f):
     @wraps(f)
