@@ -126,8 +126,6 @@ def vote_range(election, revote):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id)
 
-    sorted_votes = sorted(votes, key=lambda candidate: candidate.candidate_id)
-
     num_candidates = election.candidates.count()
 
     cand_ids = [str(cand.id) for cand in election.candidates]
@@ -150,7 +148,7 @@ def vote_range(election, revote):
             for index in range(len(sorted_form)):
                 candidate = sorted_form[index]
                 if revote:
-                    vote = sorted_votes[index]
+                    vote = votes[index]
                     vote.value = candidate.data
                     SESSION.add(vote)
                 else:
