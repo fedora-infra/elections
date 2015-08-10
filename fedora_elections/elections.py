@@ -141,12 +141,13 @@ def vote_range(election, revote):
 
     if form.validate_on_submit():
         if form.action.data == 'submit':
-            candidate_filter = lambda item: item.short_name not in ['csrf_token', 'action']
-            candidates =  filter(lambda candidate: candidate_filter(candidate), form)
-            sorted_form = sorted(candidates, key=lambda candidate: candidate.short_name)
-            iter = 0
-            for index in range(len(sorted_form)):
-                candidate = sorted_form[index]
+            candidates =  [
+                            candidate
+                            for candidate in form
+                            if candidate and candidate.short_name not in ['csrf_token', 'action']
+                          ]
+            for index in range(len(candidates)):
+                candidate = candidates[index]
                 if revote:
                     vote = votes[index]
                     vote.value = candidate.data
