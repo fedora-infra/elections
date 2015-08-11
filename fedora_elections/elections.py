@@ -154,12 +154,12 @@ def vote_range(election, revote):
                     SESSION.add(vote)
                 else:
                     new_vote = models.Vote(
-                    election_id=election.id,
-                    voter=flask.g.fas_user.username,
-                    timestamp=datetime.now(),
-                    candidate_id=candidate.short_name,
-                    value=candidate.data,
-                    )
+                                   election_id=election.id,
+                                   voter=flask.g.fas_user.username,
+                                   timestamp=datetime.now(),
+                                   candidate_id=candidate.short_name,
+                                   value=candidate.data,
+                               )
                     SESSION.add(new_vote)
             SESSION.commit()
 
