@@ -214,10 +214,10 @@ def vote_select(election, revote):
         else:
             if form.action.data == 'submit':
                 candidates = [
-                              candidate
-                              for candidate in form
-                              if candidate and candidate.short_name not in ['csrf_token', 'action']
-                             ]
+                    candidate
+                    for candidate in form
+                    if candidate and candidate.short_name not in ['csrf_token', 'action']
+                ]
                 for index in range(len(candidates)):
                     candidate = candidates[index]
                     if revote:
