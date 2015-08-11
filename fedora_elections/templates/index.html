@@ -32,7 +32,7 @@
               <a href="{{ url_for('vote', election_alias=election.alias) }}">
               Vote now!
               </a>
-            {% elif election.voting_type == 'range' %}
+            {% elif election.voting_type == 'range' or election.voting_type == 'select' %}
               <a href="{{ url_for('vote', election_alias=election.alias) }}">
               Change your vote!
               </a>
