@@ -161,7 +161,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
 
     def test_vote_select_revote(self):
-        """ Test the vote_range function - the re-voting part. """
+        """ Test the vote_select function - the re-voting part. """
         #First we need to vote
         self.setup_db()
 
