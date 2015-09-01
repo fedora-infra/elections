@@ -32,11 +32,10 @@
               <a href="{{ url_for('vote', election_alias=election.alias) }}">
               Vote now!
               </a>
-            {% elif election.voting_type != "simple" %}
+            {% endif %}
               <a href="{{ url_for('vote', election_alias=election.alias) }}">
               Change your vote!
               </a>
-            {% endif %}
           {% endif %}
         </td>
       </tr>
