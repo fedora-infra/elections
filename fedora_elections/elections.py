@@ -146,23 +146,7 @@ def vote_range(election, revote):
                             for candidate in form
                             if candidate and candidate.short_name not in ['csrf_token', 'action']
                           ]
-            for index in range(len(candidates)):
-                candidate = candidates[index]
-                if revote:
-                    vote = votes[index]
-                    vote.value = candidate.data
-                    SESSION.add(vote)
-                else:
-                    new_vote = models.Vote(
-                        election_id=election.id,
-                        voter=flask.g.fas_user.username,
-                        timestamp=datetime.now(),
-                        candidate_id=candidate.short_name,
-                        value=candidate.data,
-                    )
-                    SESSION.add(new_vote)
-            SESSION.commit()
-
+            process_vote(candidates, election, votes, revote)
             flask.flash("Your vote has been recorded.  Thank you!")
             return safe_redirect_back()
 
@@ -202,14 +186,12 @@ def vote_select(election, revote):
         max_selection=max_selection)
 
     if form.validate_on_submit():
-
-        cnt = 0
-        for candidate in form:
-            if candidate.short_name in ['csrf_token', 'action']:
-                continue
-            if candidate.data:
-                cnt += 1
-        if cnt > max_selection:
+        cnt = [
+            candidate
+            for candidate in form
+            if candidate.data and candidate.short_name not in ['csrf_token', 'action']
+        ]
+        if len(cnt) > max_selection:
             flask.flash('Too many candidates submitted', 'error')
         else:
             if form.action.data == 'submit':
@@ -218,22 +200,7 @@ def vote_select(election, revote):
                     for candidate in form
                     if candidate and candidate.short_name not in ['csrf_token', 'action']
                 ]
-                for index in range(len(candidates)):
-                    candidate = candidates[index]
-                    if revote:
-                        vote = votes[index]
-                        vote.value = int(candidate.data)
-                        SESSION.add(vote)
-                    else:
-                        new_vote = models.Vote(
-                            election_id=election.id,
-                            voter=flask.g.fas_user.username,
-                            timestamp=datetime.now(),
-                            candidate_id=cand_name[candidate.short_name],
-                            value=int(candidate.data),
-                        )
-                        SESSION.add(new_vote)
-                    SESSION.commit()
+                process_vote_by_cand_name(candidates, cand_name, election, votes, revote)
                 flask.flash("Your vote has been recorded.  Thank you!")
                 return safe_redirect_back()
 
@@ -251,7 +218,6 @@ def vote_select(election, revote):
         max_selection=max_selection,
         usernamemap=usernamemap,
         nextaction=next_action)
-
 
 def vote_simple(election):
     votes = models.Vote.of_user_on_election(
@@ -317,22 +283,7 @@ def vote_irc(election, revote):
                 for candidate in form
                 if candidate and candidate.short_name not in ['csrf_token', 'action']
             ]
-            for index in range(len(candidates)):
-                candidate = candidates[index]
-                if revote:
-                    vote = votes[index]
-                    vote.value = int(candidate.data)
-                    SESSION.add(vote)
-                else:
-                    new_vote = models.Vote(
-                        election_id=election.id,
-                        voter=flask.g.fas_user.username,
-                        timestamp=datetime.now(),
-                        candidate_id=cand_name[candidate.short_name],
-                        value=int(candidate.data),
-                    )
-                    SESSION.add(new_vote)
-                SESSION.commit()
+            process_vote_by_cand_name(candidates, cand_name, election, votes, revote)
             flask.flash("Your vote has been recorded.  Thank you!")
             return safe_redirect_back()
 
@@ -427,3 +378,39 @@ def election_results_text(election_alias):
         usernamemap=usernamemap,
         stats=stats,
     )
+
+def process_vote(candidates, election, votes, revote):
+    for index in range(len(candidates)):
+        candidate = candidates[index]
+        if revote:
+            vote = votes[index]
+            vote.value = int(candidate.data)
+            SESSION.add(vote)
+        else:
+            new_vote = models.Vote(
+                election_id=election.id,
+                voter=flask.g.fas_user.username,
+                timestamp=datetime.now(),
+                candidate_id=candidate.short_name,
+                value=int(candidate.data),
+            )
+            SESSION.add(new_vote)
+        SESSION.commit()
+
+def process_vote_by_cand_name(candidates, cand_name, election, votes, revote):
+    for index in range(len(candidates)):
+        candidate = candidates[index]
+        if revote:
+            vote = votes[index]
+            vote.value = int(candidate.data)
+            SESSION.add(vote)
+        else:
+            new_vote = models.Vote(
+                election_id=election.id,
+                voter=flask.g.fas_user.username,
+                timestamp=datetime.now(),
+                candidate_id=cand_name[candidate.short_name],
+                value=int(candidate.data),
+            )
+            SESSION.add(new_vote)
+        SESSION.commit()
