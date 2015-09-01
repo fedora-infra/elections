@@ -112,7 +112,7 @@ def vote(election_alias):
     if election.voting_type.startswith('range'):
         return vote_range(election, revote)
     elif election.voting_type == 'simple':
-        return vote_simple(election)
+        return vote_simple(election, revote)
     elif election.voting_type == 'select':
         return vote_select(election, revote)
     elif election.voting_type == 'irc':
@@ -219,9 +219,9 @@ def vote_select(election, revote):
         usernamemap=usernamemap,
         nextaction=next_action)
 
-def vote_simple(election):
+def vote_simple(election, revote):
     votes = models.Vote.of_user_on_election(
-        SESSION, flask.g.fas_user.username, election.id, count=True)
+        SESSION, flask.g.fas_user.username, election.id)
 
     num_candidates = election.candidates.count()
 
@@ -233,20 +233,27 @@ def vote_simple(election):
 
     if form.validate_on_submit():
         if form.action.data == 'submit':
-            for candidate in form:
-                if candidate.short_name in ['csrf_token', 'action']:
-                    continue
-
-                new_vote = models.Vote(
-                    election_id=election.id,
-                    voter=flask.g.fas_user.username,
-                    timestamp=datetime.now(),
-                    candidate_id=candidate.data,
-                    value=1,
-                )
-                SESSION.add(new_vote)
-            SESSION.commit()
-
+            candidates =  [
+                candidate
+                for candidate in form
+                if candidate and candidate.short_name not in ['csrf_token', 'action']
+            ]
+            for index in range(len(candidates)):
+                candidate = candidates[index]
+                if revote:
+                    vote = votes[index]
+                    vote.candidate_id = candidate.data
+                    SESSION.add(vote)
+                else:
+                    new_vote = models.Vote(
+                        election_id=election.id,
+                        voter=flask.g.fas_user.username,
+                        timestamp=datetime.now(),
+                        candidate_id=candidate.data,
+                        value=1,
+                    )
+                    SESSION.add(new_vote)
+                SESSION.commit()
             flask.flash("Your vote has been recorded.  Thank you!")
             return safe_redirect_back()
 
