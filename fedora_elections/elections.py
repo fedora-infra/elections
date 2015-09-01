@@ -238,7 +238,7 @@ def vote_simple(election, revote):
                 for candidate in form
                 if candidate and candidate.short_name not in ['csrf_token', 'action']
             ]
-            process_vote(candidates, election, votes, revote, None, 1)
+            process_vote(candidates, election, votes, revote, value=1)
             flask.flash("Your vote has been recorded.  Thank you!")
             return safe_redirect_back()
 
@@ -376,13 +376,13 @@ def process_vote(candidates, election, votes, revote, cand_name=None, value=None
         candidate = candidates[index]
         if revote:
             vote = votes[index]
-            if value == 1:
+            if value is not None:
                 vote.candidate_id = candidate.data
             else:
                 vote.value = value if value else int(candidate.data)
             SESSION.add(vote)
         else:
-            if value == 1:
+            if value is not None:
                 cand_id = candidate.data
             elif cand_name:
                 cand_id = cand_name[candidate.short_name]
