@@ -392,7 +392,7 @@ def process_vote(candidates, election, votes, revote, cand_name=None, value=None
             new_vote = models.Vote(
                 election_id=election.id,
                 voter=flask.g.fas_user.username,
-                timestamp=datetime.now(),
+                timestamp=datetime.utcnow(),
                 candidate_id=cand_id,
                 value= value if value else int(candidate.data),
             )
