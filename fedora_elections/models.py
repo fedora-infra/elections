@@ -136,7 +136,7 @@ class Election(BASE):
 
     @property
     def locked(self):
-        return datetime.now() >= self.start_date
+        return datetime.utcnow() >= self.start_date
 
     @classmethod
     def search(cls, session, alias=None, shortdesc=None,
