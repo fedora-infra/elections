@@ -374,7 +374,7 @@ def election_results_text(election_alias):
 def process_vote(candidates, election, votes, revote, cand_name=None, value=None):
     for index in range(len(candidates)):
         candidate = candidates[index]
-        if revote:
+        if revote and (index+1 == len(votes)):
             vote = votes[index]
             if value is not None:
                 vote.candidate_id = candidate.data
