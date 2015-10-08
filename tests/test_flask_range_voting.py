@@ -314,11 +314,21 @@ class FlaskRangeElectionstests(ModelFlasktests):
         #Let's not do repetition of what is tested above we aren't testing the
         #functionality of voting as that has already been asserted
 
+            obj = fedora_elections.models.Candidate(  # id:16
+                election_id=3,
+                name='Josh',
+                url='https://fedoraproject.org/wiki/User:Nerdsville',
+            )
+            self.session.add(obj)
+            self.session.commit()
+
+
         #Next, we need to try revoting
             newdata = {
                 '4': 2,
                 '5': 1,
                 '6': 1,
+                '16': 0,
                 'action': 'submit',
                 'csrf_token': csrf_token,
             }
@@ -336,6 +346,7 @@ class FlaskRangeElectionstests(ModelFlasktests):
             self.assertEqual(votes[0].value, 2)
             self.assertEqual(votes[1].value, 1)
             self.assertEqual(votes[2].value, 1)
+            self.assertEqual(votes[3].value, 0)
         #If we haven't failed yet, HOORAY!
 
 
