@@ -312,7 +312,7 @@ class FlaskRangeElectionstests(ModelFlasktests):
             self.assertEqual(votes[1].value, 0)
             self.assertEqual(votes[2].value, 2)
         #Let's not do repetition of what is tested above we aren't testing the
-        #functionality of voting as that has already been asserted                 
+        #functionality of voting as that has already been asserted
 
             obj = fedora_elections.models.Candidate(  # id:16
                 election_id=3,
