@@ -263,6 +263,7 @@ class Candidate(BASE):
         nullable=False)
     # FAS username if candidates_are_fasusers
     name = sa.Column(sa.Unicode(150), nullable=False)
+    fas_name = sa.Column(sa.Unicode(150), nullable=True)
     url = sa.Column(sa.Unicode(250))
 
     election = relationship(
