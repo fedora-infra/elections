@@ -25,6 +25,7 @@
     <ul>
       {% for candidate in election.candidates.all() %}
         <li>{{ candidate.name }}
+          {% if candidate.fas_name %} ({{ candidate.fas_name }}) {% endif %}
           <a href="{{ url_for('admin_edit_candidate',
                               election_alias=election.alias,
                               candidate_id=candidate.id) }}">
