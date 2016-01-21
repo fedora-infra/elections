@@ -24,7 +24,6 @@ BuildRequires:  python-setuptools
 BuildRequires:  python-wtforms
 BuildRequires:  python-nose
 BuildRequires:  python-coverage
-BuildRequires:  python-dogpile-cache
 
 Requires:       python-fedora
 Requires:       python-fedora-flask
@@ -34,7 +33,6 @@ Requires:       python-openid
 Requires:       python-openid-teams
 Requires:       python-openid-cla
 Requires:       python-wtforms
-Requires:       python-dogpile-cache
 
 # EPEL6
 %if ( 0%{?rhel} && 0%{?rhel} == 6 )
