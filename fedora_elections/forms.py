@@ -122,7 +122,7 @@ def get_range_voting_form(candidates, max_range):
         action = wtforms.HiddenField()
 
     for candidate in candidates:
-        title = candidate.name
+        title = candidate.fas_name or candidate.name
         if candidate.url:
             title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
         field = wtforms.SelectField(
@@ -140,7 +140,7 @@ def get_simple_voting_form(candidates, fasusers):
 
     titles = []
     for candidate in candidates:
-        title = candidate.name
+        title = candidate.fas_name or candidate.name
         if fasusers:  # pragma: no cover
             # We can't cover FAS integration
             try:
@@ -179,7 +179,7 @@ def get_select_voting_form(candidates, max_selection):
         action = wtforms.HiddenField()
 
     for candidate in candidates:
-        title = candidate.name
+        title = candidate.fas_name or candidate.name
         if candidate.url:
             title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
         field = wtforms.BooleanField(
