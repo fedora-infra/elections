@@ -39,6 +39,7 @@ from fedora_elections import (
 )
 from fedora_elections.utils import build_name_map
 
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -122,6 +123,7 @@ def vote(election_alias):
             'Unknown election voting type: %s' % election.voting_type)
         return safe_redirect_back()
 
+
 def vote_range(election, revote):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id)
@@ -142,10 +144,10 @@ def vote_range(election, revote):
     if form.validate_on_submit():
         if form.action.data == 'submit':
             candidates =  [
-                            candidate
-                            for candidate in form
-                            if candidate and candidate.short_name not in ['csrf_token', 'action']
-                          ]
+                candidate
+                for candidate in form
+                if candidate and candidate.short_name not in ['csrf_token', 'action']
+              ]
             process_vote(candidates, election, votes, revote)
             flask.flash("Your vote has been recorded.  Thank you!")
             return safe_redirect_back()
@@ -218,6 +220,7 @@ def vote_select(election, revote):
         max_selection=max_selection,
         usernamemap=usernamemap,
         nextaction=next_action)
+
 
 def vote_simple(election, revote):
     votes = models.Vote.of_user_on_election(
@@ -370,6 +373,7 @@ def election_results_text(election_alias):
         usernamemap=usernamemap,
         stats=stats,
     )
+
 
 def process_vote(candidates, election, votes, revote, cand_name=None, value=None):
     for index in range(len(candidates)):

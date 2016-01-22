@@ -238,9 +238,10 @@ def admin_add_candidate(election_alias):
     form = forms.CandidateForm()
     if form.validate_on_submit():
 
+        fas_name = None
         if election.candidates_are_fasusers:  # pragma: no cover
             try:
-                FAS2.person_by_username(form.name.data)['human_name']
+                fas_name = FAS2.person_by_username(form.name.data)['human_name']
             except (KeyError, AuthError), err:
                 flask.flash(
                     'User `%s` does not have a FAS account.'
@@ -253,7 +254,8 @@ def admin_add_candidate(election_alias):
         candidate = models.Candidate(
             election=election,
             name=form.name.data,
-            url=form.url.data
+            url=form.url.data,
+            fas_name=fas_name,
         )
 
         SESSION.add(candidate)
@@ -291,9 +293,11 @@ def admin_add_multi_candidate(election_alias):
         for entry in form.candidate.data.strip().split("|"):
             candidate = entry.split("!")
 
+            fas_name = None
             if election.candidates_are_fasusers:  # pragma: no cover
                 try:
-                    FAS2.person_by_username(candidate[0])['human_name']
+                    fas_name = FAS2.person_by_username(
+                        candidate[0])['human_name']
                 except (KeyError, AuthError), err:
                     SESSION.rollback()
                     flask.flash(
@@ -308,7 +312,8 @@ def admin_add_multi_candidate(election_alias):
             if len(candidate) == 1:
                 cand = models.Candidate(
                     election=election,
-                    name=candidate[0])
+                    name=candidate[0],
+                    fas_name=fas_name)
                 SESSION.add(cand)
                 candidates_name.append(cand.name)
             # With url
@@ -316,7 +321,8 @@ def admin_add_multi_candidate(election_alias):
                 cand = models.Candidate(
                     election=election,
                     name=candidate[0],
-                    url=candidate[1])
+                    url=candidate[1],
+                    fas_name=fas_name)
                 SESSION.add(cand)
                 candidates_name.append(cand.name)
             else:
@@ -357,6 +363,22 @@ def admin_edit_candidate(election_alias, candidate_id):
     form = forms.CandidateForm(obj=candidate)
     if form.validate_on_submit():
         form.populate_obj(candidate)
+
+        fas_name = None
+        if election.candidates_are_fasusers:  # pragma: no cover
+            try:
+                candidate.fas_name = FAS2.person_by_username(
+                    candidate[0])['human_name']
+            except (KeyError, AuthError), err:
+                SESSION.rollback()
+                flask.flash(
+                    'User `%s` does not have a FAS account.'
+                    % candidate[0], 'error')
+                return flask.redirect(flask.url_for(
+                    'admin_edit_candidate',
+                    election_alias=election_alias,
+                    candidate_id=candidate_id))
+
         SESSION.commit()
         flask.flash('Candidate "%s" saved' % candidate.name)
         fedmsgshim.publish(

@@ -84,8 +84,7 @@ from fedora_elections import models
 SESSION = models.create_session(APP.config['DB_URL'])
 from fedora_elections import forms
 
-cache = dogpile.cache.make_region()
-cache.configure(**APP.config['DOGPILE_CACHE'])
+
 from fedora_elections.utils import build_name_map
 
 
