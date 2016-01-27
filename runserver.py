@@ -10,7 +10,7 @@ import os
 
 
 parser = argparse.ArgumentParser(
-    description='Run the packages2 app')
+    description='Run the Fedora election app')
 parser.add_argument(
     '--config', '-c', dest='config',
     help='Configuration file to use for packages.')
@@ -21,7 +21,7 @@ parser.add_argument(
 parser.add_argument(
     '--profile', dest='profile', action='store_true',
     default=False,
-    help='Profile the packages2 application.')
+    help='Profile the application.')
 parser.add_argument(
     '--port', '-p', default=5000,
     help='Port for the flask application.')
