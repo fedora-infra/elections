@@ -81,7 +81,7 @@ There are 2 ways to start the application:
    * with apache
 
 
-* How to start without apache on localhost:5000 (useful for development):
+* How to start without apache on http://127.0.0.1:5000 (useful for development):
 
    ::
 
