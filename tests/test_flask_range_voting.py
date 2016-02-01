@@ -55,14 +55,6 @@ class FlaskRangeElectionstests(ModelFlasktests):
 
         self.setup_db()
 
-        user = FakeUser(['voters'], username='toshio')
-        with user_set(fedora_elections.APP, user):
-            output = self.app.get(
-                '/vote/test_election3', follow_redirects=True)
-            self.assertTrue(
-                'class="message">You have already voted in the election!</'
-                in output.data)
-
         user = FakeUser(['voters'], username='pingou')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
@@ -295,6 +287,67 @@ class FlaskRangeElectionstests(ModelFlasktests):
             self.assertTrue('<h3>Current elections</h3>' in output.data)
             self.assertTrue('<h3>Next 1 elections</h3>' in output.data)
             self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
+
+    def test_vote_range_revote(self):
+        """ Test the vote_range function - the re-voting part. """
+        #First we need to vote
+        self.setup_db()
+
+        user = FakeUser(['voters'], username='nerdsville')
+        with user_set(fedora_elections.APP, user):
+            retrieve_csrf = self.app.post('/vote/test_election3')
+            csrf_token = retrieve_csrf.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+            data = {
+                '4': 1,
+                '5': 0,
+                '6': 2,
+                'action': 'submit',
+                'csrf_token': csrf_token,
+            }
+            self.app.post('/vote/test_election3', data=data, follow_redirects=True)
+            vote = fedora_elections.models.Vote
+            votes = vote.of_user_on_election(self.session, "nerdsville", '3')
+            self.assertEqual(votes[0].value, 1)
+            self.assertEqual(votes[1].value, 0)
+            self.assertEqual(votes[2].value, 2)
+        #Let's not do repetition of what is tested above we aren't testing the
+        #functionality of voting as that has already been asserted
+
+            obj = fedora_elections.models.Candidate(  # id:16
+                election_id=3,
+                name='Josh',
+                url='https://fedoraproject.org/wiki/User:Nerdsville',
+            )
+            self.session.add(obj)
+            self.session.commit()
+
+
+        #Next, we need to try revoting
+            newdata = {
+                '4': 2,
+                '5': 1,
+                '6': 1,
+                '16': 0,
+                'action': 'submit',
+                'csrf_token': csrf_token,
+            }
+            output = self.app.post('/vote/test_election3', data=newdata, follow_redirects=True)
+        #Next, we need to check if the vote has been recorded
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                'class="message">Your vote has been recorded.  Thank you!</'
+                in output.data)
+            self.assertTrue('<h3>Current elections</h3>' in output.data)
+            self.assertTrue('<h3>Next 1 elections</h3>' in output.data)
+            self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
+            vote = fedora_elections.models.Vote
+            votes = vote.of_user_on_election(self.session, "nerdsville", '3')
+            self.assertEqual(votes[0].value, 2)
+            self.assertEqual(votes[1].value, 1)
+            self.assertEqual(votes[2].value, 1)
+            self.assertEqual(votes[3].value, 0)
+        #If we haven't failed yet, HOORAY!
 
 
 if __name__ == '__main__':

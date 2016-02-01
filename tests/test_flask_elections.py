@@ -155,17 +155,6 @@ class FlaskElectionstests(ModelFlasktests):
                 '<input type="hidden" name="action" value="preview" />'
                 in output.data)
 
-        user = FakeUser(['voters'], username='toshio')
-        with user_set(fedora_elections.APP, user):
-
-            # Election in progress
-            output = self.app.get(
-                '/vote/test_election3', follow_redirects=True)
-            self.assertTrue(
-                'class="message">You have already voted in the election!</'
-                in output.data)
-            self.assertTrue('<h3>Current elections</h3>' in output.data)
-
     def test_election_results(self):
         """ Test the election_results function - the preview part. """
         output = self.app.get(

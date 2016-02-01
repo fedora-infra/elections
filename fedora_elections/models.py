@@ -136,7 +136,7 @@ class Election(BASE):
 
     @property
     def locked(self):
-        return datetime.now() >= self.start_date
+        return datetime.utcnow() >= self.start_date
 
     @classmethod
     def search(cls, session, alias=None, shortdesc=None,
@@ -263,6 +263,7 @@ class Candidate(BASE):
         nullable=False)
     # FAS username if candidates_are_fasusers
     name = sa.Column(sa.Unicode(150), nullable=False)
+    fas_name = sa.Column(sa.Unicode(150), nullable=True)
     url = sa.Column(sa.Unicode(250))
 
     election = relationship(
@@ -356,7 +357,7 @@ class Vote(BASE):
         ).filter(
             cls.voter == user
         ).order_by(
-            cls.timestamp
+            cls.candidate_id
         )
 
         if count:
