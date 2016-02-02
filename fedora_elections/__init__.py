@@ -24,7 +24,7 @@
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
 
-__version__ = '2.6'
+__version__ = '2.6.1'
 
 import logging
 import os
