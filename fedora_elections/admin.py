@@ -368,12 +368,12 @@ def admin_edit_candidate(election_alias, candidate_id):
         if election.candidates_are_fasusers:  # pragma: no cover
             try:
                 candidate.fas_name = FAS2.person_by_username(
-                    candidate[0])['human_name']
+                    candidate.name)['human_name']
             except (KeyError, AuthError), err:
                 SESSION.rollback()
                 flask.flash(
                     'User `%s` does not have a FAS account.'
-                    % candidate[0], 'error')
+                    % candidate.name, 'error')
                 return flask.redirect(flask.url_for(
                     'admin_edit_candidate',
                     election_alias=election_alias,

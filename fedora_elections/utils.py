@@ -11,6 +11,6 @@ def build_name_map(election):
         return {}
 
     return dict([
-        (str(candidate.id), candidate.fas_name)
+        (str(candidate.id), candidate.fas_name or candidate.name)
         for candidate in election.candidates
     ])
