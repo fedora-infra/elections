@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.5.4
+Version:        2.6
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -109,6 +109,13 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Mon Feb 01 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.6-1
+- Update to 2.6
+- Add the possibility to change one's vote on an election (Joshua Santos)
+- Cache the candidate's name retrieved from FAS locally
+- Improve the runserver script and adjust the README accordingly
+- Drop the requirement on dogpile.cache
+
 * Thu May 28 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.5.4-1
 - Update to 2.5.4
 - Fix displaying information about the simplified range voting method
