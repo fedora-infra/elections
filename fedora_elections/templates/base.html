@@ -23,7 +23,7 @@
            <div class="row">
              <div class="col-sm-3">
                <a href="/">
-                 <img src="{{ url_for('static', filename='elections-logo.png') }}"
+                 <img src="{{ url_for('static', filename='images/elections_logo.png') }}"
                    alt="Elections Logo" height="40px" id="kojiLogo"/>
                </a>
              </div>
@@ -38,7 +38,7 @@
                         <li class="nav-item dropdown p-l-1">
                           <a class="nav-link dropdown-toggle" data-toggle="dropdown"
                              href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                            <img src="{{ g.fas_user.emailZ | avatar(24) }}"/>
+                            <img src="{{ g.fas_user.email | avatar(24) }}"/>
                           </a>
                           <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="{{ url_for('.auth_logout') }}">log out</a>
