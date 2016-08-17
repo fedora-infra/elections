@@ -38,7 +38,7 @@
                         <li class="nav-item dropdown p-l-1">
                           <a class="nav-link dropdown-toggle" data-toggle="dropdown"
                              href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                            <img src="{{ g.fas_user.email | avatar(24) }}"/>
+                            <img src="{{ g.fas_user.emailZ | avatar(24) }}"/>
                           </a>
                           <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="{{ url_for('.auth_logout') }}">log out</a>
@@ -103,9 +103,7 @@
     <div class="footer p-t-1 p-b-1">
         <div class="container">
             <p class="text-muted credit">
-         Copyright © 2014-2016 Red Hat
-          <a href="https://pagure.io/pagure">pagure</a> --
-          2.3.4
+         Copyright © 2013-2016 Red Hat
             </p>
             <p class="text-muted credit"> Powered by the <a href="//github.com/fedora-infra/elections/"
                   target="_blank">elections</a> app -- version {{ version }}</p>
