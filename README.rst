@@ -12,6 +12,39 @@ adapted to other projects.  Fedora-elections is integrated with the Fedora
 Account System (FAS).
 
 
+Hacking with Vagrant
+====================
+Quickly start hacking on elections using the vagrant setup that is included in
+the elections repo is super simple.
+
+First, install Vagrant and the vagrant-libvirt plugin from the official Fedora
+repos::
+
+    $ sudo dnf install vagrant vagrant-libvirt
+
+The elections vagrant setup uses vagrant-sshfs for syncing files between your
+host and the vagrant dev machine. vagrant-sshfs is not in the Fedora repos
+(yet), so we install the vagrant-sshfs plugin from dustymabe's COPR repo::
+
+    $ sudo dnf copr enable dustymabe/vagrant-sshfs
+    $ sudo dnf install vagrant-sshfs
+
+Now, from within main directory (the one with the Vagrantfile in it) of your git
+checkout of elections, run the ``vagrant up`` command to provision your dev
+environment::
+
+    $ vagrant up
+
+When this command is completed (it may take a while) you will be able to ssh
+into your dev VM with ``vagrant ssh`` and then run the command to start the
+elections server::
+
+    $ vagrant ssh
+    [vagrant@localhost ~]$ pushd /vagrant/; ./runserver.py --host "0.0.0.0";
+
+Once that is running, simply go to http://localhost:5002/ in your browser on
+your host to see your running elections test instance.
+
 Running from a checkout:
 ========================
 
