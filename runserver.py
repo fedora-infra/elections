@@ -25,6 +25,10 @@ parser.add_argument(
 parser.add_argument(
     '--port', '-p', default=5000,
     help='Port for the flask application.')
+parser.add_argument(
+    '--host', default="127.0.0.1",
+    help='Hostname to listen on. When set to 0.0.0.0 the server is available \
+    externally. Defaults to 127.0.0.1 making the it only visable on localhost')
 
 args = parser.parse_args()
 
@@ -43,4 +47,4 @@ if args.config:
     os.environ['FEDORA_ELECTIONS_CONFIG'] = config
 
 APP.debug = True
-APP.run(host='127.0.0.1', port=int(args.port))
+APP.run(host=args.host, port=int(args.port))
