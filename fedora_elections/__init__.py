@@ -29,6 +29,8 @@ __version__ = '2.6.1'
 import logging
 import os
 import sys
+import urllib
+import hashlib
 
 from datetime import datetime, time
 from functools import wraps
@@ -182,8 +184,6 @@ def rjust_filter(text, length):
 
 @APP.template_filter('avatar')
 def avatar_filter(openid, size=64, default='retro'):
-    import urllib
-    import hashlib
     query = urllib.urlencode({'s': size, 'd': default})
     hashhex = hashlib.sha256(openid).hexdigest()
     return "https://seccdn.libravatar.org/avatar/%s?%s" % (hashhex, query)
