@@ -9,62 +9,92 @@
         href="//fedoraproject.org/static/images/favicon.ico"/>
     <link rel='stylesheet' type='text/css'
         href="{{ url_for('static', filename='jquery-ui-1.9.2.custom.css') }}"/>
-    <link rel="stylesheet" type="text/css" media="screen"
-        href="{{ url_for('static', filename='koji.css') }}"/>
+    <link href="https://apps.fedoraproject.org/global/fedora-bootstrap-1.0.1/fedora-bootstrap.css"
+            type="text/css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" media="screen"
         href="{{ url_for('static', filename='elections.css') }}"/>
-    <link rel='stylesheet' type='text/css'
-         href='//fonts.googleapis.com/css?family=Comfortaa'/>
+    <link href="https://apps.fedoraproject.org/global/fedora-bootstrap-fonts/open-sans.css" rel="stylesheet">
 
   </head>
   <body id="{%block tag %}{% endblock %}">
+    <!-- start masthead -->
+       <div class="masthead">
+         <div class="container">
+           <div class="row">
+             <div class="col-sm-3">
+               <a href="/">
+                 <img src="{{ url_for('static', filename='images/elections_logo.png') }}"
+                   alt="Elections Logo" height="40px" id="kojiLogo"/>
+               </a>
+             </div>
+             <div class="col-sm-9">
+               <div class="row">
 
-    <div id="wrap">
-      <div id="innerwrap">
+               <nav class="navbar navbar-light p-t-0 p-b-0">
+                   <div class="container">
+                     <ul class="nav navbar-nav nav-underline pull-xs-right">
 
-        <!-- HEADER -->
-        <div id="header">
-          <img src="{{ url_for('static', filename='elections-logo.png') }}"
-            alt="Elections Logo" id="kojiLogo"/>
-        </div><!-- end header -->
+                       {% if g.fas_user %}
+                        <li class="nav-item dropdown p-l-1">
+                          <a class="nav-link dropdown-toggle" data-toggle="dropdown"
+                             href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            <img src="{{ g.fas_user.email | avatar(24) }}"/>
+                          </a>
+                          <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="{{ url_for('.auth_logout') }}">log out</a>
+                          </div>
+                        </li>
+                        {% else %}
+                        <li class="nav-item p-l-1">
+                          <a href="{{ url_for('.auth_login') }}">Log In</a>
+                        </li>
+                        {% endif %}
+                     </ul>
+                   </div>
+                 </nav>
 
-        <!-- MAIN NAVIGATION -->
-        <div id="mainNav">
-          <h4 class="hide">Main Site Links:</h4>
-          <ul>
-            <li id="indexTab"><a href="{{url_for('.index')}}">Home</a></li>
-            <li id="openTab"><a href="{{url_for('.open_elections')}}">Open</a></li>
-            <li id="archivesTab"><a href="{{url_for('.archived_elections')}}">Archives</a></li>
-            {% if is_admin %}
-            <li id="adminTab"><a href="{{url_for('.admin_view_elections')}}">Admin</a></li>
-            {% endif %}
-          </ul>
-        </div><!-- end mainNav -->
+               </div>
+             </div>
+           </div>
+         </div>
+       </div><!-- close masthead-->
 
-        <span id="loginInfo">
-          {% if g.fas_user %}
-            <span class="text">logged in as </span>
-            {{ g.fas_user.username }} |
-            <a href="{{ url_for('.auth_logout') }}">log out</a>
-          {% else %}
-            <a href="{{ url_for('.auth_login') }}">login</a>
-          {% endif %}
-        </span>
+       <nav class="navbar navbar-light navbar-underline p-t-0 p-b-0">
+         <div class="container">
+           <ul class="nav navbar-nav nav-underline">
+               <li class="nav-item {%if tag == 'index'%}active{%endif%}"><a class="nav-link" href="{{url_for('.index')}}">Home</a></li>
+               <li class="nav-item {%if tag == 'open'%}active{%endif%}"><a class="nav-link" href="{{url_for('.open_elections')}}">Open</a></li>
+               <li class="nav-item {%if tag == 'archives'%}active{%endif%}"><a class="nav-link" href="{{url_for('.archived_elections')}}">Archives</a></li>
+               {% if is_admin %}
+               <li class="nav-item {%if tag == 'admin'%}active{%endif%}"><a class="nav-link" href="{{url_for('.admin_view_elections')}}">Admin</a></li>
+               {% endif %}
+           </ul>
+         </div>
+       </nav>
 
+    <div class="bodycontent p-y-3">
+      <div class="container">
         <div id="content">
-
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if category, messages %}
-                <ul id="flashes">
                     {% for category, message in messages %}
-                    <li class="{{ category }}">{{ message |safe}}</li>
+                    <div class="alert alert-dismissable fade in
+                    {% if category == 'message'%}
+                    alert-info
+                    {% elif category == 'error'%}
+                    alert-danger
+                    {% elif category == 'warning'%}
+                    alert-warning
+                    {% endif %} ">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      {{ message |safe}}
+                    </div>
                     {% endfor %}
-                </ul>
                 {% endif %}
             {% endwith %}
-
             {% block body %}{% endblock %}
-
         </div>
 
         {% if options is defined %}
@@ -78,20 +108,23 @@
             </div>
         </div>
         {% endif %}
-
-        <p id="footer">
-          Copyright &copy; 2013-2014 Red Hat
-          <a href="//github.com/fedora-infra/elections/" rel="noopener noreferrer"
-          target="_blank">elections</a>
-        -- version: {{ version }}
-        </p>
-
       </div>
     </div>
-
+    <div class="footer p-t-1 p-b-1">
+        <div class="container">
+            <p class="text-muted credit">
+         Copyright © 2013-2016 Red Hat
+            </p>
+            <p class="text-muted credit"> Powered by the <a href="//github.com/fedora-infra/elections/"
+                  target="_blank">elections</a> app -- version {{ version }}</p>
+        </div>
+    </div>
     {% block jscripts %}
       <script type="text/javascript" src="{{
         url_for('static', filename='jquery-1.10.2.min.js') }}"> </script>
+        <script type="text/javascript"
+                src="https://apps.fedoraproject.org/global/fedora-bootstrap-1.0.1/fedora-bootstrap.js">
+        </script>
       {% if config['FEDMENU_URL'] %}
       <script src="{{ config['FEDMENU_URL'] }}/js/fedmenu.js"></script>
       <script>
