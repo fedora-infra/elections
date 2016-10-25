@@ -22,6 +22,56 @@
 </tr>
 {% endmacro %}
 
+{% macro render_bootstrap_textfield_in_row(field, after="", addon=None) %}
+<div class="form-group {% if field.errors %}has-danger{% endif %}">
+  {% if usernamemap %} {{ usernamemap[field.name] }} {%
+      else %} {{ field.label() }} {% endif %}
+      {% if addon %}
+      <div class="input-group">
+      {% endif %}
+    {{ field(class_="form-control", **kwargs)|safe }}
+    {% if addon %}
+        <span class="input-group-addon">{{ addon }}</span>
+      </div>
+    {% endif %}
+    {% if after %} <div><small class="text-muted">{{ after }}</small></div>{% endif %}
+    {% if field.errors %}
+      {% for error in field.errors%}
+      <div class="form-control-feedback">{{ error }}</div>
+      {% endfor %}
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro render_bootstrap_selectfield_in_row(field, after="") %}
+<div class="form-group {% if field.errors %}has-danger{% endif %}">
+  {% if usernamemap %} {{ usernamemap[field.name] }} {%
+      else %} {{ field.label() }} {% endif %}
+    {{ field(class_="c-select", **kwargs)|safe }}
+    {% if after %} <div><small class="text-muted">{{ after }}</small></div>{% endif %}
+    {% if field.errors %}
+      {% for error in field.errors%}
+      <div class="form-control-feedback">{{ error }}</div>
+      {% endfor %}
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro render_bootstrap_checkbox_in_row(field, after="") %}
+<div class="form-group {% if field.errors %}has-danger{% endif %}">
+  {% if usernamemap %} {{ usernamemap[field.name] }} {%
+      else %} {{ field.label() }} {% endif %}
+      <br/>
+    {{ field(**kwargs)|safe }}
+    {% if after %} <div><small class="text-muted">{{ after }}</small></div>{% endif %}
+    {% if field.errors %}
+      {% for error in field.errors%}
+      <div class="form-control-feedback">{{ error }}</div>
+      {% endfor %}
+    {% endif %}
+</div>
+{% endmacro %}
+
 {% macro render_field_data_in_row(field, num_candidates, usernamemap=None, after="") %}
 <tr>
     <td>{% if usernamemap %} {{ usernamemap[field.name] }} {%

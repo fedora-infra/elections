@@ -11,12 +11,12 @@ from fedora_elections.models import Election
 
 class ElectionForm(wtf.Form):
     shortdesc = wtforms.TextField(
-        'Summary<span class="error">*</span>', [
+        'Summary', [
             wtforms.validators.Required(),
             wtforms.validators.Length(max=150)])
 
     alias = wtforms.TextField(
-        'Alias<span class="error">*</span>', [
+        'Alias', [
             wtforms.validators.Required(),
             wtforms.validators.Length(max=100),
             wtforms.validators.Regexp(
@@ -26,11 +26,11 @@ class ElectionForm(wtf.Form):
         ])
 
     description = wtforms.TextAreaField(
-        'Description<span class="error">*</span>', [
+        'Description', [
             wtforms.validators.Required()])
 
-    voting_type = wtforms.RadioField(
-        'Type<span class="error">*</span>',
+    voting_type = wtforms.SelectField(
+        'Type',
         choices=[
             ('range', 'Range Voting'),
             ('simple', 'Simple Voting (choose one candidate in the list)'),
@@ -46,21 +46,21 @@ class ElectionForm(wtf.Form):
         [wtforms.validators.optional()])
 
     url = wtforms.TextField(
-        'URL<span class="error">*</span>', [
+        'URL', [
             wtforms.validators.Required(),
             wtforms.validators.URL(),
             wtforms.validators.Length(max=250)])
 
     start_date = wtforms.DateField(
-        'Start date<span class="error">*</span>', [
+        'Start date', [
             wtforms.validators.Required()])
 
     end_date = wtforms.DateField(
-        'End date<span class="error">*</span>', [
+        'End date', [
             wtforms.validators.Required()])
 
     seats_elected = wtforms.IntegerField(
-        'Number elected<span class="error">*</span>', [
+        'Number elected', [
             wtforms.validators.Required(),
             wtforms.validators.NumberRange(min=1)],
         default=1)
