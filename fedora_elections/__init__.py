@@ -40,7 +40,7 @@ import flask
 
 from fedora.client import AuthError, AppError
 from fedora.client.fas2 import AccountSystem
-from flask.ext.fas_openid import FAS
+from flask_fas_openid import FAS
 
 import fedora_elections.fedmsgshim
 import fedora_elections.mail_logging
