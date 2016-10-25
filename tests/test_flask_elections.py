@@ -84,7 +84,7 @@ class FlaskElectionstests(ModelFlasktests):
             output = self.app.get(
                 '/vote/test_election', follow_redirects=True)
             self.assertTrue(
-                '<li class="error">You must sign the CLA to vote</li>'
+                'You must sign the CLA to vote'
                 in output.data)
 
         user = FakeUser([], username='pingou')
@@ -96,8 +96,8 @@ class FlaskElectionstests(ModelFlasktests):
             output = self.app.get(
                 '/vote/test_election', follow_redirects=True)
             self.assertTrue(
-                '<li class="error">You need to be in one another group than '
-                'CLA to vote</li>' in output.data)
+                'You need to be in one another group than '
+                'CLA to vote' in output.data)
 
         user = FakeUser(['packager'], username='pingou')
         with user_set(fedora_elections.APP, user):
@@ -109,8 +109,8 @@ class FlaskElectionstests(ModelFlasktests):
             output = self.app.get(
                 '/vote/test_election3', follow_redirects=True)
             self.assertTrue(
-                '<li class="error">You are not among the groups that are '
-                'allowed to vote for this election</li>' in output.data)
+                'You are not among the groups that are '
+                'allowed to vote for this election' in output.data)
 
         user = FakeUser(['voters'], username='pingou')
         with user_set(fedora_elections.APP, user):
@@ -122,21 +122,21 @@ class FlaskElectionstests(ModelFlasktests):
             output = self.app.get(
                 '/vote/test_election', follow_redirects=True)
             self.assertTrue(
-                '<li class="message">This election is closed.  You have been '
-                'redirected to the election results.</li>' in output.data)
+                'This election is closed.  You have been '
+                'redirected to the election results.' in output.data)
 
             # Election closed and results are embargoed
             output = self.app.get(
                 '/vote/test_election2', follow_redirects=True)
             self.assertTrue(
-                '<li class="message">This election is closed.  You have been '
-                'redirected to the election results.</li>' in output.data)
+                'This election is closed.  You have been '
+                'redirected to the election results.' in output.data)
 
             # Election still pending
             output = self.app.get(
                 '/vote/test_election4', follow_redirects=True)
             self.assertTrue(
-                '<li class="message">Voting has not yet started, sorry.</li>'
+                'Voting has not yet started, sorry.'
                 in output.data)
 
             # Election in progress
@@ -179,9 +179,9 @@ class FlaskElectionstests(ModelFlasktests):
             '/results/test_election2', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<li class="message">We are sorry.  The results for this '
+            'We are sorry.  The results for this '
             'election cannot be viewed because they are currently embargoed '
-            'pending formal announcement.</li>' in output.data)
+            'pending formal announcement.' in output.data)
         self.assertTrue('<h3>Current elections</h3>' in output.data)
 
         user = FakeUser(['packager'], username='toshio')
@@ -190,9 +190,9 @@ class FlaskElectionstests(ModelFlasktests):
                 '/results/test_election2', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">We are sorry.  The results for this '
+                'We are sorry.  The results for this '
                 'election cannot be viewed because they are currently '
-                'embargoed pending formal announcement.</li>'
+                'embargoed pending formal announcement.'
                 in output.data)
             self.assertTrue('<h3>Current elections</h3>' in output.data)
 
@@ -204,11 +204,11 @@ class FlaskElectionstests(ModelFlasktests):
                 '/results/test_election2', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="warning">You are only seeing this page because '
-                'you are an admin.</li>' in output.data)
+                'You are only seeing this page because '
+                'you are an admin.' in output.data)
             self.assertTrue(
-                ' <li class="warning">The results for this election are '
-                'currently embargoed pending formal announcement.</li>'
+                ' The results for this election are '
+                'currently embargoed pending formal announcement.'
                 in output.data)
             self.assertTrue(
                 '<th title="Number of votes received">Votes</th>'
@@ -223,8 +223,8 @@ class FlaskElectionstests(ModelFlasktests):
                 '/results/test_election3', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Sorry but this election is in progress,'
-                ' and you may not see its results yet.</li>' in output.data)
+                'Sorry but this election is in progress,'
+                ' and you may not see its results yet.' in output.data)
             self.assertTrue('<h3>Current elections</h3>' in output.data)
 
     def test_election_results_text(self):
@@ -345,8 +345,8 @@ candidates for running this elections!
                 '/results/test_election3/text', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Sorry but this election is in progress,'
-                ' and you may not see its results yet.</li>' in output.data)
+                'Sorry but this election is in progress,'
+                ' and you may not see its results yet.' in output.data)
             self.assertTrue('<h3>Current elections</h3>' in output.data)
 
 

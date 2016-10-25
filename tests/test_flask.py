@@ -67,7 +67,7 @@ class Flasktests(ModelFlasktests):
         self.assertFalse('<h3>Current elections</h3>' in output.data)
         self.assertFalse('<h3>Next' in output.data)
         self.assertFalse('<h3>Last' in output.data)
-        self.assertTrue('<a href="/login">login</a>' in output.data)
+        self.assertTrue('<a href="/login">Log In</a>' in output.data)
 
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
@@ -75,7 +75,7 @@ class Flasktests(ModelFlasktests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<title>Fedora elections</title>' in output.data)
             self.assertTrue(
-                '<span class="text">logged in as </span>' in output.data)
+                '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
 
     def test_index_filled(self):
         """ Test the index function. """
@@ -86,7 +86,7 @@ class Flasktests(ModelFlasktests):
         self.assertTrue('<h3>Current elections</h3>' in output.data)
         self.assertTrue('<h3>Next 1 elections</h3>' in output.data)
         self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
-        self.assertTrue('<a href="/login">login</a>' in output.data)
+        self.assertTrue('<a href="/login">Log In</a>' in output.data)
 
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
@@ -98,7 +98,7 @@ class Flasktests(ModelFlasktests):
             self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
             self.assertTrue('<a href="/vote/' in output.data)
             self.assertTrue(
-                '<span class="text">logged in as </span>' in output.data)
+                '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
             self.assertEqual(output.data.count('Vote now!'), 4)
 
         user = FakeUser([], username='toshio')
@@ -110,7 +110,7 @@ class Flasktests(ModelFlasktests):
             self.assertTrue('<h3>Next 1 elections</h3>' in output.data)
             self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
             self.assertTrue(
-                '<span class="text">logged in as </span>' in output.data)
+                '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
             self.assertEqual(output.data.count('Vote now!'), 0)
 
     def test_is_admin(self):
@@ -207,7 +207,7 @@ class Flasktests(ModelFlasktests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<title>Fedora elections</title>' in output.data)
             self.assertTrue(
-                '<li class="message">You have been logged out</li>'
+                'You have been logged out'
                 in output.data)
 
         user = None
@@ -216,7 +216,7 @@ class Flasktests(ModelFlasktests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<title>Fedora elections</title>' in output.data)
             self.assertFalse(
-                '<li class="message">You have been logged out</li>'
+                'You have been logged out'
                 in output.data)
 
     def test_about_election(self):
@@ -229,7 +229,7 @@ class Flasktests(ModelFlasktests):
         output = self.app.get('/about/blah', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<li class="message">The election, blah,  does not exist.</li>'
+            'The election, blah,  does not exist.'
             in output.data)
         self.assertTrue('<title>Fedora elections</title>' in output.data)
         self.assertTrue('<h3>Current elections</h3>' in output.data)
@@ -249,7 +249,7 @@ class Flasktests(ModelFlasktests):
         self.assertTrue(
             '<a href="/results/test_election">Show Results!</a>'
             in output.data)
-        self.assertTrue('<a href="/login">login</a>' in output.data)
+        self.assertTrue('<a href="/login">Log In</a>' in output.data)
 
     def test_archived_election(self):
         """ Test the archived_elections function. """
@@ -259,7 +259,7 @@ class Flasktests(ModelFlasktests):
         output = self.app.get('/archives', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<li class="message">There are no archived elections.</li>'
+            'There are no archived elections.'
             in output.data)
         self.assertTrue('<title>Fedora elections</title>' in output.data)
         self.assertTrue('<h2>Elections</h2>' in output.data)
@@ -276,7 +276,7 @@ class Flasktests(ModelFlasktests):
             '<td>test election shortdesc</td>' in output.data)
         self.assertEqual(output.data.count('<a href="/results/'), 2)
         self.assertEqual(output.data.count('<a href="/about/'), 2)
-        self.assertTrue('<a href="/login">login</a>' in output.data)
+        self.assertTrue('<a href="/login">Log In</a>' in output.data)
 
     def test_open_elections(self):
         """ Test the open_elections function. """
@@ -286,7 +286,7 @@ class Flasktests(ModelFlasktests):
         output = self.app.get('/open', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<li class="message">There are no open elections.</li>'
+            'There are no open elections.'
             in output.data)
         self.assertTrue('<title>Fedora elections</title>' in output.data)
         self.assertTrue('<h2>Elections</h2>' in output.data)
@@ -299,7 +299,7 @@ class Flasktests(ModelFlasktests):
         self.assertTrue('<h3>Next 4 elections</h3>' in output.data)
         self.assertTrue('<td>test election 3 shortdesc</td>' in output.data)
         self.assertTrue('<a href="/vote/' in output.data)
-        self.assertTrue('<a href="/login">login</a>' in output.data)
+        self.assertTrue('<a href="/login">Log In</a>' in output.data)
 
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
@@ -309,7 +309,7 @@ class Flasktests(ModelFlasktests):
             self.assertTrue('<h3>Next 4 elections</h3>' in output.data)
             self.assertTrue('<a href="/vote/' in output.data)
             self.assertTrue(
-                '<span class="text">logged in as </span>' in output.data)
+                '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
             self.assertEqual(output.data.count('Vote now!'), 4)
 
         user = FakeUser([], username='toshio')
@@ -319,7 +319,7 @@ class Flasktests(ModelFlasktests):
             self.assertTrue('<title>Fedora elections</title>' in output.data)
             self.assertTrue('<h3>Next 4 elections</h3>' in output.data)
             self.assertTrue(
-                '<span class="text">logged in as </span>' in output.data)
+                '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
             self.assertEqual(output.data.count('Vote now!'), 0)
 
 
