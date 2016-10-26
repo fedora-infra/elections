@@ -210,7 +210,7 @@ def index():
 
     prev_elections = models.Election.get_older_election(SESSION, now)[:5]
     cur_elections = models.Election.get_open_election(SESSION, now)
-    next_elections = models.Election.get_next_election(SESSION, now)[:3]
+    next_elections = models.Election.get_next_election(SESSION, now)
 
     voted = []
     if is_authenticated():
@@ -260,31 +260,6 @@ def archived_elections():
         'archive.html',
         elections=elections)
 
-
-@APP.route('/open')
-def open_elections():
-    now = datetime.utcnow()
-
-    elections = models.Election.get_open_election(SESSION, now)
-
-    if not elections:
-        flask.flash('There are no open elections.')
-        return safe_redirect_back()
-
-    voted = []
-    if is_authenticated():
-        for elec in elections:
-            votes = models.Vote.of_user_on_election(
-                SESSION, flask.g.fas_user.username, elec.id, count=True)
-            if votes > 0:
-                voted.append(elec)
-
-    return flask.render_template(
-        'index.html',
-        next_elections=elections,
-        voted=voted,
-        tag='open',
-        title='Open Elections')
 
 
 @APP.route('/login', methods=('GET', 'POST'))
