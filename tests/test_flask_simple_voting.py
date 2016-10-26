@@ -140,7 +140,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
                 '<input type="hidden" name="action" value="submit" />'
                 in output.data)
             self.assertTrue(
-                '<li class="message">Please confirm your vote!</li>'
+                'Please confirm your vote!'
                 in output.data)
 
     def test_vote_simple_process(self):
@@ -230,7 +230,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                'class="message">Your vote has been recorded.  Thank you!</'
+                'Your vote has been recorded.  Thank you!'
                 in output.data)
             self.assertTrue('<h3>Current elections</h3>' in output.data)
             self.assertTrue('<h3>Next 1 elections</h3>' in output.data)
@@ -271,7 +271,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
         #Next, we need to check if the vote has been recorded
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                'class="message">Your vote has been recorded.  Thank you!</'
+                'Your vote has been recorded.  Thank you!'
                 in output.data)
             self.assertTrue('<h3>Current elections</h3>' in output.data)
             self.assertTrue('<h3>Next 1 elections</h3>' in output.data)

@@ -100,7 +100,7 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<h2>Create election</h2>' in output.data)
             self.assertTrue(
-                'input id="shortdesc" name="shortdesc" type="text"'
+                'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
 
             # No csrf provided
@@ -122,7 +122,7 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<h2>Create election</h2>' in output.data)
             self.assertTrue(
-                'input id="shortdesc" name="shortdesc" type="text"'
+                'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
 
             csrf_token = output.data.split(
@@ -147,10 +147,10 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<h2>Create election</h2>' in output.data)
             self.assertTrue(
-                'input id="shortdesc" name="shortdesc" type="text"'
+                'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
             self.assertTrue(
-                '<td class="error">This field is required.</td>'
+                '<div class="form-control-feedback">This field is required.</div>'
                 in output.data)
 
             # Invalid alias
@@ -173,10 +173,10 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<h2>Create election</h2>' in output.data)
             self.assertTrue(
-                'input id="shortdesc" name="shortdesc" type="text"'
+                'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
             self.assertTrue(
-                '<td class="error">The alias cannot be <code>new</code>.</td>'
+                '<div class="form-control-feedback">The alias cannot be <code>new</code>.</div>'
                 in output.data)
 
             # Invalid: end_date earlier than start_date
@@ -199,10 +199,10 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<h2>Create election</h2>' in output.data)
             self.assertTrue(
-                'input id="shortdesc" name="shortdesc" type="text"'
+                'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
             self.assertTrue(
-                'class="error">End date must be later than start date.</td>'
+                'class="form-control-feedback">End date must be later than start date.</div>'
                 in output.data)
 
             # Invalid: alias already taken
@@ -225,11 +225,11 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<h2>Create election</h2>' in output.data)
             self.assertTrue(
-                'input id="shortdesc" name="shortdesc" type="text"'
+                'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
             self.assertTrue(
-                '<td class="error">There is already another election with '
-                'this alias.</td>' in output.data)
+                '<div class="form-control-feedback">There is already another election with '
+                'this alias.</div>' in output.data)
 
             # Invalid: shortdesc already taken
             data = {
@@ -251,11 +251,11 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<h2>Create election</h2>' in output.data)
             self.assertTrue(
-                'input id="shortdesc" name="shortdesc" type="text"'
+                'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
             self.assertTrue(
-                '<td class="error">There is already another election with '
-                'this summary.</td>' in output.data)
+                '<div class="form-control-feedback">There is already another election with '
+                'this summary.</div>' in output.data)
 
             # All good  -  max_votes is ignored as it is not a integer
             data = {
@@ -279,7 +279,7 @@ class FlaskAdmintests(ModelFlasktests):
                 '/admin/new', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Election "new_election" added</li>'
+                'Election "new_election" added'
                 in output.data)
             self.assertTrue(
                 '<a href="/admin/new_election/edit">' in output.data)
@@ -316,7 +316,7 @@ class FlaskAdmintests(ModelFlasktests):
                 '/admin/new', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Election "new_election2" added</li>'
+                'Election "new_election2" added'
                 in output.data)
             self.assertTrue(
                 '<a href="/admin/new_election2/edit">' in output.data)
@@ -349,7 +349,7 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<h2>Edit election</h2>' in output.data)
             self.assertTrue(
-                'input id="shortdesc" name="shortdesc" type="text"'
+                'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
 
             data = {
@@ -370,7 +370,7 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<h2>Edit election</h2>' in output.data)
             self.assertTrue(
-                'input id="shortdesc" name="shortdesc" type="text"'
+                'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
 
             csrf_token = output.data.split(
@@ -394,10 +394,10 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 '<h2>Edit election</h2>' in output.data)
             self.assertTrue(
-                'input id="shortdesc" name="shortdesc" type="text"'
+                'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
             self.assertTrue(
-                '<td class="error">This field is required.</td>'
+                '<div class="form-control-feedback">This field is required.</div>'
                 in output.data)
 
             # Check election before edit
@@ -426,7 +426,7 @@ class FlaskAdmintests(ModelFlasktests):
                 '/admin/test_election/edit', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Election "test_election" saved</li>'
+                'Election "test_election" saved'
                 in output.data)
             # We edited the seats_elected from 1 to 2
             self.assertTrue(
@@ -482,7 +482,7 @@ class FlaskAdmintests(ModelFlasktests):
                 '/admin/test_election2/edit', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Election "test_election2" saved</li>'
+                'Election "test_election2" saved'
                 in output.data)
             self.assertTrue(
                 '<li>Number elected: 2</li>' in output.data)
@@ -511,7 +511,7 @@ class FlaskAdmintests(ModelFlasktests):
                 '/admin/test_election2/edit', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Election "test_election2" saved</li>'
+                'Election "test_election2" saved'
                 in output.data)
             self.assertTrue(
                 '<li>Number elected: 2</li>' in output.data)
@@ -567,7 +567,7 @@ class FlaskAdmintests(ModelFlasktests):
                 '/admin/test_election3/edit', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Election "test_election3" saved</li>'
+                'Election "test_election3" saved'
                 in output.data)
             # We edited the legal_voters
             self.assertTrue(
@@ -594,7 +594,7 @@ class FlaskAdmintests(ModelFlasktests):
                 '/admin/test_election3/edit', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Election "test_election3" saved</li>'
+                'Election "test_election3" saved'
                 in output.data)
             # We edited the legal_voters
             self.assertTrue(
@@ -662,7 +662,7 @@ class FlaskAdmintests(ModelFlasktests):
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Candidate "pingou" saved</li>'
+                'Candidate "pingou" saved'
                 in output.data)
             self.assertTrue('<h3>Candidates</h3>' in output.data)
             self.assertTrue('<p>4 candidates found</p>' in output.data)
@@ -729,7 +729,7 @@ class FlaskAdmintests(ModelFlasktests):
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Added 3 candidates</li>'
+                'Added 3 candidates'
                 in output.data)
             self.assertTrue('<h3>Candidates</h3>' in output.data)
             self.assertTrue('<p>6 candidates found</p>' in output.data)
@@ -811,7 +811,7 @@ class FlaskAdmintests(ModelFlasktests):
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Candidate "Toshio Kuratomi" saved</li>'
+                'Candidate "Toshio Kuratomi" saved'
                 in output.data)
             self.assertTrue('<h3>Candidates</h3>' in output.data)
             self.assertTrue('<p>3 candidates found</p>' in output.data)
@@ -870,8 +870,8 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<h2>test election shortdesc</h2>' in output.data)
             self.assertTrue(
-                '<li class="error">Could not delete this candidate. Is it '
-                'already part of an election?</li>' in output.data)
+                'Could not delete this candidate. Is it '
+                'already part of an election?' in output.data)
 
             # Check election before edit
             output = self.app.get('/admin/test_election4/')
@@ -892,7 +892,7 @@ class FlaskAdmintests(ModelFlasktests):
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Candidate "Toshio" deleted</li>'
+                'Candidate "Toshio" deleted'
                 in output.data)
             self.assertTrue(
                 '<h2>test election 4 shortdesc</h2>' in output.data)

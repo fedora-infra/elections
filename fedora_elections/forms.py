@@ -2,14 +2,19 @@
 
 import flask
 import wtforms
-from flask.ext import wtf
+import flask_wtf as wtf
+try:
+    from flask_wtf import FlaskForm
+except ImportError:
+    from flask_wtf import Form as FlaskForm
+
 
 from fedora.client import AuthError
 from fedora_elections import SESSION, FAS2
 from fedora_elections.models import Election
 
 
-class ElectionForm(wtf.Form):
+class ElectionForm(FlaskForm):
     shortdesc = wtforms.TextField(
         'Summary', [
             wtforms.validators.Required(),
@@ -103,22 +108,22 @@ class ElectionForm(wtf.Form):
                 'End date must be later than start date.')
 
 
-class CandidateForm(wtf.Form):
+class CandidateForm(FlaskForm):
     name = wtforms.TextField('Name', [wtforms.validators.Required()])
     url = wtforms.TextField('URL', [wtforms.validators.Length(max=250)])
 
 
-class MultiCandidateForm(wtf.Form):
+class MultiCandidateForm(FlaskForm):
     candidate = wtforms.TextField(
         'Candidates', [wtforms.validators.Required()])
 
 
-class ConfirmationForm(wtf.Form):
+class ConfirmationForm(FlaskForm):
     pass
 
 
 def get_range_voting_form(candidates, max_range):
-    class RangeVoting(wtf.Form):
+    class RangeVoting(FlaskForm):
         action = wtforms.HiddenField()
 
     for candidate in candidates:
@@ -135,7 +140,7 @@ def get_range_voting_form(candidates, max_range):
 
 
 def get_simple_voting_form(candidates, fasusers):
-    class SimpleVoting(wtf.Form):
+    class SimpleVoting(FlaskForm):
         action = wtforms.HiddenField()
 
     titles = []
@@ -161,7 +166,7 @@ def get_simple_voting_form(candidates, fasusers):
 
 
 def get_irc_voting_form(candidates, fasusers):
-    class IrcVoting(wtf.Form):
+    class IrcVoting(FlaskForm):
         action = wtforms.HiddenField()
 
     for candidate in candidates:
@@ -175,7 +180,7 @@ def get_irc_voting_form(candidates, fasusers):
 
 
 def get_select_voting_form(candidates, max_selection):
-    class SelectVoting(wtf.Form):
+    class SelectVoting(FlaskForm):
         action = wtforms.HiddenField()
 
     for candidate in candidates:

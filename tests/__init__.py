@@ -172,6 +172,7 @@ class FakeUser(object):
         self.dic = {}
         self.dic['timezone'] = 'Europe/Paris'
         self.cla_done = cla_done
+        self.email = "test@example.com"
 
     def __getitem__(self, key):
         return self.dic[key]
