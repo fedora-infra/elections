@@ -33,8 +33,5 @@
   {{ render_elections(next_elections, 'Next %s elections' % (next_elections|length), is_admin) }}
   {% endif %}
 
-  {% if prev_elections %}
-  {{ render_elections(prev_elections, 'Last %s elections' % (prev_elections|length), is_admin) }}
-  {% endif %}
 
 {% endblock %}
