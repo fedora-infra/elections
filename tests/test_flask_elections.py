@@ -62,7 +62,7 @@ class FlaskElectionstests(ModelFlasktests):
 
             output = self.app.get('/vote/test_election', follow_redirects=True)
             self.assertTrue(
-                '"message">The election, test_election, does not exist.</'
+                'The election, test_election, does not exist.'
                 in output.data)
 
     def test_vote(self):
@@ -161,7 +161,7 @@ class FlaskElectionstests(ModelFlasktests):
             '/results/test_election', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            'class="message">The election, test_election, does not exist.</'
+            'The election, test_election, does not exist.'
             in output.data)
 
         self.setup_db()
@@ -233,7 +233,7 @@ class FlaskElectionstests(ModelFlasktests):
             '/results/test_election/text', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            'class="message">The election, test_election, does not exist.</'
+            'The election, test_election, does not exist.'
             in output.data)
 
         self.setup_db()
@@ -242,8 +242,8 @@ class FlaskElectionstests(ModelFlasktests):
             '/results/test_election/text', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            'class="error">The text results are only available to the '
-            'admins</li>' in output.data)
+            'The text results are only available to the '
+            'admins' in output.data)
         self.assertTrue('<h2>Elections</h2>' in output.data)
 
         user = FakeUser(['packager'], username='toshio')
@@ -252,8 +252,8 @@ class FlaskElectionstests(ModelFlasktests):
                 '/results/test_election2/text', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                'class="error">The text results are only available to the '
-                'admins</li>' in output.data)
+                'The text results are only available to the '
+                'admins' in output.data)
             self.assertTrue('<h2>Elections</h2>' in output.data)
 
         user = FakeUser(
