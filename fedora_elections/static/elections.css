@@ -1,3 +1,11 @@
 .bodycontent{
   min-height: 500px;
 }
+
+.nowrap{
+  white-space: nowrap;
+}
+
+.stretch-cell{
+  min-width:99%
+}

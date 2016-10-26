@@ -1,34 +1,9 @@
 {% extends "base.html" %}
+{% from "_macros.html" import render_elections %}
+
 
 {%block tag %}archives{% endblock %}
 
 {% block body %}
-  <h2>Past Elections</h2>
-  <table border="1" cellpadding="1">
-    <tr>
-      <th></th>
-      <th>Start Date (UTC)</th>
-      <th>End Date (UTC)</th>
-      <th></th>
-      <th></th>
-    </tr>
-    {% for election in elections %}
-      <tr>
-        <td>{{election.shortdesc}}</td>
-        <td>{{ election.start_date.strftime('%Y-%m-%d') }} 00:00 </td>
-        <td>{{ election.end_date.strftime('%Y-%m-%d') }} 23:59 </td>
-        <td>
-          <a href="{{ url_for('about_election', election_alias=election.alias) }}">
-            More information
-          </a>
-        </td>
-        <td>
-          <a href="{{ url_for('election_results',
-            election_alias=election.alias) }}">
-            Results
-          </a>
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+{{ render_elections(elections, 'Past elections', is_admin) }}
 {% endblock %}
