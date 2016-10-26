@@ -25,12 +25,26 @@
   </p>
   {% endif %}
 
+  <h4><strong>Open elections</strong></h4>
   {% if cur_elections %}
-  {{ render_elections(cur_elections, 'Current elections', is_admin) }}
+  {{ render_elections(cur_elections, is_admin) }}
+  {% else %}
+  <div class="card">
+    <div class="card-header text-xs-center">
+      No elections currently open for voting
+    </div>
+  </div>
   {% endif %}
 
+  <h4><strong>Upcoming elections</strong></h4>
   {% if next_elections %}
-  {{ render_elections(next_elections, 'Next %s elections' % (next_elections|length), is_admin) }}
+  {{ render_elections(next_elections, is_admin) }}
+  {% else %}
+  <div class="card">
+    <div class="card-header text-xs-center">
+      No elections scheduled
+    </div>
+  </div>
   {% endif %}
 
 

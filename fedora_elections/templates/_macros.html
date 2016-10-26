@@ -1,14 +1,14 @@
-{% macro render_elections(election_list, title, is_admin) -%}
+{% macro render_elections(election_list, is_admin) -%}
 
-  <h3>{{title}}</h3>
-
-  <table class="table">
-    <tr>
-      <th class="stretch-cell">Election</th>
-      <th></th>
-      <th class="nowrap">Start date (UTC)</th>
-      <th class="nowrap">End date (UTC)</th>
-    </tr>
+  <table class="table card">
+    <thead class="thead-default">
+      <tr>
+        <th class="stretch-cell">Election</th>
+        <th></th>
+        <th class="nowrap">Start date (UTC)</th>
+        <th class="nowrap">End date (UTC)</th>
+      </tr>
+    </thead>
     {% for election in election_list %}
       <tr>
         <td class="stretch-cell">
