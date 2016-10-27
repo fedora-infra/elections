@@ -1,52 +1,16 @@
 {% extends "base.html" %}
+{% from "_macros.html" import render_elections %}
 
 {%block tag %}{{tag}}{% endblock %}
 
-{% macro render_elections(election_list, title) -%}
-
-  <h3>{{title}}</h3>
-
-  <table class="table">
-    <tr>
-      <th>Election</th>
-      <th>Start date (UTC)</th>
-      <th>End date (UTC)</th>
-      <th>Status</th>
-      <th></th>
-      <th></th>
-    </tr>
-    {% for election in election_list %}
-      <tr>
-        <td>{{ election.shortdesc }}</td>
-        <td>{{ election.start_date.strftime('%Y-%m-%d') }} 00:00 </td>
-        <td>{{ election.end_date.strftime('%Y-%m-%d') }} 23:59 </td>
-        <td>{{ election.status }}</td>
-        <td>
-          <a href="{{ url_for('about_election', election_alias=election.alias) }}">
-            More information
-          </a>
-        </td>
-        <td>
-          {% if election.status == "In progress" %}
-            {% if election not in voted %}
-              <a href="{{ url_for('vote', election_alias=election.alias) }}">
-              Vote now!
-              </a>
-            {% else %}
-              <a href="{{ url_for('vote', election_alias=election.alias) }}">
-              Change your vote!
-              </a>
-            {% endif %}
-          {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
-
-{% endmacro %}
-
 {% block body %}
-  <h2>{{ title }}</h2>
+  <h2>{{ title }}
+    {% if is_admin %}
+    <a class="btn btn-sm btn-success pull-xs-right" href="{{ url_for('admin_new_election') }}">
+      New Election
+    </a>
+    {% endif %}
+  </h2>
 
   {% if tag == 'index' %}
   <p>
@@ -62,15 +26,15 @@
   {% endif %}
 
   {% if cur_elections %}
-  {{ render_elections(cur_elections, 'Current elections') }}
+  {{ render_elections(cur_elections, 'Current elections', is_admin) }}
   {% endif %}
 
   {% if next_elections %}
-  {{ render_elections(next_elections, 'Next %s elections' % (next_elections|length)) }}
+  {{ render_elections(next_elections, 'Next %s elections' % (next_elections|length), is_admin) }}
   {% endif %}
 
   {% if prev_elections %}
-  {{ render_elections(prev_elections, 'Last %s elections' % (prev_elections|length)) }}
+  {{ render_elections(prev_elections, 'Last %s elections' % (prev_elections|length), is_admin) }}
   {% endif %}
 
 {% endblock %}

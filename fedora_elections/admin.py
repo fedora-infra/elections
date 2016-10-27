@@ -52,15 +52,6 @@ def election_admin_required(f):
     return decorated_function
 
 
-@APP.route('/admin/')
-@election_admin_required
-def admin_view_elections():
-    elections = models.Election.search(SESSION)
-
-    return flask.render_template(
-        'admin/all_elections.html',
-        elections=elections)
-
 
 @APP.route('/admin/new', methods=('GET', 'POST'))
 @election_admin_required

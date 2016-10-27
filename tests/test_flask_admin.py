@@ -44,30 +44,6 @@ from tests import ModelFlasktests, Modeltests, TODAY, FakeUser, user_set
 class FlaskAdmintests(ModelFlasktests):
     """ Flask application tests for the admin controller. """
 
-    def test_admin(self):
-        """ Test the admin function. """
-        output = self.app.get('/admin/')
-        self.assertEqual(output.status_code, 302)
-
-        output = self.app.get('/admin/', follow_redirects=True)
-        self.assertEqual(output.status_code, 200)
-        self.assertTrue(
-            '<title>OpenID transaction in progress</title>' in output.data
-            or 'discoveryfailure' in output.data)
-
-        user = FakeUser([], username='pingou')
-        with user_set(fedora_elections.APP, user):
-            output = self.app.get('/admin/')
-            self.assertEqual(output.status_code, 403)
-
-        user = FakeUser(
-            fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
-            username='toshio')
-        with user_set(fedora_elections.APP, user):
-            output = self.app.get('/admin/')
-            self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h2>Election administration</h2>' in output.data)
-
     def test_admin_view_election(self):
         """ Test the admin_view_election function. """
         user = FakeUser(

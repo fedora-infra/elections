@@ -96,7 +96,7 @@ class Flasktests(ModelFlasktests):
             self.assertTrue('<h3>Current elections</h3>' in output.data)
             self.assertTrue('<h3>Next 1 elections</h3>' in output.data)
             self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
-            self.assertTrue('<a href="/vote/' in output.data)
+            self.assertTrue('<a class="btn btn-sm btn-primary m-l-2" href="/vote/' in output.data)
             self.assertTrue(
                 '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
             self.assertEqual(output.data.count('Vote now!'), 4)
@@ -111,7 +111,6 @@ class Flasktests(ModelFlasktests):
             self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
             self.assertTrue(
                 '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
-            self.assertEqual(output.data.count('Vote now!'), 0)
 
     def test_is_admin(self):
         """ Test the is_admin function. """
@@ -262,20 +261,19 @@ class Flasktests(ModelFlasktests):
             'There are no archived elections.'
             in output.data)
         self.assertTrue('<title>Fedora elections</title>' in output.data)
-        self.assertTrue('<h2>Elections</h2>' in output.data)
+        self.assertTrue('<h2>Elections' in output.data)
 
         self.setup_db()
 
         output = self.app.get('/archives')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<title>Fedora elections</title>' in output.data)
-        self.assertTrue('<h2>Past Elections</h2>' in output.data)
         self.assertTrue(
-            '<td>test election 2 shortdesc</td>' in output.data)
+            'test election 2 shortdesc' in output.data)
         self.assertTrue(
-            '<td>test election shortdesc</td>' in output.data)
-        self.assertEqual(output.data.count('<a href="/results/'), 2)
-        self.assertEqual(output.data.count('<a href="/about/'), 2)
+            'test election shortdesc' in output.data)
+        self.assertEqual(output.data.count('href="/results/'), 2)
+        self.assertEqual(output.data.count('href="/about/'), 2)
         self.assertTrue('<a href="/login">Log In</a>' in output.data)
 
     def test_open_elections(self):
@@ -289,7 +287,7 @@ class Flasktests(ModelFlasktests):
             'There are no open elections.'
             in output.data)
         self.assertTrue('<title>Fedora elections</title>' in output.data)
-        self.assertTrue('<h2>Elections</h2>' in output.data)
+        self.assertTrue('<h2>Elections' in output.data)
 
         self.setup_db()
 
@@ -297,8 +295,8 @@ class Flasktests(ModelFlasktests):
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<title>Fedora elections</title>' in output.data)
         self.assertTrue('<h3>Next 4 elections</h3>' in output.data)
-        self.assertTrue('<td>test election 3 shortdesc</td>' in output.data)
-        self.assertTrue('<a href="/vote/' in output.data)
+        self.assertTrue('test election 3 shortdesc' in output.data)
+        self.assertTrue('href="/vote/' in output.data)
         self.assertTrue('<a href="/login">Log In</a>' in output.data)
 
         user = FakeUser([], username='pingou')
@@ -307,7 +305,7 @@ class Flasktests(ModelFlasktests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<title>Fedora elections</title>' in output.data)
             self.assertTrue('<h3>Next 4 elections</h3>' in output.data)
-            self.assertTrue('<a href="/vote/' in output.data)
+            self.assertTrue('href="/vote/' in output.data)
             self.assertTrue(
                 '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
             self.assertEqual(output.data.count('Vote now!'), 4)
@@ -320,8 +318,6 @@ class Flasktests(ModelFlasktests):
             self.assertTrue('<h3>Next 4 elections</h3>' in output.data)
             self.assertTrue(
                 '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
-            self.assertEqual(output.data.count('Vote now!'), 0)
-
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Flasktests)

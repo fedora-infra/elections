@@ -244,7 +244,6 @@ class FlaskElectionstests(ModelFlasktests):
         self.assertTrue(
             'The text results are only available to the '
             'admins' in output.data)
-        self.assertTrue('<h2>Elections</h2>' in output.data)
 
         user = FakeUser(['packager'], username='toshio')
         with user_set(fedora_elections.APP, user):
@@ -254,7 +253,7 @@ class FlaskElectionstests(ModelFlasktests):
             self.assertTrue(
                 'The text results are only available to the '
                 'admins' in output.data)
-            self.assertTrue('<h2>Elections</h2>' in output.data)
+            self.assertTrue('<h2>Elections' in output.data)
 
         user = FakeUser(
             fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
