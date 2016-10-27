@@ -8,8 +8,6 @@
       <th></th>
       <th class="nowrap">Start date (UTC)</th>
       <th class="nowrap">End date (UTC)</th>
-      {% if is_admin %}
-      {% endif %}
     </tr>
     {% for election in election_list %}
       <tr>
@@ -39,7 +37,7 @@
           {% if is_admin %}
             <a class="btn btn-sm btn-danger" href="{{ url_for('admin_view_election',
                                 election_alias=election.alias) }}">
-              Edit
+              Review
             </a>
           {% endif %}
         </td>
