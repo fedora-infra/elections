@@ -160,6 +160,12 @@ def admin_edit_election(election_alias):
             form.candidates_are_fasusers.data)
         form.populate_obj(election)
 
+        # Fix start_date and end_date to use datetime
+        election.start_date = datetime.combine(election.start_date, time())
+        election.end_date = datetime.combine(election.end_date,
+                                             time(23, 59, 59))
+        SESSION.add(election)
+        
         admin_groups = set(election.admin_groups_list)
 
         new_groups = set(
