@@ -1,31 +1,86 @@
 {% extends "base.html" %}
 {% block title %}Election Information{% endblock %}
 {% block body %}
-  <h1>{{ election.shortdesc }}</h1>
-  <p>{{ election.description }}</p>
+  {% if is_admin or election.status == 'In progress'%}
+    <div class="pull-xs-right">
+    {% if election.status == 'In progress'%}
+      {% if election not in voted %}
+        <a class="btn btn-sm btn-primary m-l-2" href="{{ url_for('vote', election_alias=election.alias) }}">
+        Vote now!
+        </a>
+      {% else %}
+        <a class="btn btn-sm btn-secondary m-l-2" href="{{ url_for('vote', election_alias=election.alias) }}">
+        Change your vote!
+        </a>
+      {% endif %}
+    {% endif %}
+    {% if is_admin %}
+    <a class="btn btn-sm btn-danger" href="{{ url_for('admin_view_election',
+                        election_alias=election.alias) }}">
+      Edit
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+  {% if election.status == 'Ended' or election.status == 'Embargoed' %}
+    <h1 class="m-b-0"> {{ election.shortdesc }}</h1>
+    <p>
+      <span class="label label-danger">Election Closed</span>
+      <small>
+        voting ended
+        <span class="text-muted" data-toggle="tooltip" title="{{election.end_date | prettydate }}" >
+          {{ election.end_date | humanize}}
+        </span>
+      </small>
+    </p>
+    <p>{{ election.description }}</p>
+  {% elif election.status == 'In progress' %}
+    <h1 class="m-b-0">{{ election.shortdesc }}</h1>
+    <p>
+      <span class="label label-success">Election Open</span>
+      <small>
+        voting ends
+        <span class="text-muted" data-toggle="tooltip" title="{{election.end_date | prettydate }}" >
+          {{ election.end_date | humanize}}
+        </span>
+      </small>
+    </p>
+    <p>{{ election.description }}</p>
+  {% elif  election.status == 'Pending'%}
+    <h1 class="m-b-0">{{ election.shortdesc }}</h1>
+    <p>
+      <span class="label label-default">Election Opens Soon</span>
+      <small>
+        voting opens
+        <span class="text-muted" data-toggle="tooltip" title="{{election.start_date | prettydate }}" >
+          {{ election.start_date | humanize}}
+        </small>
+    </p>
+    <p>{{ election.description }}</p>
+  {% endif %}
+
   {% if election.url %}
-    <p><a href="{{ election.url }}">[More Information]</a></p>
+    <p><a href="{{ election.url }}">More Information about this election</a></p>
   {% endif %}
-  {% if election.status == 'Ended' %}
-    <a href="{{ url_for('election_results',
-            election_alias=election.alias) }}">Show Results!</a>
-  {% endif %}
-  <table border="1" cellpadding="1">
+  <h4><strong>Candidates</strong></h4>
+
+  <div class="list-group">
     {% for candidate in election.candidates %}
-      <tr>
-        <td>
+      <a {% if candidate.url %}href="{{ candidate.url }}"{%endif%} class="list-group-item">
           {% if election.candidates_are_fasusers %}
             {{ usernamemap['%s' % candidate.id] }}
           {% else %}
             {{ candidate.name }}
           {% endif %}
-          {% if candidate.url %}
-            <small><a href="{{ candidate.url }}">[info]</a></small>
-          {% endif %}
-        </td>
-      </tr>
+      </a>
     {% endfor %}
-  </table>
+    {% if election.candidates.count() == 0 %}
+    <div class="card card-header text-xs-center text-muted">
+      this election has no candidates nominated
+    </div>
+    {% endif %}
+  </div>
+
   {% if election.legal_voters.count() != 0 %}
     <p>
       To vote in this election you must be a member of any one of the following groups:
@@ -38,4 +93,197 @@
   {% else %}
     <p />
   {% endif %}
+  {% if election.status == 'Ended' or (election.status == 'Embargoed' and is_admin)%}
+    {% if election.status == 'Embargoed' and is_admin %}
+    <div class="alert alert-danger">
+      <p>You are only seeing these results because you are an admin.</p>
+      <p>The results for this election are currently embargoed pending formal announcement</p>
+    </div>
+    {% endif %}
+    <h3> Results </h3>
+    <table id="results">
+        <tr>
+            <th>Candidate</th>
+            <th title="Number of votes received">Votes</th>
+        </tr>
+
+      {% for candidate in election.candidates|sort(attribute='vote_count', reverse=True) %}
+      {% if loop.index <= election.seats_elected %}
+      {# If we are below the number of user that will be selected, get the number
+      of votes and the flag to False#}
+      {% set flag = False %}
+      {% set votes = candidate.vote_count %}
+      {% elif loop.index > election.seats_elected and votes > candidate.vote_count and not flag %}
+      {# if we are above the number of user that will be selected (seats
+      available), check if the number of votes for this candidate is lower than
+      the number of votes for the last candidate and if the Flag is False
+      So this takes care of the case where there are 10 seats elected and the 11th
+      candidate has the same score as the 10th one.
+      In this case we would end up with one more person that the number of seats
+      available and we'll need to either find a way to select one over the other
+      or deal with having one more candidate accepted #}
+      {% set flag = True %}
+      {% set lastrow = True %}
+      {% else %}
+      {# we are above the number of seats available, the number of votes is below
+      that of the last candidate above selected and the Flag is True which means
+      we already passed the condition above #}
+      {% set lastrow = False %}
+      {% endif %}
+      <tr class="{% if lastrow == True %}firstout{% endif %} {{ loop.cycle('row_odd', 'row_even') }}">
+          <td>
+            {% if election.candidates_are_fasusers %}
+              {{ usernamemap['%s' % candidate.id] }}
+            {% else %}
+              {{candidate.name}}
+            {% endif %}
+            {% if candidate.url %}
+              <small><a href="{{ candidate.url }}">[info]</a></small>
+            {% endif %}
+          </td>
+          <td>{{ candidate.vote_count }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+
+    <section class="stats">
+        <h3>Some statistics about this election</h3>
+        <table>
+            <tr>
+                <th>Number of seats elections</th>
+                <td>{{ election.seats_elected }}</td>
+            </tr>
+            <tr>
+                <th>Number of voters</th>
+                <td>{{ stats['n_voters'] }}</td>
+            </tr>
+            <tr>
+                <th title="Number of votes registered, there may be more than one vote per voters">Number of votes</th>
+                <td>{{ stats['n_votes'] }}</td>
+            </tr>
+            <tr>
+                <th title="Maximum number of votes possible">Maximum of votes</th>
+                <td>{{ stats['n_voters'] * stats['max_vote'] }}</td>
+            </tr>
+            {% if stats['candidate_voters'] %}
+            <tr>
+                <th></th>
+                <th>Number of voters per candidate</th>
+                <th>Average votes per candidate</th>
+            </tr>
+            {% for candidate in election.candidates|sort(attribute='vote_count',reverse=True) %}
+            <tr>
+                <th>{{ candidate.name }}</th>
+                <td>{{ stats['candidate_voters'][candidate.name] }}</td>
+                {% if stats['candidate_voters'][candidate.name] %}
+                <td>{{ candidate.vote_count / stats['candidate_voters'][candidate.name] }}</td>
+                {% else %}
+                <td> - </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+
+        <h3>Evolution of the number of voters during this election</h3>
+        <div class="evolution-container">
+          <div id="placeholder" class="evolution-placeholder"></div>
+        </div>
+
+    </section>
+  {% elif election.status == 'Embargoed' %}
+    <h3> Results </h3>
+    <div class="card card-header text-xs-center text-muted">
+      The results for this election cannot be viewed because they are currently
+      embargoed pending formal announcement.
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block jscripts %}
+{{ super() }}
+{% if election.status == 'Ended' or election.status == 'Embargoed'%}
+<script type="text/javascript" src="{{
+    url_for('static', filename='jquery-ui-1.9.2.custom.min.js') }}"> </script>
+<script language="javascript" type="text/javascript"
+        src="{{ url_for('static', filename='jquery.flot.js') }}"></script>
+<script language="javascript" type="text/javascript"
+    src="{{ url_for('static', filename='jquery.flot.categories.js') }}"></script>
+
+
+<script type="text/javascript">
+
+    {% autoescape false %}
+    var data = [{'color': '#1F77B4',
+                'data': {{ evolution_data }},
+                'bars': {'order': 1, 'barWidth': 0.8, 'show': 1},
+                'label': 'Voters over time',
+                'ticks': {{ evolution_label }},
+                }];
+    {% endautoescape %}
+
+    $(function() {
+        var plot = $.plot("#placeholder", data, {
+            series: {
+                clickable: true,
+                hoverable: true
+            },
+            grid: { hoverable: true, clickable: true },
+            xaxis: {
+                mode: "categories",
+                points: { show: true },
+                lines: { show: true },
+                tickLength: 0,
+                //show: false
+            }
+        });
+
+        // show the tooltip
+        function showTooltip(x, y, contents) {
+            $('<div id="tooltip">' + contents + '</div>').css( {
+                position: 'absolute',
+                display: 'none',
+                top: y + 5,
+                left: x + 5,
+                border: '1px solid #fdd',
+                padding: '2px',
+                'background-color': '#fee',
+                opacity: 0.80
+            }).appendTo("body").fadeIn(200);
+        }
+
+        // Add 'details' label to the charts.
+        var placeHolderCanvas;
+        var placeHolderCanvasContext;
+        placeHolderCanvas = $("#placeholder canvas")[0];
+        if(placeHolderCanvas != null){
+            placeHolderCanvasContext = placeHolderCanvas.getContext("2d")
+            placeHolderCanvasContext.fillStyle = "#545454";
+            placeHolderCanvasContext.font = "8pt Arial";
+            placeHolderCanvasContext.fillText("Hover Over A Bar For Additional Details", 25, 30);
+        };
+
+        $("#placeholder").bind("plothover", function (event, pos, item) {
+            $("#x").text(pos.x);
+            $("#y").text(pos.y);
+
+            if (item) {
+                $("#tooltip").remove();
+                var x = item.datapoint[0],
+                    y = item.datapoint[1];
+
+                if (item.series.label ==
+                        'Evolution of the voters during the election') {
+                    showTooltip(item.pageX, item.pageY,
+                                data[0].ticks[item.dataIndex][1]);
+                }
+            } else {
+                document.body.style.cursor = 'default';
+                $("#tooltip").remove();
+            }
+        });
+    });
+</script>
+{% endif %}
 {% endblock %}

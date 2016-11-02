@@ -121,6 +121,11 @@
         <script type="text/javascript"
                 src="https://apps.fedoraproject.org/global/fedora-bootstrap-1.0.1/fedora-bootstrap.js">
         </script>
+        <script>
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
+        </script>
       {% if config['FEDMENU_URL'] %}
       <script src="{{ config['FEDMENU_URL'] }}/js/fedmenu.js"></script>
       <script>

@@ -9,3 +9,11 @@
 .stretch-cell{
   min-width:99%
 }
+
+.voting-sheet{
+  border: 2px solid black
+}
+
+.c-select.fullwidth{
+  width:100%;
+}

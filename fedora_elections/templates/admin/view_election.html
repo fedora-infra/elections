@@ -1,53 +1,64 @@
 {% extends "base.html" %}
+{% from "_formhelpers.html" import render_election_form %}
 
 {%block tag %}admin{% endblock %}
 
 {% block body %}
   <h2>{{ election.shortdesc }}</h2>
   <p>{{ election.description }}</p>
-  <p>
-    <a href="{{ url_for('admin_edit_election', election_alias=election.alias) }}">
-      Edit election
-    </a>
-  </p>
-  <ul>
-    <li>Start date: {{ election.start_date.strftime('%Y-%m-%d') }} 00:00 </li>
-    <li>End date: {{ election.end_date.strftime('%Y-%m-%d') }} 23:59 </li>
-    <li>Number elected: {{ election.seats_elected }}</li>
-    <li>Election type: {{ election.voting_type }}</li>
-    <li>Maximum number of votes: {{ election.max_votes }}</li>
-    <li>Admin groups: {{ election.admin_groups_list | join(', ') }}</li>
-    <li>Legal voters: {{ election.legal_voters_list | join(', ') }}</li>
-  </ul>
-  <h3>Candidates</h3>
-  {% if election.candidates.all() %}
-    <p>{{ election.candidates.count() }} candidates found</p>
-    <ul>
-      {% for candidate in election.candidates.all() %}
-        <li>{{ candidate.name }}
-          {% if candidate.fas_name %} ({{ candidate.fas_name }}) {% endif %}
-          <a href="{{ url_for('admin_edit_candidate',
-                              election_alias=election.alias,
-                              candidate_id=candidate.id) }}">
-            [edit]
-          </a>
-          <a href="{{ url_for('admin_delete_candidate',
-                              election_alias=election.alias,
-                              candidate_id=candidate.id) }}">
-            [x]
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>There are no candidates.</p>
-  {% endif %}
-  <a href="{{ url_for('admin_add_candidate',
-                      election_alias=election.alias) }}">
-    Add a candidate
-  </a> -
-  <a href="{{ url_for('admin_add_multi_candidate',
-                      election_alias=election.alias) }}">
-    Add a multiple candidates
-  </a>
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-sm-8 col-sm-offset-2 col-xs-12">
+      <div class="card">
+        <div class="card-header">
+          Candidates <span class="label label-pill label-default">{{ election.candidates.count() }}</span>
+          <div class="pull-xs-right">
+            <a class="btn btn-secondary btn-sm" href="{{ url_for('admin_add_candidate',
+                                election_alias=election.alias) }}">
+              Add
+            </a>
+            <a class="btn btn-secondary btn-sm" href="{{ url_for('admin_add_multi_candidate',
+                                election_alias=election.alias) }}">
+              Add multiple
+            </a>
+          </div>
+        </div>
+          {% if election.candidates.all() %}
+            <div class="list-group list-group-flush">
+              {% for candidate in election.candidates.all() %}
+                <div class="list-group-item">{{ candidate.name }}
+                  {% if candidate.fas_name %} ({{ candidate.fas_name }}) {% endif %}
+                  <div class="pull-xs-right">
+                  <a class="btn btn-secondary btn-sm" href="{{ url_for('admin_edit_candidate',
+                                      election_alias=election.alias,
+                                      candidate_id=candidate.id) }}">
+                    edit
+                  </a>
+                  <a class="btn btn-danger btn-sm" href="{{ url_for('admin_delete_candidate',
+                                      election_alias=election.alias,
+                                      candidate_id=candidate.id) }}">
+                    delete
+                  </a>
+                </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="card-block text-xs-center">There are no candidates. </div>
+          {% endif %}
+      </div>
+  </div>
+</div>
+
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-sm-8 col-sm-offset-2 col-xs-12">
+      <div class="card">
+        <div class="card-header">Election Details</div>
+        <div class="card-block">
+        {{ render_election_form(form, submit_text="Save Changes") }}
+      </div>
+      </div>
+    </div>
+  </div>
+
+
 {% endblock %}

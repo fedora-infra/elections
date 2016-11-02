@@ -126,16 +126,93 @@ def admin_new_election():
         submit_text='Create election')
 
 
-@APP.route('/admin/<election_alias>/')
+@APP.route('/admin/<election_alias>/', methods=('GET', 'POST'))
 @election_admin_required
 def admin_view_election(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
     if not election:
         flask.abort(404)
 
+    form = forms.ElectionForm(election.id, obj=election)
+    if form.validate_on_submit():
+        form.embargoed.data = int(form.embargoed.data)
+        if form.max_votes.data:
+            try:
+                form.max_votes.data = int(form.max_votes.data)
+            except ValueError:
+                form.max_votes.data = None
+        else:
+            form.max_votes.data = None
+
+        form.candidates_are_fasusers.data = int(
+            form.candidates_are_fasusers.data)
+        form.populate_obj(election)
+
+        # Fix start_date and end_date to use datetime
+        election.start_date = datetime.combine(election.start_date, time())
+        election.end_date = datetime.combine(election.end_date,
+                                             time(23, 59, 59))
+        SESSION.add(election)
+
+        admin_groups = set(election.admin_groups_list)
+
+        new_groups = set(
+            [grp.strip() for grp in form.admin_grp.data.split(',')])
+
+        # Add the new admin groups
+        for admin_grp in new_groups.difference(admin_groups):
+            admin = models.ElectionAdminGroup(
+                election=election,
+                group_name=admin_grp,
+            )
+            SESSION.add(admin)
+
+        # Remove the admin groups that were removed with this edition
+        for admin_grp in admin_groups.difference(new_groups):
+            admingrp = models.ElectionAdminGroup.by_election_id_and_name(
+                SESSION, election.id, admin_grp)
+            SESSION.delete(admingrp)
+
+        legal_voters = set(election.legal_voters_list)
+
+        new_lgl_voters_groups = set(
+            [grp.strip() for grp in form.lgl_voters.data.split(',')
+             if grp.strip()])
+
+        # Add the new legal voter groups
+        for lgl_grp in new_lgl_voters_groups.difference(legal_voters):
+            admin = models.LegalVoter(
+                election=election,
+                group_name=lgl_grp,
+            )
+            SESSION.add(admin)
+
+        # Remove the legal voter groups that were removed with this edition
+        for lgl_grp in legal_voters.difference(new_lgl_voters_groups):
+            admingrp = models.LegalVoter.by_election_id_and_name(
+                SESSION, election.id, lgl_grp)
+            SESSION.delete(admingrp)
+
+        SESSION.commit()
+        fedmsgshim.publish(
+            topic="election.edit",
+            msg=dict(
+                agent=flask.g.fas_user.username,
+                election=election.to_json(),
+            )
+        )
+        flask.flash('Election "%s" saved' % election.alias)
+        return flask.redirect(flask.url_for(
+            'admin_view_election', election_alias=election.alias))
+
+        form.admin_grp.data = ', '.join(election.admin_groups_list)
+        form.lgl_voters.data = ', '.join(election.legal_voters_list)
+
     return flask.render_template(
-        'admin/view_election.html',
-        election=election)
+            'admin/view_election.html',
+            election=election,
+            form=form,
+            submit_text='Edit election')
 
 
 @APP.route('/admin/<election_alias>/edit', methods=('GET', 'POST'))
@@ -165,7 +242,7 @@ def admin_edit_election(election_alias):
         election.end_date = datetime.combine(election.end_date,
                                              time(23, 59, 59))
         SESSION.add(election)
-        
+
         admin_groups = set(election.admin_groups_list)
 
         new_groups = set(
