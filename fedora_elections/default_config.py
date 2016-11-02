@@ -9,7 +9,7 @@ from datetime import timedelta
 # Set the time after which the session expires
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
-FEDORA_ELECTIONS_ADMIN_GROUP = 'elections'
+FEDORA_ELECTIONS_ADMIN_GROUP = 'web'
 
 # url to the database server:
 DB_URL = 'sqlite:////var/tmp/elections_dev.sqlite'
