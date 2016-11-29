@@ -62,8 +62,10 @@
   {% if election.url %}
     <p><a href="{{ election.url }}">More Information about this election</a></p>
   {% endif %}
-  <h4><strong>Candidates</strong></h4>
 
+
+  {% if election.status == 'In progress' or election.status == 'Pending' %}
+  <h4><strong>Candidates</strong></h4>
   <div class="list-group">
     {% for candidate in election.candidates %}
       <a {% if candidate.url %}href="{{ candidate.url }}"{%endif%} class="list-group-item">
@@ -80,6 +82,7 @@
     </div>
     {% endif %}
   </div>
+  {% endif %}
 
   {% if election.legal_voters.count() != 0 %}
     <p>
