@@ -108,6 +108,10 @@
         <tr>
             <th>Candidate</th>
             <th title="Number of votes received">Votes</th>
+            {% if stats['candidate_voters'] %}
+            <th>Voters per candidate</th>
+            <th>Average votes per candidate</th>
+            {% endif %}
         </tr>
 
       {% for candidate in election.candidates|sort(attribute='vote_count', reverse=True) %}
@@ -145,6 +149,14 @@
             {% endif %}
           </td>
           <td>{{ candidate.vote_count }}</td>
+          {% if stats['candidate_voters'] %}
+          <td>{{ stats['candidate_voters'][candidate.name] }}</td>
+            {% if stats['candidate_voters'][candidate.name] %}
+          <td>{{ candidate.vote_count / stats['candidate_voters'][candidate.name] }}</td>
+            {% else %}
+          <td> - </td>
+            {% endif %}
+          {% endif %}
         </tr>
       {% endfor %}
     </table>
@@ -169,24 +181,6 @@
                 <th title="Maximum number of votes possible">Maximum of votes</th>
                 <td>{{ stats['n_voters'] * stats['max_vote'] }}</td>
             </tr>
-            {% if stats['candidate_voters'] %}
-            <tr>
-                <th></th>
-                <th>Number of voters per candidate</th>
-                <th>Average votes per candidate</th>
-            </tr>
-            {% for candidate in election.candidates|sort(attribute='vote_count',reverse=True) %}
-            <tr>
-                <th>{{ candidate.name }}</th>
-                <td>{{ stats['candidate_voters'][candidate.name] }}</td>
-                {% if stats['candidate_voters'][candidate.name] %}
-                <td>{{ candidate.vote_count / stats['candidate_voters'][candidate.name] }}</td>
-                {% else %}
-                <td> - </td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-            {% endif %}
         </table>
 
         <h3>Evolution of the number of voters during this election</h3>
