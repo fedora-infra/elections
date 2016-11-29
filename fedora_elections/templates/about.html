@@ -104,15 +104,17 @@
     </div>
     {% endif %}
     <h3> Results </h3>
-    <table id="results">
-        <tr>
-            <th>Candidate</th>
-            <th title="Number of votes received">Votes</th>
-            {% if stats['candidate_voters'] %}
-            <th>Voters per candidate</th>
-            <th>Average votes per candidate</th>
-            {% endif %}
-        </tr>
+    <table id="results" class="table">
+        <thead>
+          <tr>
+              <th class="stretch-cell nowrap">Candidate</th>
+              <th class="nowrap" title="Number of votes received">Votes</th>
+              {% if stats['candidate_voters'] %}
+              <th class="nowrap">Voters per candidate</th>
+              <th class="nowrap">Average votes per candidate</th>
+              {% endif %}
+          </tr>
+      </thead>
 
       {% for candidate in election.candidates|sort(attribute='vote_count', reverse=True) %}
       {% if loop.index <= election.seats_elected %}
@@ -139,22 +141,28 @@
       {% endif %}
       <tr class="{% if lastrow == True %}firstout{% endif %} {{ loop.cycle('row_odd', 'row_even') }}">
           <td>
+            {% if candidate.url %}
+              <a href="{{ candidate.url }}">
+            {% endif %}
             {% if election.candidates_are_fasusers %}
               {{ usernamemap['%s' % candidate.id] }}
             {% else %}
               {{candidate.name}}
             {% endif %}
             {% if candidate.url %}
-              <small><a href="{{ candidate.url }}">[info]</a></small>
+              </a>
+            {% endif %}
+            {% if not flag %}
+            <span class="label label-success">Elected</span>
             {% endif %}
           </td>
-          <td>{{ candidate.vote_count }}</td>
+          <td class="text-xs-center">{{ candidate.vote_count }}</td>
           {% if stats['candidate_voters'] %}
-          <td>{{ stats['candidate_voters'][candidate.name] }}</td>
+          <td class="text-xs-center">{{ stats['candidate_voters'][candidate.name] }}</td>
             {% if stats['candidate_voters'][candidate.name] %}
-          <td>{{ candidate.vote_count / stats['candidate_voters'][candidate.name] }}</td>
+          <td class="text-xs-center">{{ candidate.vote_count / stats['candidate_voters'][candidate.name] }}</td>
             {% else %}
-          <td> - </td>
+          <td class="text-xs-center"> - </td>
             {% endif %}
           {% endif %}
         </tr>
