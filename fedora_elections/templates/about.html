@@ -172,31 +172,28 @@
 
     <section class="stats">
         <h3>Some statistics about this election</h3>
-        <table>
-            <tr>
-                <th>Number of seats elections</th>
-                <td>{{ election.seats_elected }}</td>
-            </tr>
-            <tr>
-                <th>Number of voters</th>
-                <td>{{ stats['n_voters'] }}</td>
-            </tr>
-            <tr>
-                <th title="Number of votes registered, there may be more than one vote per voters">Number of votes</th>
-                <td>{{ stats['n_votes'] }}</td>
-            </tr>
-            <tr>
-                <th title="Maximum number of votes possible">Maximum of votes</th>
-                <td>{{ stats['n_voters'] * stats['max_vote'] }}</td>
-            </tr>
-        </table>
+        <ul>
+          <li>
+            The {{ election.shortdesc }} election had <strong>
+            {{ election.seats_elected }} seats open for election </strong>.
+          </li>
+          <li>
+            A total of <strong>{{ stats['n_voters'] }} voters participated</strong>
+            in this election, <strong>casting {{ stats['n_votes'] }} votes.
+            </strong>
+          </li>
+          <li>
+            The <strong> maximum number of votes possible was
+            {{ stats['n_voters'] * stats['max_vote'] }}</strong>
+          </li>
+        </ul>
+      </section>
 
         <h3>Evolution of the number of voters during this election</h3>
         <div class="evolution-container">
           <div id="placeholder" class="evolution-placeholder"></div>
         </div>
 
-    </section>
   {% elif election.status == 'Embargoed' %}
     <h3> Results </h3>
     <div class="card card-header text-xs-center text-muted">
