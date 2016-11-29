@@ -31,3 +31,8 @@
     font-size: 14px;
     line-height: 1.2em;
 }
+
+#results .firstout tr,
+#results .firstout td {
+    border-top: 2px solid red !important;
+}
