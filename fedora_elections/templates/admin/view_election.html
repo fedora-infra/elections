@@ -7,7 +7,15 @@
   <h2>{{ election.shortdesc }}</h2>
   <p>{{ election.description }}</p>
   <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-sm-8 col-sm-offset-2 col-xs-12">
+    <div class="col-lg-8 col-xs-12">
+      <div class="card">
+        <div class="card-header">Election Details</div>
+        <div class="card-block">
+        {{ render_election_form(form, submit_text="Save Changes") }}
+      </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-xs-12">
       <div class="card">
         <div class="card-header">
           Candidates <span class="label label-pill label-default">{{ election.candidates.count() }}</span>
@@ -48,18 +56,6 @@
       </div>
   </div>
 </div>
-
-  <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-sm-8 col-sm-offset-2 col-xs-12">
-      <div class="card">
-        <div class="card-header">Election Details</div>
-        <div class="card-block">
-        {{ render_election_form(form, submit_text="Save Changes") }}
-      </div>
-      </div>
-    </div>
-  </div>
-
 
 {% endblock %}
 
