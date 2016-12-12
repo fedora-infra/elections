@@ -314,16 +314,16 @@ class FlaskAdmintests(ModelFlasktests):
             fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
             username='toshio')
         with user_set(fedora_elections.APP, user):
-            output = self.app.get('/admin/test_election/edit')
+            output = self.app.get('/admin/test_election/')
             self.assertEqual(output.status_code, 404)
 
         self.setup_db()
 
         with user_set(fedora_elections.APP, user):
-            output = self.app.get('/admin/test_election/edit')
+            output = self.app.get('/admin/test_election/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h2>Edit election</h2>' in output.data)
+                'Election Details' in output.data)
             self.assertTrue(
                 'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
@@ -341,10 +341,10 @@ class FlaskAdmintests(ModelFlasktests):
                 'embargoed': False,
             }
 
-            output = self.app.post('/admin/test_election/edit', data=data)
+            output = self.app.post('/admin/test_election/', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h2>Edit election</h2>' in output.data)
+                'Election Details' in output.data)
             self.assertTrue(
                 'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
@@ -365,10 +365,10 @@ class FlaskAdmintests(ModelFlasktests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/admin/test_election/edit', data=data)
+            output = self.app.post('/admin/test_election/', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h2>Edit election</h2>' in output.data)
+                'Election Details' in output.data)
             self.assertTrue(
                 'input class="form-control" id="shortdesc" name="shortdesc" type="text"'
                 in output.data)
@@ -379,9 +379,8 @@ class FlaskAdmintests(ModelFlasktests):
             # Check election before edit
             output = self.app.get('/admin/test_election/')
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h3>Candidates</h3>' in output.data)
-            self.assertTrue('<p>3 candidates found</p>' in output.data)
-            self.assertTrue('<li>Number elected: 1</li>' in output.data)
+            self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output.data)
+            self.assertTrue('<input class="form-control" id="seats_elected" name="seats_elected" type="text" value="1">' in output.data)
 
             data = {
                 'alias': 'test_election',
@@ -399,17 +398,15 @@ class FlaskAdmintests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/admin/test_election/edit', data=data, follow_redirects=True)
+                '/admin/test_election/', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 'Election "test_election" saved'
                 in output.data)
             # We edited the seats_elected from 1 to 2
             self.assertTrue(
-                '<li>Number elected: 2</li>' in output.data)
-            self.assertTrue(
-                '<p>3 candidates found</p>'
-                in output.data)
+                '<input class="form-control" id="seats_elected" name="seats_elected" type="text" value="2">' in output.data)
+            self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output.data)
 
     def test_admin_edit_election_admin_groups(self):
         """ Test the admin_edit_election function when editing admin groups.
@@ -424,7 +421,7 @@ class FlaskAdmintests(ModelFlasktests):
         self.setup_db()
 
         with user_set(fedora_elections.APP, user):
-            output = self.app.get('/admin/test_election2/edit')
+            output = self.app.get('/admin/test_election2/')
             self.assertEqual(output.status_code, 200)
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
@@ -434,9 +431,9 @@ class FlaskAdmintests(ModelFlasktests):
             # Check election before edit
             output = self.app.get('/admin/test_election2/')
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h3>Candidates</h3>' in output.data)
-            self.assertTrue('<li>Number elected: 1</li>' in output.data)
-            self.assertTrue('<li>Admin groups: testers</li>' in output.data)
+            self.assertTrue(
+                '<input class="form-control" id="seats_elected" name="seats_elected" type="text" value="1">' in output.data)
+            self.assertTrue('Candidates <span class="label' in output.data)
 
             # Add a new admin group: sysadmin-main
             data = {
@@ -455,8 +452,9 @@ class FlaskAdmintests(ModelFlasktests):
             }
 
             output = self.app.post(
-                '/admin/test_election2/edit', data=data, follow_redirects=True)
+                '/admin/test_election2/', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
+            print output.data
             self.assertTrue(
                 'Election "test_election2" saved'
                 in output.data)
@@ -592,9 +590,9 @@ class FlaskAdmintests(ModelFlasktests):
             output = self.app.get('/admin/test_election/candidates/new')
             self.assertEqual(output.status_code, 200)
 
-            self.assertTrue('<h2>Add candidate</h2>' in output.data)
+            self.assertTrue('Add candidate' in output.data)
             self.assertTrue(
-                'input id="name" name="name" type="text"' in output.data)
+                'input class="form-control" id="name" name="name" type="text"' in output.data)
 
             data = {
                 'name': 'pingou',
@@ -604,9 +602,9 @@ class FlaskAdmintests(ModelFlasktests):
             output = self.app.post(
                 '/admin/test_election/candidates/new', data=data)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h2>Add candidate</h2>' in output.data)
+            self.assertTrue('Add candidate' in output.data)
             self.assertTrue(
-                'input id="name" name="name" type="text"' in output.data)
+                'input class="form-control" id="name" name="name" type="text"' in output.data)
 
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
@@ -620,11 +618,11 @@ class FlaskAdmintests(ModelFlasktests):
             output = self.app.post(
                 '/admin/test_election/candidates/new', data=data)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h2>Add candidate</h2>' in output.data)
+            self.assertTrue('Add candidate' in output.data)
             self.assertTrue(
-                'input id="name" name="name" type="text"' in output.data)
+                'input class="form-control" id="name" name="name" type="text"' in output.data)
             self.assertTrue(
-                '<td class="error">This field is required.</td>'
+                '<div class="form-control-feedback">This field is required.</div>'
                 in output.data)
 
             data = {
@@ -640,8 +638,7 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 'Candidate "pingou" saved'
                 in output.data)
-            self.assertTrue('<h3>Candidates</h3>' in output.data)
-            self.assertTrue('<p>4 candidates found</p>' in output.data)
+            self.assertTrue('Candidates <span class="label label-pill label-default">4</span>' in output.data)
 
     def test_admin_add_multi_candidate(self):
         """ Test the admin_add_multi_candidate function. """
@@ -658,9 +655,9 @@ class FlaskAdmintests(ModelFlasktests):
             output = self.app.get('/admin/test_election/candidates/new/multi')
             self.assertEqual(output.status_code, 200)
 
-            self.assertTrue('<h2>Add candidates</h2>' in output.data)
+            self.assertTrue('Add candidates' in output.data)
             self.assertTrue(
-                'input id="candidate" name="candidate" type="text"'
+                'input class="form-control" id="candidate" name="candidate" type="text"'
                 in output.data)
 
             data = {
@@ -670,9 +667,9 @@ class FlaskAdmintests(ModelFlasktests):
             output = self.app.post(
                 '/admin/test_election/candidates/new/multi', data=data)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h2>Add candidates</h2>' in output.data)
+            self.assertTrue('Add candidates' in output.data)
             self.assertTrue(
-                'input id="candidate" name="candidate" type="text"'
+                'input class="form-control" id="candidate" name="candidate" type="text"'
                 in output.data)
 
             csrf_token = output.data.split(
@@ -686,12 +683,12 @@ class FlaskAdmintests(ModelFlasktests):
             output = self.app.post(
                 '/admin/test_election/candidates/new/multi', data=data)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h2>Add candidates</h2>' in output.data)
+            self.assertTrue('Add candidates' in output.data)
             self.assertTrue(
-                'input id="candidate" name="candidate" type="text"'
+                'input class="form-control" id="candidate" name="candidate" type="text"'
                 in output.data)
             self.assertTrue(
-                '<td class="error">This field is required.</td>'
+                '<div class="form-control-feedback">This field is required.</div>'
                 in output.data)
 
             data = {
@@ -707,8 +704,7 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 'Added 3 candidates'
                 in output.data)
-            self.assertTrue('<h3>Candidates</h3>' in output.data)
-            self.assertTrue('<p>6 candidates found</p>' in output.data)
+            self.assertTrue('Candidates <span class="label label-pill label-default">6</span>' in output.data)
 
     def test_admin_edit_candidate(self):
         """ Test the admin_edit_candidate function. """
@@ -737,18 +733,18 @@ class FlaskAdmintests(ModelFlasktests):
             output = self.app.get('/admin/test_election/candidates/1/edit')
             self.assertEqual(output.status_code, 200)
 
-            self.assertTrue('<h2>Edit candidate</h2>' in output.data)
+            self.assertTrue('Edit candidate' in output.data)
             self.assertTrue(
-                'input id="name" name="name" type="text"' in output.data)
+                'input class="form-control" id="name" name="name" type="text"' in output.data)
 
             data = {
                 'name': 'Toshio Kuratomi',
                 'url': 'https://fedoraproject.org/wiki/User:Toshio',
             }
 
-            self.assertTrue('<h2>Edit candidate</h2>' in output.data)
+            self.assertTrue('Edit candidate' in output.data)
             self.assertTrue(
-                'input id="name" name="name" type="text"' in output.data)
+                'input class="form-control" id="name" name="name" type="text"' in output.data)
 
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
@@ -761,20 +757,19 @@ class FlaskAdmintests(ModelFlasktests):
             output = self.app.post(
                 '/admin/test_election/candidates/1/edit', data=data)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h2>Edit candidate</h2>' in output.data)
+            self.assertTrue('Edit candidate' in output.data)
             self.assertTrue(
-                'input id="name" name="name" type="text"' in output.data)
+                'input class="form-control" id="name" name="name" type="text"' in output.data)
             self.assertTrue(
-                '<td class="error">This field is required.</td>'
+                '<div class="form-control-feedback">This field is required.</div>'
                 in output.data)
 
             # Check election before edit
             output = self.app.get('/admin/test_election/')
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h3>Candidates</h3>' in output.data)
-            self.assertTrue('<p>3 candidates found</p>' in output.data)
-            self.assertTrue('<li>Number elected: 1</li>' in output.data)
-            self.assertFalse('<li>Toshio Kuratomi' in output.data)
+            self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output.data)
+            self.assertTrue('<input class="form-control" id="seats_elected" name="seats_elected" type="text" value="1">' in output.data)
+            self.assertTrue('<div class="list-group-item">Toshio' in output.data)
 
             data = {
                 'name': 'Toshio Kuratomi',
@@ -789,9 +784,8 @@ class FlaskAdmintests(ModelFlasktests):
             self.assertTrue(
                 'Candidate "Toshio Kuratomi" saved'
                 in output.data)
-            self.assertTrue('<h3>Candidates</h3>' in output.data)
-            self.assertTrue('<p>3 candidates found</p>' in output.data)
-            self.assertTrue('<li>Toshio Kuratomi' in output.data)
+            self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output.data)
+            self.assertTrue('<div class="list-group-item">Toshio' in output.data)
 
     def test_admin_delete_candidate(self):
         """ Test the admin_delete_candidate function. """
@@ -851,12 +845,11 @@ class FlaskAdmintests(ModelFlasktests):
 
             # Check election before edit
             output = self.app.get('/admin/test_election4/')
-            self.assertTrue('<h3>Candidates</h3>' in output.data)
-            self.assertTrue('<p>2 candidates found</p>' in output.data)
-            self.assertTrue('<li>Number elected: 1</li>' in output.data)
-            self.assertTrue('<li>Toshio' in output.data)
+            self.assertTrue('Candidates <span class="label label-pill label-default">2</span>' in output.data)
+            self.assertTrue('<input class="form-control" id="seats_elected" name="seats_elected" type="text" value="1">' in output.data)
+            self.assertTrue('<div class="list-group-item">Toshio' in output.data)
             self.assertTrue(
-                '<h2>test election 4 shortdesc</h2>' in output.data)
+                'value="test election 4 shortdesc">' in output.data)
 
             # Delete one candidate
             data = {
@@ -871,10 +864,9 @@ class FlaskAdmintests(ModelFlasktests):
                 'Candidate "Toshio" deleted'
                 in output.data)
             self.assertTrue(
-                '<h2>test election 4 shortdesc</h2>' in output.data)
-            self.assertTrue('<h3>Candidates</h3>' in output.data)
-            self.assertTrue('<p>1 candidates found</p>' in output.data)
-            self.assertFalse('<li>Toshio' in output.data)
+                'value="test election 4 shortdesc">' in output.data)
+            self.assertTrue('Candidates <span class="label label-pill label-default">1</span>' in output.data)
+            self.assertFalse('<div class="list-group-item">Toshio' in output.data)
 
 
 if __name__ == '__main__':
