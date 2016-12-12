@@ -12,12 +12,24 @@
 <form action="{{ url_for('vote', election_alias=election.alias) }}" method="post">
     <div class="list-group">
     {% for field in form if field.widget.input_type != 'hidden' %}
-      {% for subfield in field %}
+      {% if field.type == "BooleanField" %}
+      <div class="list-group-item">
+        {{field}}
+        {{field.label}}
+      </div>
+      {% elif election.voting_type == "irc"%}
         <div class="list-group-item">
-            {{ subfield }}
-            {{ subfield.label }}
+            {{ field.label }}
+            {{ field(class_="c-select pull-xs-right") }}
         </div>
-      {% endfor %}
+      {% else %}
+        {% for subfield in field %}
+          <div class="list-group-item">
+              {{ subfield }}
+              {{ subfield.label }}
+          </div>
+        {% endfor %}
+      {% endif %}
     {% endfor %}
   </div>
 
