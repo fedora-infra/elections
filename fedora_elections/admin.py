@@ -132,7 +132,7 @@ def admin_view_election(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
     if not election:
         flask.abort(404)
-
+    print election.admin_groups_list
     form = forms.ElectionForm(election.id, obj=election)
     if form.validate_on_submit():
         form.embargoed.data = int(form.embargoed.data)
@@ -205,8 +205,8 @@ def admin_view_election(election_alias):
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
-        form.admin_grp.data = ', '.join(election.admin_groups_list)
-        form.lgl_voters.data = ', '.join(election.legal_voters_list)
+    form.admin_grp.data = ', '.join(election.admin_groups_list)
+    form.lgl_voters.data = ', '.join(election.legal_voters_list)
 
     return flask.render_template(
             'admin/view_election.html',
