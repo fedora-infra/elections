@@ -74,11 +74,8 @@ def get_valid_election(election_alias, ended=False):
         return safe_redirect_back()
 
     elif not ended and election.status in ('Ended', 'Embargoed'):
-        flask.flash(
-            'This election is closed.  You have been redirected to the '
-            'election results.')
         return flask.redirect(flask.url_for(
-            'election_results', election_alias=election.alias))
+            'about_election', election_alias=election.alias))
 
     elif ended and election.status == 'In progress':
         flask.flash(
