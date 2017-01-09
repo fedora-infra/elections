@@ -126,25 +126,12 @@ def admin_new_election():
         submit_text='Create election')
 
 
-@APP.route('/admin/<election_alias>/')
+@APP.route('/admin/<election_alias>/', methods=('GET', 'POST'))
 @election_admin_required
 def admin_view_election(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
     if not election:
         flask.abort(404)
-
-    return flask.render_template(
-        'admin/view_election.html',
-        election=election)
-
-
-@APP.route('/admin/<election_alias>/edit', methods=('GET', 'POST'))
-@election_admin_required
-def admin_edit_election(election_alias):
-    election = models.Election.get(SESSION, alias=election_alias)
-    if not election:
-        flask.abort(404)
-
     form = forms.ElectionForm(election.id, obj=election)
     if form.validate_on_submit():
         form.embargoed.data = int(form.embargoed.data)
@@ -159,6 +146,12 @@ def admin_edit_election(election_alias):
         form.candidates_are_fasusers.data = int(
             form.candidates_are_fasusers.data)
         form.populate_obj(election)
+
+        # Fix start_date and end_date to use datetime
+        election.start_date = datetime.combine(election.start_date, time())
+        election.end_date = datetime.combine(election.end_date,
+                                             time(23, 59, 59))
+        SESSION.add(election)
 
         admin_groups = set(election.admin_groups_list)
 
@@ -213,8 +206,10 @@ def admin_edit_election(election_alias):
 
     form.admin_grp.data = ', '.join(election.admin_groups_list)
     form.lgl_voters.data = ', '.join(election.legal_voters_list)
+
     return flask.render_template(
-        'admin/election_form.html',
+        'admin/view_election.html',
+        election=election,
         form=form,
         submit_text='Edit election')
 

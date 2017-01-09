@@ -5,5 +5,6 @@
 {%block tag %}archives{% endblock %}
 
 {% block body %}
-{{ render_elections(elections, 'Past elections', is_admin) }}
+  <h4><strong>Past elections</strong></h4>
+{{ render_elections(elections, is_admin) }}
 {% endblock %}

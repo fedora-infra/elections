@@ -1,50 +1,52 @@
-{% macro render_elections(election_list, title, is_admin) -%}
+{% macro render_elections(election_list, is_admin, voted) -%}
 
-  <h3>{{title}}</h3>
-
-  <table class="table">
-    <tr>
-      <th class="stretch-cell">Election</th>
-      <th></th>
-      <th class="nowrap">Start date (UTC)</th>
-      <th class="nowrap">End date (UTC)</th>
-    </tr>
+  <div class="list-group">
     {% for election in election_list %}
-      <tr>
-        <td class="stretch-cell">
-          <a href="{{ url_for('about_election', election_alias=election.alias) }}">
-            {{ election.shortdesc }}
-          </a>
-        </td>
-        <td class="nowrap">
+      <div class="list-group-item">
+        <div class="pull-xs-right">
           {% if election.status == "In progress" %}
             {% if election not in voted %}
               <a class="btn btn-sm btn-primary m-l-2" href="{{ url_for('vote', election_alias=election.alias) }}">
               Vote now!
               </a>
             {% else %}
-              <a class="btn btn-sm btn-primary m-l-2" href="{{ url_for('vote', election_alias=election.alias) }}">
+              <a class="btn btn-sm btn-secondary m-l-2" href="{{ url_for('vote', election_alias=election.alias) }}">
               Change your vote!
               </a>
             {% endif %}
-          {% elif election.status == "Ended" or election.status == "Embargoed"%}
-          <a class="btn btn-sm btn-secondary m-l-2" href="{{ url_for('election_results',
-                  election_alias=election.alias) }}">
-          View Results
-          </a>
           {% endif %}
 
           {% if is_admin %}
             <a class="btn btn-sm btn-danger" href="{{ url_for('admin_view_election',
                                 election_alias=election.alias) }}">
-              Review
+              Edit
             </a>
           {% endif %}
-        </td>
-        <td class="nowrap">{{ election.start_date.strftime('%Y-%m-%d') }} 00:00 </td>
-        <td class="nowrap">{{ election.end_date.strftime('%Y-%m-%d') }} 23:59 </td>
-      </tr>
+        </div>
+          <h5 class="list-group-item-heading">
+            <a href="{{ url_for('about_election', election_alias=election.alias) }}">
+              {{ election.shortdesc }}
+            </a>
+          </h5>
+          <p class="list-group-item-text">
+            {% if election.status == "In progress" %}
+              <span>Voting closes</span>
+              <span class="text-muted" data-toggle="tooltip" title="{{ election.end_date.strftime('%A %B %d %Y %X UTC') }}">
+                {{ election.end_date | humanize }}
+              </span>
+            {% elif election.status == "Embargoed" or election.status == "Ended" %}
+              <span>Voting closed</span>
+              <span class="text-muted" data-toggle="tooltip" title="{{ election.end_date.strftime('%A %B %d %Y %X UTC') }}">
+                {{ election.end_date | humanize }}
+              </span>
+            {% else %}
+              <span>Voting opens</span>
+              <span class="text-muted" data-toggle="tooltip" title="{{ election.start_date.strftime('%A %B %d %Y %X UTC') }}">
+              {{ election.start_date | humanize }}
+              </span>
+            {%endif%}
+          </p>
+      </div>
     {% endfor %}
-  </table>
-
+  </div>
 {% endmacro %}

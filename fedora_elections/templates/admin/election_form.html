@@ -1,8 +1,5 @@
 {% extends "base.html" %}
-{% from "_formhelpers.html" import render_field_in_row %}
-{% from "_formhelpers.html" import render_bootstrap_textfield_in_row %}
-{% from "_formhelpers.html" import render_bootstrap_selectfield_in_row %}
-{% from "_formhelpers.html" import render_bootstrap_checkbox_in_row %}
+{% from "_formhelpers.html" import render_election_form %}
 
 
 {% block title %}{{ submit_text }}{% endblock %}
@@ -10,35 +7,12 @@
 {%block tag %}admin{% endblock %}
 
 {% block body %}
-  <div class="row">
-    <div class="col-lg-6 col-lg-offset-3 col-sm-8 col-sm-offset-2 col-xs-12">
-      <h2>{{ self.title() }}</h2>
-
-      <form action="" method="post">
-        <fieldset>
-            {{ render_bootstrap_textfield_in_row(form.alias) }}
-            {{ render_bootstrap_textfield_in_row(form.shortdesc) }}
-            {{ render_bootstrap_textfield_in_row(form.description) }}
-            {{ render_bootstrap_selectfield_in_row(form.voting_type, fieldclass="c-select") }}
-            {{ render_bootstrap_textfield_in_row(form.max_votes) }}
-            {{ render_bootstrap_textfield_in_row(form.url) }}
-            {{ render_bootstrap_textfield_in_row(form.start_date, addon=" at 00:00:00 UTC") }}
-            {{ render_bootstrap_textfield_in_row(form.end_date, addon=" at 23:59:59 UTC") }}
-            {{ render_bootstrap_textfield_in_row(form.seats_elected) }}
-            {{ render_bootstrap_checkbox_in_row(form.candidates_are_fasusers) }}
-            {{ render_bootstrap_checkbox_in_row(form.embargoed) }}
-            {{ render_bootstrap_textfield_in_row(form.lgl_voters, after="FAS groups allowed to vote on this election (CLA-done is always required)") }}
-            {{ render_bootstrap_textfield_in_row(form.admin_grp, after="FAS groups allowed to view the result despite the embargo") }}
-        </fieldset>
-
-        <br class="clear">
-        <p class="buttons">
-          <input type="submit" class="btn btn-primary" value="Save Changes">
-        </p>
-        {{ form.csrf_token }}
-      </form>
-    </div>
+<div class="row">
+  <div class="col-lg-6 col-lg-offset-3 col-sm-8 col-sm-offset-2 col-xs-12">
+    <h2>Create new election</h2>
+    {{ render_election_form(form, submit_text="Create Election") }}
   </div>
+</div>
 {% endblock %}
 
 {% block jscripts %}

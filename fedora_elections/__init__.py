@@ -31,8 +31,10 @@ import os
 import sys
 import urllib
 import hashlib
+import arrow
 
-from datetime import datetime, time
+
+from datetime import datetime, time, timedelta
 from functools import wraps
 from urlparse import urlparse, urljoin
 
@@ -188,6 +190,14 @@ def avatar_filter(openid, size=64, default='retro'):
     hashhex = hashlib.sha256(openid).hexdigest()
     return "https://seccdn.libravatar.org/avatar/%s?%s" % (hashhex, query)
 
+@APP.template_filter('humanize')
+def humanize_date(date):
+    return arrow.get(date).humanize()
+
+@APP.template_filter('prettydate')
+def prettydate(date):
+    return date.strftime('%A %B %d %Y %X UTC')
+
 # pylint: disable=W0613
 @APP.before_request
 def set_session():
@@ -210,7 +220,7 @@ def index():
 
     prev_elections = models.Election.get_older_election(SESSION, now)[:5]
     cur_elections = models.Election.get_open_election(SESSION, now)
-    next_elections = models.Election.get_next_election(SESSION, now)[:3]
+    next_elections = models.Election.get_next_election(SESSION, now)
 
     voted = []
     if is_authenticated():
@@ -233,17 +243,41 @@ def index():
 @APP.route('/about/<election_alias>')
 def about_election(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
-
+    stats=[]
+    evolution_label = []
+    evolution_data = []
     if not election:
         flask.flash('The election, %s,  does not exist.' % election_alias)
         return safe_redirect_back()
+    elif election.status in ['Embargoed', 'Ended']:
+
+        stats = models.Vote.get_election_stats(SESSION, election.id)
+        cnt = 1
+        for delta in range((election.end_date - election.start_date).days + 1):
+            day = (
+                election.start_date + timedelta(days=delta)
+            ).strftime('%d-%m-%Y')
+            evolution_label.append([cnt, day])
+            evolution_data.append([cnt, stats['vote_timestamps'].count(day)])
+            cnt += 1
 
     usernamemap = build_name_map(election)
+
+    voted = []
+    if is_authenticated():
+        votes = models.Vote.of_user_on_election(
+            SESSION, flask.g.fas_user.username, election.id, count=True)
+        if votes > 0:
+            voted.append(election)
 
     return flask.render_template(
         'about.html',
         election=election,
-        usernamemap=usernamemap)
+        usernamemap=usernamemap,
+        stats=stats,
+        voted=voted,
+        evolution_label=evolution_label,
+        evolution_data=evolution_data)
 
 
 @APP.route('/archives')
@@ -260,31 +294,6 @@ def archived_elections():
         'archive.html',
         elections=elections)
 
-
-@APP.route('/open')
-def open_elections():
-    now = datetime.utcnow()
-
-    elections = models.Election.get_open_election(SESSION, now)
-
-    if not elections:
-        flask.flash('There are no open elections.')
-        return safe_redirect_back()
-
-    voted = []
-    if is_authenticated():
-        for elec in elections:
-            votes = models.Vote.of_user_on_election(
-                SESSION, flask.g.fas_user.username, elec.id, count=True)
-            if votes > 0:
-                voted.append(elec)
-
-    return flask.render_template(
-        'index.html',
-        next_elections=elections,
-        voted=voted,
-        tag='open',
-        title='Open Elections')
 
 
 @APP.route('/login', methods=('GET', 'POST'))

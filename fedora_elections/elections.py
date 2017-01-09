@@ -74,11 +74,8 @@ def get_valid_election(election_alias, ended=False):
         return safe_redirect_back()
 
     elif not ended and election.status in ('Ended', 'Embargoed'):
-        flask.flash(
-            'This election is closed.  You have been redirected to the '
-            'election results.')
         return flask.redirect(flask.url_for(
-            'election_results', election_alias=election.alias))
+            'about_election', election_alias=election.alias))
 
     elif ended and election.status == 'In progress':
         flask.flash(
@@ -292,63 +289,6 @@ def vote_irc(election, revote):
         form=form,
         num_candidates=num_candidates,
         nextaction=next_action)
-
-
-@APP.route('/results/<election_alias>')
-def election_results(election_alias):
-    election = get_valid_election(election_alias, ended=True)
-
-    if not isinstance(election, models.Election):  # pragma: no cover
-        return election
-
-    elif election.embargoed:
-        if is_authenticated() and (
-                is_admin(flask.g.fas_user)
-                or is_election_admin(flask.g.fas_user, election.id)):
-            flask.flash("You are only seeing this page because you are "
-                        "an admin.", "warning")
-            flask.flash("The results for this election are currently "
-                        "embargoed pending formal announcement.",
-                        "warning")
-        else:
-            flask.flash("We are sorry.  The results for this election "
-                        "cannot be viewed because they are currently "
-                        "embargoed pending formal announcement.")
-            return safe_redirect_back()
-
-    if is_authenticated() and (
-            is_admin(flask.g.fas_user)
-            or is_election_admin(flask.g.fas_user, election.id)):
-        flask.flash(
-            "Check out the <a href='%s'>Text version</a> "
-            "to send the annoucement" % flask.url_for(
-                'election_results_text', election_alias=election.alias)
-            )
-
-    usernamemap = build_name_map(election)
-
-    stats = models.Vote.get_election_stats(SESSION, election.id)
-
-    cnt = 1
-    evolution_label = []
-    evolution_data = []
-    for delta in range((election.end_date - election.start_date).days + 1):
-        day = (
-            election.start_date + timedelta(days=delta)
-        ).strftime('%d-%m-%Y')
-        evolution_label.append([cnt, day])
-        evolution_data.append([cnt, stats['vote_timestamps'].count(day)])
-        cnt += 1
-
-    return flask.render_template(
-        'results.html',
-        election=election,
-        usernamemap=usernamemap,
-        stats=stats,
-        evolution_label=evolution_label,
-        evolution_data=evolution_data,
-    )
-
 
 @APP.route('/results/<election_alias>/text')
 def election_results_text(election_alias):

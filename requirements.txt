@@ -9,4 +9,5 @@ python-openid-cla
 python-openid-teams
 SQLAlchemy
 wtforms
+arrow
 blinker # required by Flask for the unit-tests (for signaling)

@@ -1,25 +1,29 @@
 {% extends "base.html" %}
-{% from "_formhelpers.html" import render_field_in_row %}
+{% from "_formhelpers.html" import render_bootstrap_textfield_in_row %}
 
 {% block title %}{{ submit_text }}{% endblock %}
 
 {%block tag %}admin{% endblock %}
 
 {% block body %}
-  <h2>{{ submit_text }}</h2>
 
-  <form action="" method="post">
-    <fieldset>
-        <table>
-        {{ render_field_in_row(form.name) }}
-        {{ render_field_in_row(form.url) }}
-        </table>
-    </fieldset>
-
-    <br class="clear">
-    <p class="buttons">
-      <input type="submit" class="submit positive" value="{{ submit_text }}">
-    </p>
-    {{ form.csrf_token }}
-  </form>
+<div class="row">
+  <div class="col-lg-8 col-lg-offset-2 col-sm-8 col-sm-offset-2 col-xs-12">
+    <div class="card">
+      <div class="card-header">
+        {{ submit_text }}
+      </div>
+      <div class="card-block">
+        <form action="" method="post">
+          <fieldset>
+              {{ render_bootstrap_textfield_in_row(form.name) }}
+              {{ render_bootstrap_textfield_in_row(form.url) }}
+          </fieldset>
+          <input class="btn btn-primary btn-block" type="submit" class="submit positive" value="{{ submit_text }}">
+          {{ form.csrf_token }}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

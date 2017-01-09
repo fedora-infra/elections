@@ -60,7 +60,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             output = self.app.get(
                 '/vote/test_election6')
             self.assertTrue(
-                '<h2>test election 6 shortdesc</h2>' in output.data)
+                'test election 6 shortdesc' in output.data)
             self.assertTrue(
                 '<input type="hidden" name="action" value="preview" />'
                 in output.data)
@@ -76,7 +76,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             output = self.app.post('/vote/test_election6', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h2>test election 6 shortdesc</h2>' in output.data)
+                'test election 6 shortdesc' in output.data)
 
             # Invalid vote: Too many candidates
             data = {
@@ -89,7 +89,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             output = self.app.post('/vote/test_election6', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h2>test election 6 shortdesc</h2>' in output.data)
+                'test election 6 shortdesc' in output.data)
             self.assertTrue(
                 '<input type="hidden" name="action" value="preview" />'
                 in output.data)
@@ -107,7 +107,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             output = self.app.post('/vote/test_election6', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h2>test election 6 shortdesc</h2>' in output.data)
+                'test election 6 shortdesc' in output.data)
             self.assertTrue(
                 '<input type="hidden" name="action" value="submit" />'
                 in output.data)
@@ -156,9 +156,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             self.assertTrue(
                 'Your vote has been recorded.  Thank you!'
                 in output.data)
-            self.assertTrue('<h3>Current elections</h3>' in output.data)
-            self.assertTrue('<h3>Next 1 elections</h3>' in output.data)
-            self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
+            self.assertTrue('Open elections' in output.data)
 
     def test_vote_select_revote(self):
         """ Test the vote_select function - the re-voting part. """
@@ -197,9 +195,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             self.assertTrue(
                 'Your vote has been recorded.  Thank you!'
                 in output.data)
-            self.assertTrue('<h3>Current elections</h3>' in output.data)
-            self.assertTrue('<h3>Next 1 elections</h3>' in output.data)
-            self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
+            self.assertTrue('Open elections' in output.data)
             vote = fedora_elections.models.Vote
             votes = vote.of_user_on_election(self.session, "nerdsville", '6')
             self.assertEqual(votes[0].value, 1)

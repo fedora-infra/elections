@@ -60,7 +60,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             output = self.app.get(
                 '/vote/test_election5')
             self.assertTrue(
-                '<h2>test election 5 shortdesc</h2>' in output.data)
+                'test election 5 shortdesc' in output.data)
             self.assertTrue(
                 '<input type="hidden" name="action" value="preview" />'
                 in output.data)
@@ -73,13 +73,10 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             output = self.app.post('/vote/test_election5', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h2>test election 5 shortdesc</h2>' in output.data)
+                'test election 5 shortdesc' in output.data)
             self.assertTrue(
-                '<td class="error">Not a valid choice</td>'
+                'Preview your vote'
                 in output.data)
-            self.assertEqual(
-                output.data.count('<td class="error">Not a valid choice</td>'),
-                1)
             self.assertTrue(
                 '<input type="hidden" name="action" value="preview" />'
                 in output.data)
@@ -96,13 +93,10 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             output = self.app.post('/vote/test_election5', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h2>test election 5 shortdesc</h2>' in output.data)
+                'test election 5 shortdesc' in output.data)
             self.assertTrue(
-                '<td class="error">Not a valid choice</td>'
+                'Preview your vote'
                 in output.data)
-            self.assertEqual(
-                output.data.count('<td class="error">Not a valid choice</td>'),
-                1)
             self.assertTrue(
                 '<input type="hidden" name="action" value="preview" />'
                 in output.data)
@@ -117,13 +111,11 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             output = self.app.post('/vote/test_election5', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h2>test election 5 shortdesc</h2>' in output.data)
+                'test election 5 shortdesc' in output.data)
             self.assertTrue(
                 '<input type="hidden" name="action" value="preview" />'
                 in output.data)
-            self.assertEqual(
-                output.data.count('<td class="error">Not a valid choice</td>'),
-                1)
+
 
             # Valid input
             data = {
@@ -135,7 +127,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             output = self.app.post('/vote/test_election5', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h2>test election 5 shortdesc</h2>' in output.data)
+                'test election 5 shortdesc' in output.data)
             self.assertTrue(
                 '<input type="hidden" name="action" value="submit" />'
                 in output.data)
@@ -166,9 +158,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
                 '/vote/test_election5', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertEqual(
-                output.data.count('<td class="error">Not a valid choice</td>'),
-                1)
+
 
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
@@ -184,9 +174,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
                 '/vote/test_election5', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertEqual(
-                output.data.count('<td class="error">Not a valid choice</td>'),
-                1)
+
 
             # Invalid vote: too low
             data = {
@@ -199,9 +187,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
                 '/vote/test_election5', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertEqual(
-                output.data.count('<td class="error">Not a valid choice</td>'),
-                1)
+
 
             # Invalid vote: Not numeric
             data = {
@@ -214,9 +200,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
                 '/vote/test_election5', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertEqual(
-                output.data.count('<td class="error">Not a valid choice</td>'),
-                1)
+
 
             # Valid input
             data = {
@@ -232,9 +216,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             self.assertTrue(
                 'Your vote has been recorded.  Thank you!'
                 in output.data)
-            self.assertTrue('<h3>Current elections</h3>' in output.data)
-            self.assertTrue('<h3>Next 1 elections</h3>' in output.data)
-            self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
+            self.assertTrue('Open elections' in output.data)
 
     def test_vote_simple_revote(self):
         """ Test the vote_simple function - the re-voting part. """
@@ -273,9 +255,7 @@ class FlaskSimpleElectionstests(ModelFlasktests):
             self.assertTrue(
                 'Your vote has been recorded.  Thank you!'
                 in output.data)
-            self.assertTrue('<h3>Current elections</h3>' in output.data)
-            self.assertTrue('<h3>Next 1 elections</h3>' in output.data)
-            self.assertTrue('<h3>Last 2 elections</h3>' in output.data)
+            self.assertTrue('Open elections' in output.data)
             vote = fedora_elections.models.Vote
             votes = vote.of_user_on_election(self.session, "nerdsville", '5')
             self.assertEqual(votes[0].candidate_id, 9)
