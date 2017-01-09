@@ -249,7 +249,7 @@ def about_election(election_alias):
     if not election:
         flask.flash('The election, %s,  does not exist.' % election_alias)
         return safe_redirect_back()
-    elif election.status == 'Embargoed' or election.status == 'Ended':
+    elif election.status in ['Embargoed', 'Ended']:
 
         stats = models.Vote.get_election_stats(SESSION, election.id)
         cnt = 1

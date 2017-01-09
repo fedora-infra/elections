@@ -132,7 +132,6 @@ def admin_view_election(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
     if not election:
         flask.abort(404)
-    print election.admin_groups_list
     form = forms.ElectionForm(election.id, obj=election)
     if form.validate_on_submit():
         form.embargoed.data = int(form.embargoed.data)
