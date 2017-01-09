@@ -45,7 +45,7 @@ elections server::
 Once that is running, simply go to http://localhost:5002/ in your browser on
 your host to see your running elections test instance.
 
-A note about Fonts
+A note about fonts
 ~~~~~~~~~~~~~~~~~~
 Fedora elections uses webfonts pulled down from Fedora infrastructure that might
 not work when hacking locally due to CORS resctrictions. Installing the fonts on
@@ -53,7 +53,6 @@ the system that you are looking at the elections website on will be the same as
 when it gets deployed to prod. Install the required fonts on Fedora with:
 
     sudo dnf install open-sans-fonts
-
 
 
 Running from a checkout:
