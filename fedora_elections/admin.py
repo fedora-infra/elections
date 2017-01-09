@@ -208,10 +208,10 @@ def admin_view_election(election_alias):
     form.lgl_voters.data = ', '.join(election.legal_voters_list)
 
     return flask.render_template(
-            'admin/view_election.html',
-            election=election,
-            form=form,
-            submit_text='Edit election')
+        'admin/view_election.html',
+        election=election,
+        form=form,
+        submit_text='Edit election')
 
 
 @APP.route('/admin/<election_alias>/candidates/new', methods=('GET', 'POST'))
