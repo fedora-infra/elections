@@ -101,6 +101,8 @@
     <div class="alert alert-danger">
       <p>You are only seeing these results because you are an admin.</p>
       <p>The results for this election are currently embargoed pending formal announcement</p>
+      <p>Consult the <a href="{{ url_for('election_results_text', election_alias=election.alias)
+      }}">text version of the results</a></p>
     </div>
     {% endif %}
     <h3> Results </h3>
