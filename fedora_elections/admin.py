@@ -35,8 +35,7 @@ from fedora_elections import fedmsgshim
 from fedora_elections import forms
 from fedora_elections import models
 from fedora_elections import (
-    APP, SESSION, FAS2, is_authenticated, is_admin, is_election_admin,
-    is_safe_url, safe_redirect_back
+    APP, SESSION, FAS2, is_authenticated, is_admin
 )
 
 
@@ -50,7 +49,6 @@ def election_admin_required(f):
             flask.abort(403)
         return f(*args, **kwargs)
     return decorated_function
-
 
 
 @APP.route('/admin/new', methods=('GET', 'POST'))
@@ -227,8 +225,9 @@ def admin_add_candidate(election_alias):
         fas_name = None
         if election.candidates_are_fasusers:  # pragma: no cover
             try:
-                fas_name = FAS2.person_by_username(form.name.data)['human_name']
-            except (KeyError, AuthError), err:
+                fas_name = FAS2.person_by_username(
+                    form.name.data)['human_name']
+            except (KeyError, AuthError):
                 flask.flash(
                     'User `%s` does not have a FAS account.'
                     % form.name.data, 'error')
@@ -284,7 +283,7 @@ def admin_add_multi_candidate(election_alias):
                 try:
                     fas_name = FAS2.person_by_username(
                         candidate[0])['human_name']
-                except (KeyError, AuthError), err:
+                except (KeyError, AuthError):
                     SESSION.rollback()
                     flask.flash(
                         'User `%s` does not have a FAS account.'
@@ -350,12 +349,11 @@ def admin_edit_candidate(election_alias, candidate_id):
     if form.validate_on_submit():
         form.populate_obj(candidate)
 
-        fas_name = None
         if election.candidates_are_fasusers:  # pragma: no cover
             try:
                 candidate.fas_name = FAS2.person_by_username(
                     candidate.name)['human_name']
-            except (KeyError, AuthError), err:
+            except (KeyError, AuthError):
                 SESSION.rollback()
                 flask.flash(
                     'User `%s` does not have a FAS account.'

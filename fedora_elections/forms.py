@@ -2,7 +2,6 @@
 
 import flask
 import wtforms
-import flask_wtf as wtf
 try:
     from flask_wtf import FlaskForm
 except ImportError:
@@ -10,7 +9,7 @@ except ImportError:
 
 
 from fedora.client import AuthError
-from fedora_elections import SESSION, FAS2
+from fedora_elections import SESSION, FAS2, APP
 from fedora_elections.models import Election
 
 

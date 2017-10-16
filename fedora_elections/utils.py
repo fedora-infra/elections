@@ -2,8 +2,6 @@
 
 import fedora_elections
 
-from fedora.client import AuthError
-
 
 def build_name_map(election):
     """ Returns a mapping of candidate ids to fas human_names. """

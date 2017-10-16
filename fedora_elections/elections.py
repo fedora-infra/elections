@@ -24,18 +24,16 @@
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
 
-from datetime import datetime, time, timedelta
+from datetime import datetime
 from functools import wraps
 
 import flask
-from fedora.client import AuthError
 
-from fedora_elections import fedmsgshim
 from fedora_elections import forms
 from fedora_elections import models
 from fedora_elections import (
-    APP, SESSION, FAS2, is_authenticated, is_admin, is_election_admin,
-    is_safe_url, safe_redirect_back,
+    APP, SESSION, is_authenticated, is_admin, is_election_admin,
+    safe_redirect_back,
 )
 from fedora_elections.utils import build_name_map
 
@@ -121,13 +119,36 @@ def vote(election_alias):
         return safe_redirect_back()
 
 
+@APP.route('/results/<election_alias>/text')
+def election_results_text(election_alias):
+    election = get_valid_election(election_alias, ended=True)
+
+    if not isinstance(election, models.Election):  # pragma: no cover
+        return election
+
+    if not (is_authenticated() and (is_admin(flask.g.fas_user)
+            or is_election_admin(flask.g.fas_user, election.id))):
+        flask.flash(
+            "The text results are only available to the admins", "error")
+        return safe_redirect_back()
+
+    usernamemap = build_name_map(election)
+
+    stats = models.Vote.get_election_stats(SESSION, election.id)
+
+    return flask.render_template(
+        'results_text.html',
+        election=election,
+        usernamemap=usernamemap,
+        stats=stats,
+    )
+
+
 def vote_range(election, revote):
     votes = models.Vote.of_user_on_election(
         SESSION, flask.g.fas_user.username, election.id)
 
     num_candidates = election.candidates.count()
-
-    cand_ids = [str(cand.id) for cand in election.candidates]
     next_action = 'confirm'
 
     max_selection = num_candidates
@@ -140,11 +161,12 @@ def vote_range(election, revote):
 
     if form.validate_on_submit():
         if form.action.data == 'submit':
-            candidates =  [
+            candidates = [
                 candidate
                 for candidate in form
-                if candidate and candidate.short_name not in ['csrf_token', 'action']
-              ]
+                if candidate
+                and candidate.short_name not in ['csrf_token', 'action']
+            ]
             process_vote(candidates, election, votes, revote)
             flask.flash("Your vote has been recorded.  Thank you!")
             return safe_redirect_back()
@@ -188,7 +210,8 @@ def vote_select(election, revote):
         cnt = [
             candidate
             for candidate in form
-            if candidate.data and candidate.short_name not in ['csrf_token', 'action']
+            if candidate.data
+            and candidate.short_name not in ['csrf_token', 'action']
         ]
         if len(cnt) > max_selection:
             flask.flash('Too many candidates submitted', 'error')
@@ -197,7 +220,8 @@ def vote_select(election, revote):
                 candidates = [
                     candidate
                     for candidate in form
-                    if candidate and candidate.short_name not in ['csrf_token', 'action']
+                    if candidate
+                    and candidate.short_name not in ['csrf_token', 'action']
                 ]
                 process_vote(candidates, election, votes, revote, cand_name)
                 flask.flash("Your vote has been recorded.  Thank you!")
@@ -233,10 +257,11 @@ def vote_simple(election, revote):
 
     if form.validate_on_submit():
         if form.action.data == 'submit':
-            candidates =  [
+            candidates = [
                 candidate
                 for candidate in form
-                if candidate and candidate.short_name not in ['csrf_token', 'action']
+                if candidate
+                and candidate.short_name not in ['csrf_token', 'action']
             ]
             process_vote(candidates, election, votes, revote, value=1)
             flask.flash("Your vote has been recorded.  Thank you!")
@@ -270,10 +295,11 @@ def vote_irc(election, revote):
         fasusers=election.candidates_are_fasusers)
     if form.validate_on_submit():
         if form.action.data == 'submit':
-            candidates =  [
+            candidates = [
                 candidate
                 for candidate in form
-                if candidate and candidate.short_name not in ['csrf_token', 'action']
+                if candidate
+                and candidate.short_name not in ['csrf_token', 'action']
             ]
             process_vote(candidates, election, votes, revote, cand_name)
             flask.flash("Your vote has been recorded.  Thank you!")
@@ -290,32 +316,9 @@ def vote_irc(election, revote):
         num_candidates=num_candidates,
         nextaction=next_action)
 
-@APP.route('/results/<election_alias>/text')
-def election_results_text(election_alias):
-    election = get_valid_election(election_alias, ended=True)
 
-    if not isinstance(election, models.Election):  # pragma: no cover
-        return election
-
-    if not (is_authenticated() and (is_admin(flask.g.fas_user)
-            or is_election_admin(flask.g.fas_user, election.id))):
-        flask.flash(
-            "The text results are only available to the admins", "error")
-        return safe_redirect_back()
-
-    usernamemap = build_name_map(election)
-
-    stats = models.Vote.get_election_stats(SESSION, election.id)
-
-    return flask.render_template(
-        'results_text.html',
-        election=election,
-        usernamemap=usernamemap,
-        stats=stats,
-    )
-
-
-def process_vote(candidates, election, votes, revote, cand_name=None, value=None):
+def process_vote(
+        candidates, election, votes, revote, cand_name=None, value=None):
     for index in range(len(candidates)):
         candidate = candidates[index]
         if revote and (index+1 <= len(votes)):
@@ -338,7 +341,7 @@ def process_vote(candidates, election, votes, revote, cand_name=None, value=None
                 voter=flask.g.fas_user.username,
                 timestamp=datetime.utcnow(),
                 candidate_id=cand_id,
-                value= value if value else int(candidate.data),
+                value=value if value else int(candidate.data),
             )
             SESSION.add(new_vote)
         SESSION.commit()

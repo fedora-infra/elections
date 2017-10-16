@@ -26,27 +26,27 @@
 
 __version__ = '2.6.1'
 
-import logging
-import os
-import sys
-import urllib
-import hashlib
-import arrow
+import logging  # noqa
+import os  # noqa
+import sys  # noqa
+import urllib  # noqa
+import hashlib  # noqa
+import arrow  # noqa
 
 
-from datetime import datetime, time, timedelta
-from functools import wraps
-from urlparse import urlparse, urljoin
+from datetime import datetime, time, timedelta  # noqa
+from functools import wraps  # noqa
+from urlparse import urlparse, urljoin  # noqa
 
-import flask
+import flask  # noqa
 
-from fedora.client import AuthError, AppError
-from fedora.client.fas2 import AccountSystem
-from flask_fas_openid import FAS
+from fedora.client import AuthError, AppError  # noqa
+from fedora.client.fas2 import AccountSystem  # noqa
+from flask_fas_openid import FAS  # noqa
 
-import fedora_elections.fedmsgshim
-import fedora_elections.mail_logging
-import fedora_elections.proxy
+import fedora_elections.fedmsgshim  # noqa
+import fedora_elections.mail_logging  # noqa
+import fedora_elections.proxy  # noqa
 
 APP = flask.Flask(__name__)
 APP.config.from_object('fedora_elections.default_config')
@@ -82,12 +82,12 @@ FAS2 = AccountSystem(
 
 
 # modular imports
-from fedora_elections import models
+from fedora_elections import models  # noqa
 SESSION = models.create_session(APP.config['DB_URL'])
-from fedora_elections import forms
+from fedora_elections import forms  # noqa
 
 
-from fedora_elections.utils import build_name_map
+from fedora_elections.utils import build_name_map  # noqa
 
 
 def is_authenticated():
@@ -101,8 +101,7 @@ def is_safe_url(target):
     website not some other malicious one.
     """
     ref_url = urlparse(flask.request.host_url)
-    test_url = urlparse(
-        urljoin(flask.request.host_url, target))
+    test_url = urlparse(urljoin(flask.request.host_url, target))
     return test_url.scheme in ('http', 'https') and \
         ref_url.netloc == test_url.netloc
 
@@ -144,14 +143,6 @@ def is_election_admin(user, election_id):
     return len(set(user.groups).intersection(set(admingroups))) > 0
 
 
-def is_safe_url(target):
-    ''' Check is a url is safe to use or not. '''
-    ref_url = urlparse(flask.request.host_url)
-    test_url = urlparse(urljoin(flask.request.host_url, target))
-    return test_url.scheme in ('http', 'https') and \
-        ref_url.netloc == test_url.netloc
-
-
 def safe_redirect_back(next=None, fallback=('index', {})):
     ''' Safely redirect the user to its previous page. '''
     targets = []
@@ -184,19 +175,23 @@ def rjust_filter(text, length):
     """
     return str(text).rjust(length)
 
+
 @APP.template_filter('avatar')
 def avatar_filter(openid, size=64, default='retro'):
     query = urllib.urlencode({'s': size, 'd': default})
     hashhex = hashlib.sha256(openid).hexdigest()
     return "https://seccdn.libravatar.org/avatar/%s?%s" % (hashhex, query)
 
+
 @APP.template_filter('humanize')
 def humanize_date(date):
     return arrow.get(date).humanize()
 
+
 @APP.template_filter('prettydate')
 def prettydate(date):
     return date.strftime('%A %B %d %Y %X UTC')
+
 
 # pylint: disable=W0613
 @APP.before_request
@@ -243,7 +238,7 @@ def index():
 @APP.route('/about/<election_alias>')
 def about_election(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
-    stats=[]
+    stats = []
     evolution_label = []
     evolution_data = []
     if not election:
@@ -284,16 +279,15 @@ def about_election(election_alias):
 def archived_elections():
     now = datetime.utcnow()
 
-    elections = models.Election.get_older_election(SESSION, now)
+    old_elections = models.Election.get_older_election(SESSION, now)
 
-    if not elections:
+    if not old_elections:
         flask.flash('There are no archived elections.')
         return safe_redirect_back()
 
     return flask.render_template(
         'archive.html',
-        elections=elections)
-
+        elections=old_elections)
 
 
 @APP.route('/login', methods=('GET', 'POST'))
@@ -326,5 +320,5 @@ def auth_logout():
 
 
 # Finalize the import of other controllers
-import admin
-import elections
+import admin  # noqa
+import elections  # noqa
