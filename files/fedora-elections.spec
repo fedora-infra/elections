@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.6.1
+Version:        2.7
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -13,6 +13,7 @@ Source0:        %{name}/%{name}-%{version}.tar.gz
 
 BuildArch:      noarch
 
+BuildRequires:  python-arrow
 BuildRequires:  python-fedora
 BuildRequires:  python-fedora-flask
 BuildRequires:  python-flask-wtf
@@ -25,6 +26,8 @@ BuildRequires:  python-wtforms
 BuildRequires:  python-nose
 BuildRequires:  python-coverage
 
+
+Requires:       python-arrow
 Requires:       python-fedora
 Requires:       python-fedora-flask
 Requires:       python-flask-wtf
@@ -109,6 +112,16 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Tue Oct 17 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.7-1
+- Update to 2.7
+- Fix spelling error (VoidWhisperer)
+- Fix spelling and grammar errors (Justin W. Flory)
+- Add a Vagrant-based development environment (Ryan Lerch)
+- Specify rel="noopener noreferrer" to link including target='_blank'
+- Port election to fedora-bootstrap (Ryan Lerch)
+- Improve the README (Justin W. Flory)
+- Project wide flake8 fixes
+
 * Tue Feb 02 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.6.1-1
 - Update to 2.6.1
 - Fix editing a single candidate when the election asks for the FAS names
