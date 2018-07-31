@@ -115,7 +115,6 @@ def admin_new_election():
         )
 
         flask.flash('Election "%s" added' % election.alias)
-        fedmsgshim.publish(topic="election.new", msg=election)
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
     return flask.render_template(
