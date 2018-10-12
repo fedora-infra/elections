@@ -173,7 +173,7 @@ def vote_range(election, revote):
                 and candidate.short_name not in ['csrf_token', 'action']
             ]
             process_vote(candidates, election, votes, revote)
-            flask.flash("Your vote has been recorded.  Thank you!")
+            say_thank_you(election)
             return safe_redirect_back()
 
         if form.action.data == 'preview':
@@ -229,7 +229,7 @@ def vote_select(election, revote):
                     and candidate.short_name not in ['csrf_token', 'action']
                 ]
                 process_vote(candidates, election, votes, revote, cand_name)
-                flask.flash("Your vote has been recorded.  Thank you!")
+                say_thank_you(election)
                 return safe_redirect_back()
 
             if form.action.data == 'preview':
@@ -269,7 +269,7 @@ def vote_simple(election, revote):
                 and candidate.short_name not in ['csrf_token', 'action']
             ]
             process_vote(candidates, election, votes, revote, value=1)
-            flask.flash("Your vote has been recorded.  Thank you!")
+            say_thank_you(election)
             return safe_redirect_back()
 
         if form.action.data == 'preview':
@@ -307,7 +307,7 @@ def vote_irc(election, revote):
                 and candidate.short_name not in ['csrf_token', 'action']
             ]
             process_vote(candidates, election, votes, revote, cand_name)
-            flask.flash("Your vote has been recorded.  Thank you!")
+            say_thank_you(election)
             return safe_redirect_back()
 
         if form.action.data == 'preview':
@@ -350,3 +350,11 @@ def process_vote(
             )
             SESSION.add(new_vote)
         SESSION.commit()
+
+
+def say_thank_you(election):
+    thank_you = "Your vote has been recorded.  Thank you!"
+    if election.voted_badge:
+        thank_you = thank_you + '<br><a href="' + \
+            election.voted_badge + '" target=_new>Claim your I Voted badge</a>.'
+    flask.flash(thank_you)

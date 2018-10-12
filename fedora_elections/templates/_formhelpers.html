@@ -112,6 +112,7 @@
           {{ render_bootstrap_textfield_in_row(form.seats_elected) }}
           {{ render_bootstrap_checkbox_in_row(form.candidates_are_fasusers) }}
           {{ render_bootstrap_checkbox_in_row(form.embargoed) }}
+          {{ render_bootstrap_textfield_in_row(form.voted_badge) }}
           {{ render_bootstrap_textfield_in_row(form.lgl_voters, after="FAS groups allowed to vote on this election (CLA-done is always required)") }}
           {{ render_bootstrap_textfield_in_row(form.admin_grp, after="FAS groups allowed to view the result despite the embargo") }}
       </fieldset>

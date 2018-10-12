@@ -74,6 +74,12 @@ class ElectionForm(FlaskForm):
 
     embargoed = wtforms.BooleanField('Embargo results?', default=True)
 
+    voted_badge = wtforms.TextField(
+        'Badge URL (optional)', [
+            wtforms.validators.Optional(),
+            wtforms.validators.URL(),
+            wtforms.validators.Length(max=250)])
+
     lgl_voters = wtforms.TextField(
         'Legal voters groups', [wtforms.validators.optional()])
 
