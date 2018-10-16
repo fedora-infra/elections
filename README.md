@@ -43,7 +43,7 @@ vagrant ssh
 [vagrant@localhost ~]$ pushd /vagrant/; ./runserver.py --host "0.0.0.0";
 ```
 
-Once that is running, go to [localhost:5002](http://localhost:5002/) in your
+Once that is running, go to [localhost:5005](http://localhost:5005/) in your
 browser to see your running Fedora Elections test instance.
 
 ### A note about fonts
@@ -116,6 +116,32 @@ Run:
 python createdb.py
 ```
 
+### Register the application using openid-connect
+
+Run:
+
+```
+oidc-register https://iddev.fedorainfracloud.org/ http://localhost:5005/oidc_callback
+```
+
+Copy the corresponding ``client_secrets.json`` in the sources:
+
+```
+cp client_secrets.json fedora_elections/client_secrets.json
+```
+
+### Create a local configuration file
+
+Run:
+
+```
+cat > config <<EOL
+OIDC_ID_TOKEN_COOKIE_SECURE = False
+OIDC_REQUIRE_VERIFIED_EMAIL = False
+EOL
+```
+
+
 ### Starting the app
 
 There are 2 ways to start the application:
@@ -127,10 +153,10 @@ There are 2 ways to start the application:
 
 This is useful for a quick development instance, when you don't have to worry
 about security yet. Do not run this in production. The server will start on
-http://127.0.0.1:5000.
+http://127.0.0.1:5005.
 
 ```
-./runserver
+./runserver.py -c config
 ```
 
 #### With Apache
@@ -151,7 +177,8 @@ Adjust the Apache configuration file to point to your web directory. Then,
 adjust the `.wsgi` file in `/var/www` to point to the `fedora_elections`
 directory.
 
-Place the configuration file in `/etc/fedora-elections/fedora-elections.cfg`.
+Place the configuration file in `/etc/fedora-elections/fedora-elections.cfg`
+and adjust it as you wish.
 
 ```
 sudo mkdir -p /etc/fedora-elections/
