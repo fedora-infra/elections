@@ -31,6 +31,7 @@ from datetime import time
 from datetime import timedelta
 
 import flask
+from mock import patch, MagicMock
 
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
@@ -117,18 +118,31 @@ class Flasktests(ModelFlasktests):
             flask.g.fas_user = None
             self.assertFalse(fedora_elections.is_admin(flask.g.fas_user))
 
-            flask.g.fas_user = FakeUser()
-            self.assertFalse(fedora_elections.is_admin(flask.g.fas_user))
+            flask.g.oidc_id_token = 'foobar'
 
-            flask.g.fas_user = FakeUser(
-                fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'])
-            self.assertTrue(fedora_elections.is_admin(flask.g.fas_user))
+            with patch(
+                    'fedora_elections.OIDC.user_getfield',
+                    MagicMock(return_value=['foobar'])):
+                flask.g.fas_user = FakeUser()
+                self.assertFalse(fedora_elections.is_admin(flask.g.fas_user))
 
-            fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'] = [
-                'sysadmin-main', 'sysadmin-elections']
-            flask.g.fas_user = FakeUser(
-                fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'])
-            self.assertTrue(fedora_elections.is_admin(flask.g.fas_user))
+            with patch(
+                    'fedora_elections.OIDC.user_getfield',
+                    MagicMock(return_value=['elections'])):
+                flask.g.fas_user = FakeUser(
+                    fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'])
+                self.assertTrue(
+                    fedora_elections.is_admin(flask.g.fas_user, ['elections']))
+
+            with patch(
+                    'fedora_elections.OIDC.user_getfield',
+                    MagicMock(return_value=['sysadmin-main'])):
+
+                fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'] = [
+                    'sysadmin-main', 'sysadmin-elections']
+                flask.g.fas_user = FakeUser(['sysadmin-main'])
+                self.assertTrue(
+                    fedora_elections.is_admin(flask.g.fas_user, ['sysadmin-main']))
 
     def test_is_election_admin(self):
         """ Test the is_election_admin function. """
@@ -140,31 +154,42 @@ class Flasktests(ModelFlasktests):
                 fedora_elections.is_election_admin(
                     flask.g.fas_user, 1)
             )
+
+            flask.g.oidc_id_token = 'foobar'
+
             flask.g.fas_user = FakeUser()
             self.assertFalse(
                 fedora_elections.is_election_admin(
                     flask.g.fas_user, 1)
             )
-            flask.g.fas_user = FakeUser(
-                fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'])
-            self.assertTrue(fedora_elections.is_election_admin(
-                flask.g.fas_user, 1))
+            with patch(
+                    'fedora_elections.OIDC.user_getfield',
+                    MagicMock(return_value=['elections'])):
+                flask.g.fas_user = FakeUser(
+                    fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'])
+                self.assertTrue(fedora_elections.is_election_admin(
+                    flask.g.fas_user, 1))
 
         self.setup_db()
 
         with app.test_request_context():
             flask.g.fas_user = FakeUser('testers')
-            # This is user is not an admin for election #1
-            self.assertFalse(
-                fedora_elections.is_election_admin(
-                    flask.g.fas_user, 1)
-            )
+            flask.g.oidc_id_token = 'foobar'
 
-            # This is user is an admin for election #2
-            self.assertTrue(
-                fedora_elections.is_election_admin(
-                    flask.g.fas_user, 2)
-            )
+            # This is user is not an admin for election #1
+            with patch(
+                    'fedora_elections.OIDC.user_getfield',
+                    MagicMock(return_value=['foobar'])):
+                self.assertFalse(
+                    fedora_elections.is_election_admin(
+                        flask.g.fas_user, 1)
+                )
+
+                # This is user is an admin for election #2
+                self.assertTrue(
+                    fedora_elections.is_election_admin(
+                        flask.g.fas_user, 2)
+                )
 
     def test_is_safe_url(self):
         """ Test the is_safe_url function. """
@@ -182,17 +207,23 @@ class Flasktests(ModelFlasktests):
         with app.test_request_context():
             flask.g.fas_user = FakeUser(['gitr2spec'])
             output = self.app.get('/login')
-            self.assertEqual(output.status_code, 200)
+            self.assertEqual(output.status_code, 302)
+            self.assertIn(
+                'https://iddev.fedorainfracloud.org/openidc/Authorization?',
+                output.data)
 
             output = self.app.get('/login?next=http://localhost/')
-            self.assertEqual(output.status_code, 200)
+            self.assertEqual(output.status_code, 302)
+            self.assertIn(
+                'https://iddev.fedorainfracloud.org/openidc/Authorization?',
+                output.data)
 
-        self.setup_db()
-        user = FakeUser([], username='pingou')
-        with user_set(fedora_elections.APP, user):
-            output = self.app.get('/login', follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            self.assertTrue('<title>Fedora elections</title>' in output.data)
+        # self.setup_db()
+        # user = FakeUser([], username='pingou')
+        # with user_set(fedora_elections.APP, user):
+            # output = self.app.get('/login', follow_redirects=True)
+            # self.assertEqual(output.status_code, 200)
+            # self.assertTrue('<title>Fedora elections</title>' in output.data)
 
     def test_auth_logout(self):
         """ Test the auth_logout function. """

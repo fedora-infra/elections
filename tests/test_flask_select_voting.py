@@ -32,6 +32,7 @@ from datetime import time
 from datetime import timedelta
 
 import flask
+from mock import patch, MagicMock
 
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
@@ -46,117 +47,121 @@ class FlaskSimpleElectionstests(ModelFlasktests):
 
     def test_vote_select(self):
         """ Test the vote_select function - the preview part. """
-        output = self.app.get(
-            '/vote/test_election', follow_redirects=True)
-        self.assertEqual(output.status_code, 200)
-        self.assertTrue(
-            '<title>OpenID transaction in progress</title>' in output.data
-            or 'discoveryfailure' in output.data)
+        output = self.app.get('/vote/test_election')
+        self.assertEqual(output.status_code, 302)
+        self.assertIn(
+            '/login?next=http%3A%2F%2Flocalhost%2Fvote%2Ftest_election',
+            output.data)
 
         self.setup_db()
 
         user = FakeUser(['packager'], username='pingou')
-        with user_set(fedora_elections.APP, user):
-            output = self.app.get(
-                '/vote/test_election6')
-            self.assertTrue(
-                'test election 6 shortdesc' in output.data)
-            self.assertTrue(
-                '<input type="hidden" name="action" value="preview" />'
-                in output.data)
+        with user_set(fedora_elections.APP, user, oidc_id_token='foobar'):
+            with patch(
+                    'fedora_elections.OIDC.user_getfield',
+                    MagicMock(return_value=['packager'])):
+                output = self.app.get(
+                    '/vote/test_election6')
+                self.assertTrue(
+                    'test election 6 shortdesc' in output.data)
+                self.assertTrue(
+                    '<input type="hidden" name="action" value="preview" />'
+                    in output.data)
 
-            csrf_token = output.data.split(
-                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+                csrf_token = output.data.split(
+                    'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
-            # Invalid vote: No candidate
-            data = {
-                'action': 'preview',
-            }
+                # Invalid vote: No candidate
+                data = {
+                    'action': 'preview',
+                }
 
-            output = self.app.post('/vote/test_election6', data=data)
-            self.assertEqual(output.status_code, 200)
-            self.assertTrue(
-                'test election 6 shortdesc' in output.data)
+                output = self.app.post('/vote/test_election6', data=data)
+                self.assertEqual(output.status_code, 200)
+                self.assertTrue(
+                    'test election 6 shortdesc' in output.data)
 
-            # Invalid vote: Too many candidates
-            data = {
-                'Kevin': True,
-                'Toshio': True,
-                'action': 'preview',
-                'csrf_token': csrf_token,
-            }
+                # Invalid vote: Too many candidates
+                data = {
+                    'Kevin': True,
+                    'Toshio': True,
+                    'action': 'preview',
+                    'csrf_token': csrf_token,
+                }
 
-            output = self.app.post('/vote/test_election6', data=data)
-            self.assertEqual(output.status_code, 200)
-            self.assertTrue(
-                'test election 6 shortdesc' in output.data)
-            self.assertTrue(
-                '<input type="hidden" name="action" value="preview" />'
-                in output.data)
-            self.assertTrue(
-                'Too many candidates submitted'
-                in output.data)
+                output = self.app.post('/vote/test_election6', data=data)
+                self.assertEqual(output.status_code, 200)
+                self.assertTrue(
+                    'test election 6 shortdesc' in output.data)
+                self.assertTrue(
+                    '<input type="hidden" name="action" value="preview" />'
+                    in output.data)
+                self.assertTrue(
+                    'Too many candidates submitted'
+                    in output.data)
 
-            # Valid input
-            data = {
-                'Kevin': True,
-                'action': 'preview',
-                'csrf_token': csrf_token,
-            }
+                # Valid input
+                data = {
+                    'Kevin': True,
+                    'action': 'preview',
+                    'csrf_token': csrf_token,
+                }
 
-            output = self.app.post('/vote/test_election6', data=data)
-            self.assertEqual(output.status_code, 200)
-            self.assertTrue(
-                'test election 6 shortdesc' in output.data)
-            self.assertTrue(
-                '<input type="hidden" name="action" value="submit" />'
-                in output.data)
-            self.assertTrue(
-                'Please confirm your vote!'
-                in output.data)
+                output = self.app.post('/vote/test_election6', data=data)
+                self.assertEqual(output.status_code, 200)
+                self.assertTrue(
+                    'test election 6 shortdesc' in output.data)
+                self.assertTrue(
+                    '<input type="hidden" name="action" value="submit" />'
+                    in output.data)
+                self.assertTrue(
+                    'Please confirm your vote!'
+                    in output.data)
 
     def test_vote_select_process(self):
         """ Test the vote_select function - the voting part. """
-        output = self.app.get(
-            '/vote/test_election', follow_redirects=True)
-        self.assertEqual(output.status_code, 200)
-        self.assertTrue(
-            '<title>OpenID transaction in progress</title>' in output.data
-            or 'discoveryfailure' in output.data)
+        output = self.app.get('/vote/test_election')
+        self.assertEqual(output.status_code, 302)
+        self.assertIn(
+            '/login?next=http%3A%2F%2Flocalhost%2Fvote%2Ftest_election',
+            output.data)
 
         self.setup_db()
 
         user = FakeUser(['packager'], username='pingou')
-        with user_set(fedora_elections.APP, user):
-            # Invalid candidate id - no csrf
-            data = {
-                'candidate': 1,
-                'action': 'submit',
-            }
+        with user_set(fedora_elections.APP, user, oidc_id_token='foobar'):
+            with patch(
+                    'fedora_elections.OIDC.user_getfield',
+                    MagicMock(return_value=['packager'])):
+                # Invalid candidate id - no csrf
+                data = {
+                    'candidate': 1,
+                    'action': 'submit',
+                }
 
-            output = self.app.post(
-                '/vote/test_election6', data=data,
-                follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
+                output = self.app.post(
+                    '/vote/test_election6', data=data,
+                    follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
 
-            csrf_token = output.data.split(
-                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+                csrf_token = output.data.split(
+                    'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
-            # Valid input
-            data = {
-                'Toshio': True,
-                'action': 'submit',
-                'csrf_token': csrf_token,
-            }
+                # Valid input
+                data = {
+                    'Toshio': True,
+                    'action': 'submit',
+                    'csrf_token': csrf_token,
+                }
 
-            output = self.app.post(
-                '/vote/test_election6', data=data,
-                follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            self.assertTrue(
-                'Your vote has been recorded.  Thank you!'
-                in output.data)
-            self.assertTrue('Open elections' in output.data)
+                output = self.app.post(
+                    '/vote/test_election6', data=data,
+                    follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                self.assertTrue(
+                    'Your vote has been recorded.  Thank you!'
+                    in output.data)
+                self.assertTrue('Open elections' in output.data)
 
     def test_vote_select_revote(self):
         """ Test the vote_select function - the re-voting part. """
@@ -164,45 +169,47 @@ class FlaskSimpleElectionstests(ModelFlasktests):
         self.setup_db()
 
         user = FakeUser(['voters'], username='nerdsville')
-        with user_set(fedora_elections.APP, user):
-            retrieve_csrf = self.app.post('/vote/test_election6')
-            csrf_token = retrieve_csrf.data.split(
-                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+        with user_set(fedora_elections.APP, user, oidc_id_token='foobar'):
+            with patch(
+                    'fedora_elections.OIDC.user_getfield',
+                    MagicMock(return_value=['voters'])):
+                retrieve_csrf = self.app.post('/vote/test_election6')
+                csrf_token = retrieve_csrf.data.split(
+                    'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
-            # Valid input
-            data = {
-                'Kevin': True,
-                'action': 'submit',
-                'csrf_token': csrf_token,
-            }
-            self.app.post('/vote/test_election6', data=data, follow_redirects=True)
-            vote = fedora_elections.models.Vote
-            votes = vote.of_user_on_election(self.session, "nerdsville", '6')
-            self.assertEqual(votes[0].candidate.name, "Toshio")
-            self.assertEqual(votes[0].value, 0)
-            self.assertEqual(votes[1].candidate.name, "Kevin")
-            self.assertEqual(votes[1].value, 1)
+                # Valid input
+                data = {
+                    'Kevin': True,
+                    'action': 'submit',
+                    'csrf_token': csrf_token,
+                }
+                self.app.post('/vote/test_election6', data=data, follow_redirects=True)
+                vote = fedora_elections.models.Vote
+                votes = vote.of_user_on_election(self.session, "nerdsville", '6')
+                self.assertEqual(votes[0].candidate.name, "Toshio")
+                self.assertEqual(votes[0].value, 0)
+                self.assertEqual(votes[1].candidate.name, "Kevin")
+                self.assertEqual(votes[1].value, 1)
 
-            #Next, we need to try revoting
-            newdata = {
-                'Toshio': True,
-                'action': 'submit',
-                'csrf_token': csrf_token,
-            }
-            output = self.app.post('/vote/test_election6', data=newdata, follow_redirects=True)
-            #Next, we need to check if the vote has been recorded
-            self.assertEqual(output.status_code, 200)
-            self.assertTrue(
-                'Your vote has been recorded.  Thank you!'
-                in output.data)
-            self.assertTrue('Open elections' in output.data)
-            vote = fedora_elections.models.Vote
-            votes = vote.of_user_on_election(self.session, "nerdsville", '6')
-            self.assertEqual(votes[0].value, 1)
-            self.assertEqual(votes[1].value, 0)
+                #Next, we need to try revoting
+                newdata = {
+                    'Toshio': True,
+                    'action': 'submit',
+                    'csrf_token': csrf_token,
+                }
+                output = self.app.post('/vote/test_election6', data=newdata, follow_redirects=True)
+                #Next, we need to check if the vote has been recorded
+                self.assertEqual(output.status_code, 200)
+                self.assertTrue(
+                    'Your vote has been recorded.  Thank you!'
+                    in output.data)
+                self.assertTrue('Open elections' in output.data)
+                vote = fedora_elections.models.Vote
+                votes = vote.of_user_on_election(self.session, "nerdsville", '6')
+                self.assertEqual(votes[0].value, 1)
+                self.assertEqual(votes[1].value, 0)
 
-
-        #If we haven't failed yet, HOORAY!
+            #If we haven't failed yet, HOORAY!
 
 
 if __name__ == '__main__':
