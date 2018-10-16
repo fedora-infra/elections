@@ -115,7 +115,14 @@ def is_admin(user, user_groups=None):
 
     if not user:
         return False
-    if not user.cla_done or len(user_groups) < 1:
+    if not user.cla_done:
+        return False
+
+    user_groups = []
+    if is_authenticated() and OIDC.user_loggedin:
+        user_groups = OIDC.user_getfield('groups')
+
+    if len(user_groups) < 1:
         return False
 
     admins = APP.config['FEDORA_ELECTIONS_ADMIN_GROUP']
@@ -167,11 +174,9 @@ def inject_variables():
     template).
     '''
     user = None
-    user_groups = None
     if is_authenticated() and OIDC.user_loggedin:
         user = flask.g.fas_user
-        user_groups = OIDC.user_getfield('groups')
-    return dict(is_admin=is_admin(user, user_groups),
+    return dict(is_admin=is_admin(user),
                 version=__version__)
 
 
@@ -219,8 +224,6 @@ def set_session():
     else:
         flask.session.fas_user = None
         flask.g.fas_user = None
-    print(flask.g.fas_user)
-
 
 
 # pylint: disable=W0613
@@ -334,7 +337,7 @@ def auth_login():
         if isinstance(groups, basestring):
             groups = [groups]
         groups.extend(models.get_groups(SESSION))
-        return flask.redirect(return_point)
+        return flask.redirect(next_url)
 
 
 @APP.route('/logout')
