@@ -32,7 +32,7 @@ import flask
 from fedora_elections import forms
 from fedora_elections import models
 from fedora_elections import (
-    APP, SESSION, is_authenticated, is_admin, is_election_admin,
+    OIDC, APP, SESSION, is_authenticated, is_admin, is_election_admin,
     safe_redirect_back,
 )
 from fedora_elections.utils import build_name_map
@@ -48,11 +48,13 @@ def login_required(f):
             flask.flash(
                 'You must sign the CLA to vote', 'error')
             return safe_redirect_back()
-        elif len(flask.g.fas_user.groups) == 0:
-            flask.flash(
-                'You need to be in one another group than CLA to vote',
-                'error')
-            return safe_redirect_back()
+        else:
+            user_groups = OIDC.user_getfield('groups')
+            if len(user_groups) == 0:
+                flask.flash(
+                    'You need to be in one another group than CLA to vote',
+                    'error')
+                return safe_redirect_back()
 
         return f(*args, **kwargs)
     return decorated_function
@@ -93,7 +95,8 @@ def vote(election_alias):
         return election
 
     if election.legal_voters_list:
-        if len(set(flask.g.fas_user.groups).intersection(
+        user_groups = OIDC.user_getfield('groups')
+        if len(set(user_groups).intersection(
                 set(election.legal_voters_list))) == 0:
             flask.flash(
                 'You are not among the groups that are allowed to vote '

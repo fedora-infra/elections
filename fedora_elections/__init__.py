@@ -39,10 +39,11 @@ from functools import wraps  # noqa
 from urlparse import urlparse, urljoin  # noqa
 
 import flask  # noqa
+import munch  # noqa
 
 from fedora.client import AuthError, AppError  # noqa
 from fedora.client.fas2 import AccountSystem  # noqa
-from flask_fas_openid import FAS  # noqa
+from flask_oidc import OpenIDConnect  # noqa
 
 import fedora_elections.fedmsgshim  # noqa
 import fedora_elections.mail_logging  # noqa
@@ -54,7 +55,7 @@ if 'FEDORA_ELECTIONS_CONFIG' in os.environ:  # pragma: no cover
     APP.config.from_envvar('FEDORA_ELECTIONS_CONFIG')
 
 # set up FAS
-FAS = FAS(APP)
+OIDC = OpenIDConnect(APP, credentials_store=flask.session)
 
 # Set up the logging
 if not APP.debug:
@@ -106,12 +107,15 @@ def is_safe_url(target):
         ref_url.netloc == test_url.netloc
 
 
-def is_admin(user):
+def is_admin(user, user_groups=None):
     ''' Is the user an elections admin.
     '''
+    if not user_groups:
+        user_groups = []
+
     if not user:
         return False
-    if not user.cla_done or len(user.groups) < 1:
+    if not user.cla_done or len(user_groups) < 1:
         return False
 
     admins = APP.config['FEDORA_ELECTIONS_ADMIN_GROUP']
@@ -120,7 +124,7 @@ def is_admin(user):
     else:
         admins = set(admins)
 
-    return len(set(user.groups).intersection(admins)) > 0
+    return len(set(user_groups).intersection(admins)) > 0
 
 
 def is_election_admin(user, election_id):
@@ -163,9 +167,11 @@ def inject_variables():
     template).
     '''
     user = None
-    if hasattr(flask.g, 'fas_user'):
+    user_groups = None
+    if is_authenticated() and OIDC.user_loggedin:
         user = flask.g.fas_user
-    return dict(is_admin=is_admin(user),
+        user_groups = OIDC.user_getfield('groups')
+    return dict(is_admin=is_admin(user, user_groups),
                 version=__version__)
 
 
@@ -198,6 +204,23 @@ def prettydate(date):
 def set_session():
     """ Set the flask session as permanent. """
     flask.session.permanent = True
+
+    if OIDC.user_loggedin:
+        if not hasattr(flask.session, 'fas_user') or not flask.session.fas_user:
+            flask.session.fas_user = munch.Munch({
+                'username': OIDC.user_getfield('nickname'),
+                'email': OIDC.user_getfield('email') or '',
+                'timezone': OIDC.user_getfield('zoneinfo'),
+                'cla_done': \
+                    'http://admin.fedoraproject.org/accounts/cla/done' \
+                    in (OIDC.user_getfield('cla') or []),
+            })
+        flask.g.fas_user = flask.session.fas_user
+    else:
+        flask.session.fas_user = None
+        flask.g.fas_user = None
+    print(flask.g.fas_user)
+
 
 
 # pylint: disable=W0613
@@ -294,6 +317,7 @@ def archived_elections():
 
 
 @APP.route('/login', methods=('GET', 'POST'))
+@OIDC.require_login
 def auth_login():
     next_url = None
     if 'next' in flask.request.args:
@@ -310,14 +334,15 @@ def auth_login():
         if isinstance(groups, basestring):
             groups = [groups]
         groups.extend(models.get_groups(SESSION))
-        return FAS.login(return_url=next_url, groups=groups)
+        return flask.redirect(return_point)
 
 
 @APP.route('/logout')
 def auth_logout():
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
-        FAS.logout()
+        OIDC.logout()
         flask.g.fas_user = None
+        flask.session.fas_user = None
         flask.flash('You have been logged out')
     return safe_redirect_back()
 

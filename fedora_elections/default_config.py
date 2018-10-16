@@ -3,7 +3,7 @@
 '''
 Fedora elections default configuration.
 '''
-
+import os
 from datetime import timedelta
 
 # Set the time after which the session expires
@@ -22,3 +22,8 @@ FAS_BASE_URL = 'https://admin.stg.fedoraproject.org/accounts/'
 FAS_USERNAME = ''
 FAS_PASSWORD = ''
 FAS_CHECK_CERT = False
+
+
+OIDC_CLIENT_SECRETS = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'client_secrets.json')
+OIDC_SCOPES = ['openid', 'email', 'profile', 'fedora']
