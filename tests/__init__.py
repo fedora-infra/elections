@@ -20,6 +20,7 @@
 
  fedora_elections test script
 """
+from __future__ import print_function
 
 __requires__ = ['SQLAlchemy >= 0.7']
 import pkg_resources
@@ -57,7 +58,7 @@ if os.environ.get('BUILD_ID'):
         req = requests.get('%s/new' % FAITOUT_URL)
         if req.status_code == 200:
             DB_PATH = req.text
-            print 'Using faitout at: %s' % DB_PATH
+            print('Using faitout at: %s' % DB_PATH)
     except:
         pass
 
