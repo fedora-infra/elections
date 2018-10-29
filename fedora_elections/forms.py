@@ -150,7 +150,7 @@ def get_simple_voting_form(candidates, fasusers):
             try:
                 title = \
                     FAS2.person_by_username(candidate.name)['human_name']
-            except (KeyError, AuthError), err:
+            except (KeyError, AuthError) as err:
                 APP.logger.debug(err)
         if candidate.url:
             title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)

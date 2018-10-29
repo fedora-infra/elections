@@ -409,7 +409,7 @@ def admin_delete_candidate(election_alias, candidate_id):
                     candidate=candidate.to_json(),
                 )
             )
-        except SQLAlchemyError, err:
+        except SQLAlchemyError as err:
             SESSION.rollback()
             APP.logger.debug('Could not delete candidate')
             APP.logger.exception(err)
