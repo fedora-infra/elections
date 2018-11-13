@@ -107,41 +107,44 @@
     {% endif %}
     <h3> Results </h3>
     <table id="results" class="table">
-        <thead>
-          <tr>
-              <th class="stretch-cell nowrap">Candidate</th>
-              <th class="nowrap" title="Number of votes received">Votes</th>
-              {% if stats['candidate_voters'] %}
-              <th class="nowrap">Voters per candidate</th>
-              <th class="nowrap">Average votes per candidate</th>
-              {% endif %}
-          </tr>
+      <thead>
+        <tr>
+          <th class="stretch-cell nowrap">Candidate</th>
+          <th class="nowrap" title="Number of votes received">Votes</th>
+          {% if stats['candidate_voters'] %}
+          <th class="nowrap">Voters per candidate</th>
+          <th class="nowrap">Average votes per candidate</th>
+          {% endif %}
+        </tr>
       </thead>
 
-      {% for candidate in election.candidates|sort(attribute='vote_count', reverse=True) %}
-      {% if loop.index <= election.seats_elected %}
-      {# If we are below the number of user that will be selected, get the number
-      of votes and the flag to False#}
-      {% set flag = False %}
-      {% set votes = candidate.vote_count %}
-      {% elif loop.index > election.seats_elected and votes > candidate.vote_count and not flag %}
-      {# if we are above the number of user that will be selected (seats
-      available), check if the number of votes for this candidate is lower than
-      the number of votes for the last candidate and if the Flag is False
-      So this takes care of the case where there are 10 seats elected and the 11th
-      candidate has the same score as the 10th one.
-      In this case we would end up with one more person that the number of seats
-      available and we'll need to either find a way to select one over the other
-      or deal with having one more candidate accepted #}
-      {% set flag = True %}
-      {% set lastrow = True %}
-      {% else %}
-      {# we are above the number of seats available, the number of votes is below
-      that of the last candidate above selected and the Flag is True which means
-      we already passed the condition above #}
-      {% set lastrow = False %}
-      {% endif %}
-      <tr class="{% if lastrow == True %}firstout{% endif %} {{ loop.cycle('row_odd', 'row_even') }}">
+      {%- set lastrow = [0] -%}
+      {%- set flag = [0] -%}
+      {% for candidate in candidates %}
+        {% if loop.index <= election.seats_elected %}
+          {# If we are below the number of user that will be selected, get the number
+          of votes and the flag to False#}
+          {%- set _ = flag.append(0) -%}
+        {%- elif loop.index > election.seats_elected
+          and candidates[loop.index -2].vote_count > candidate.vote_count
+          and flag[-1] == 0 -%}
+          {# if we are above the number of user that will be selected (seats
+            available), check if the number of votes for this candidate is lower than
+            the number of votes for the last candidate and if the Flag is False
+            So this takes care of the case where there are 10 seats elected and the 11th
+            candidate has the same score as the 10th one.
+            In this case we would end up with one more person that the number of seats
+            available and we'll need to either find a way to select one over the other
+            or deal with having one more candidate accepted #}
+         {%- set _ = lastrow.append(1) -%}
+         {%- set _ = flag.append(1) -%}
+        {% else %}
+          {# we are above the number of seats available, the number of votes is below
+            that of the last candidate above selected and the Flag is True which means
+            we already passed the condition above #}
+          {% set _ = lastrow.append(0) -%}
+        {% endif %}
+      <tr class="{% if lastrow[-1] == 1 %}firstout{% endif %} {{ loop.cycle('row_odd', 'row_even') }}">
           <td>
             {% if candidate.url %}
               <a href="{{ candidate.url }}">
@@ -154,7 +157,7 @@
             {% if candidate.url %}
               </a>
             {% endif %}
-            {% if not flag %}
+            {% if flag[-1] == 0 %}
             <span class="label label-success">Elected</span>
             {% endif %}
           </td>

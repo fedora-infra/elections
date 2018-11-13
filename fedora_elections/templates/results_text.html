@@ -21,14 +21,17 @@ could accumulate up to {{ stats['n_voters'] * stats['max_vote'] }} votes ({{stat
 The results for the elections are as follows:
 
   # votes |  name
-- --------+----------------------{%
-for candidate in election.candidates|sort(attribute='vote_count', reverse=True) -%}
+- --------+----------------------
+{%- set lastrow = [0] -%}
+{%- set flag = [0] -%}
+{%- for candidate in candidates -%}
   {% if loop.index <= election.seats_elected -%}
-        {# If we are below the number of user that will be selected,
+        {# If we are below the number of user that will be selected
           get the number of votes and the flag to False -#}
-    {% set flag = False -%}
-    {% set votes = candidate.vote_count -%}
-  {%- elif loop.index > election.seats_elected and votes > candidate.vote_count and not flag -%}
+    {%- set _ = flag.append(0) -%}
+  {%- elif loop.index > election.seats_elected
+        and candidates[loop.index -2].vote_count > candidate.vote_count
+        and flag[-1] == 0 -%}
     {# if we are above the number of user that will be selected (seats
       available), check if the number of votes for this candidate is lower
       than the number of votes for the last candidate and if the Flag is
@@ -38,14 +41,17 @@ for candidate in election.candidates|sort(attribute='vote_count', reverse=True) 
       In this case we would end up with one more person that the number of
       seats available and we'll need to either find a way to select one
       over the other or deal with having one more candidate accepted -#}
-    {% set flag = True -%}
-    {% set lastrow = True -%}
+    {%- set _ = lastrow.append(1) -%}
+    {%- set _ = flag.append(1) -%}
   {%- else -%}
     {# we are above the number of seats available, the number of votes is
       below that of the last candidate above selected and the Flag is True
       which means we already passed the condition above -#}
-    {% set lastrow = False -%} {%- endif %}{% if lastrow == True %}
-- --------+---------------------- {%- endif %}
+    {% set _ = lastrow.append(0) -%}
+  {%- endif -%}
+  {%- if lastrow[-1] == 1 %}
+- --------+----------------------
+  {%- endif %}
 {{ candidate.vote_count | rjust(8) }}  | {% if election.candidates_are_fasusers -%}
       {{ usernamemap[candidate.id] }} {%- else -%} {{candidate.name}}
     {%- endif %}

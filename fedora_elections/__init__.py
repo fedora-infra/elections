@@ -272,7 +272,10 @@ def about_election(election_alias):
         stats=stats,
         voted=voted,
         evolution_label=evolution_label,
-        evolution_data=evolution_data)
+        evolution_data=evolution_data,
+        candidates=sorted(
+            election.candidates, key=lambda x: x.vote_count, reverse=True),
+    )
 
 
 @APP.route('/archives')

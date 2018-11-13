@@ -141,6 +141,8 @@ def election_results_text(election_alias):
         election=election,
         usernamemap=usernamemap,
         stats=stats,
+        candidates=sorted(
+            election.candidates, key=lambda x: x.vote_count, reverse=True)
     )
 
 
