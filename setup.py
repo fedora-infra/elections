@@ -4,13 +4,19 @@
 Setup script
 """
 
-# These two lines are needed to run on EL6
-__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
-import pkg_resources
-
-from fedora_elections import __version__
-
+import os
+import re
 from setuptools import setup
+
+versionfile = os.path.join(
+    os.path.dirname(__file__), 'fedora_elections', '__init__.py')
+
+# Thanks to SQLAlchemy:
+# https://github.com/zzzeek/sqlalchemy/blob/master/setup.py#L104
+with open(versionfile) as stream:
+    __version__ = re.compile(
+        r".*__version__ = '(.*?)'", re.S
+    ).match(stream.read()).group(1)
 
 setup(
     name='fedora-elections',
