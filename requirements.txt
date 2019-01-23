@@ -11,3 +11,5 @@ wtforms
 arrow
 blinker # required by Flask for the unit-tests (for signaling)
 six
+gunicorn
+psycopg2
