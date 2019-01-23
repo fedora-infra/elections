@@ -16,3 +16,5 @@ psycopg2
 rsa==4.0  # last version that supports python2
 fasjson_client
 fedora_elections_messages
+gunicorn
+psycopg2
