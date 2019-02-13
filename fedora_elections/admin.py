@@ -129,7 +129,11 @@ def admin_view_election(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
     if not election:
         flask.abort(404)
-    form = forms.ElectionForm(election.id, obj=election)
+    if flask.request.method == 'GET':
+        form = forms.ElectionForm(election.id, obj=election)
+    else:
+        form = forms.ElectionForm(election.id)
+
     if form.validate_on_submit():
         form.embargoed.data = int(form.embargoed.data)
         if form.max_votes.data:

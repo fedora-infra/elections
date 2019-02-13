@@ -139,6 +139,27 @@ class ModelFlasktests(Modeltests):
 
         self.app = fedora_elections.APP.test_client()
 
+    def get_wtforms_version(self):
+        """Returns the wtforms version as a tuple."""
+        import wtforms
+        wtforms_v = wtforms.__version__.split('.')
+        for idx, val in enumerate(wtforms_v):
+            try:
+                val = int(val)
+            except ValueError:
+                pass
+            wtforms_v[idx] = val
+        return tuple(wtforms_v)
+
+    def get_csrf(self, url='/admin/new', output=None):
+        """Retrieve a CSRF token from given URL."""
+        if output is None:
+            output = self.app.get(url)
+            self.assertEqual(output.status_code, 200)
+
+        return output.get_data(as_text=True).split(
+            'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
 
 class FakeGroup(object):
     """ Fake object used to make the FakeUser object closer to the
