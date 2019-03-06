@@ -1,12 +1,10 @@
 # Used for when working from a virtualenv.
 # Use this file by running "$ pip install -r requirements.txt"
 Flask>=0.10
+flask-oidc
 Flask-wtf
 kitchen
 python-fedora
-python-openid
-python-openid-cla
-python-openid-teams
 SQLAlchemy
 wtforms
 arrow
