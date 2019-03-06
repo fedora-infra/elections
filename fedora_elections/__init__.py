@@ -206,7 +206,7 @@ def prettydate(date):
 
 # pylint: disable=W0613
 @APP.before_request
-def set_session():
+def set_session():  # pragma: no-cover
     """ Set the flask session as permanent. """
     flask.session.permanent = True
 
