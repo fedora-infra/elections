@@ -354,7 +354,7 @@ def process_vote(
 
 def say_thank_you(election):
     thank_you = "Your vote has been recorded.  Thank you!"
-    if election.voted_badge:
+    if election.url_badge:
         thank_you = thank_you + '<br><a href="' + \
-            election.voted_badge + '" target=_new>Claim your I Voted badge</a>.'
+            election.url_badge + '" target=_new>Claim your I Voted badge</a>.'
     flask.flash(thank_you)

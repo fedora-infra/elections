@@ -15,7 +15,7 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    """ Add the voted_badge column to the Elections table. """
+    """ Add the url_badge column to the Elections table. """
     op.add_column(
         'elections',
         sa.Column('voted_badge', sa.Unicode(250), nullable=True)
@@ -23,5 +23,5 @@ def upgrade():
 
 
 def downgrade():
-    """ Drop the voted_badge column from the Elections table. """
-    op.drop_column('elections', 'voted_badge')
+    """ Drop the url_badge column from the Elections table. """
+    op.drop_column('elections', 'url_badge')

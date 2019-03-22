@@ -74,7 +74,7 @@ def admin_new_election():
             end_date=form.end_date.data,
             seats_elected=form.seats_elected.data,
             embargoed=int(form.embargoed.data),
-            voted_badge=form.voted_badge.data,
+            url_badge=form.url_badge.data,
             voting_type=form.voting_type.data,
             max_votes=form.max_votes.data,
             candidates_are_fasusers=int(form.candidates_are_fasusers.data),
