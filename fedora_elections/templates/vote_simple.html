@@ -15,6 +15,7 @@
 
     <p class="text-xs-center"><a href="{{election.url}}">[More Information]</a></p>
 
+    <p>Here are the candidates for the {{ election.seats_elected }} seat(s) open:</p>
     <form action="{{ url_for('vote', election_alias=election.alias) }}" method="post">
       <div class="list-group">
         {% for field in form if field.widget.input_type != 'hidden' %}
