@@ -18,7 +18,7 @@ def upgrade():
     """ Add the url_badge column to the Elections table. """
     op.add_column(
         'elections',
-        sa.Column('voted_badge', sa.Unicode(250), nullable=True)
+        sa.Column('url_badge', sa.Unicode(250), nullable=True)
     )
 
 
