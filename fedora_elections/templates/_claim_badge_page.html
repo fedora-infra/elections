@@ -1,0 +1,10 @@
+{% if election.url_badge %}
+<div class="alert alert-dismissable fade in alert-info">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <span class="col-md-offset-3">
+    Do not forget to <a href="{{election.url_badge}}">claim your badge</a>!
+  </span>
+</div>
+{% endif %}
