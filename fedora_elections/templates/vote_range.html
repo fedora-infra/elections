@@ -3,34 +3,35 @@
 {% extends "base.html" %}
 {% block body %}
 <div class="row">
-<div class="col-md-6 col-md-offset-3 voting-sheet">
-<h1 class="text-xs-center"><strong>{{election.shortdesc}}</strong></h1>
+  <div class="col-md-6 col-md-offset-3 voting-sheet">
+    <h1 class="text-xs-center"><strong>{{election.shortdesc}}</strong></h1>
 
-<p class="text-xs-center">{{election.description}}</p>
+    <p class="text-xs-center">{{election.description}}</p>
 
-<p class="text-xs-center"><a href="{{election.url}}">[More Information]</a></p>
+    <p class="text-xs-center"><a href="{{election.url}}">[More Information]</a></p>
 
-<form action="{{ url_for('vote', election_alias=election.alias) }}" method="post">
-    {% for field in form if field.widget.input_type != 'hidden' %}
-      {{ render_field_data_in_row(
-          field, usernamemap=usernamemap) }}
-    {% endfor %}
+    <form action="{{ url_for('vote', election_alias=election.alias) }}" method="post">
+        {% for field in form if field.widget.input_type != 'hidden' %}
+          {{ render_field_data_in_row(
+              field, usernamemap=usernamemap) }}
+        {% endfor %}
 
-  {% if g.fas_user %}
-    <p>
-    {% if nextaction == 'vote' %}
-      <input type="hidden" name="action" value="submit" />
-      <input class="btn btn-primary btn-block m-t-1" type="submit" name="{{nextaction}}" value="Submit your vote" />
-    {% else %}
-      <input type="hidden" name="action" value="preview" />
-      <input class="btn btn-info btn-block m-t-1" type="submit" name="{{nextaction}}" value="Preview your vote" />
-    {% endif %}
-    </p>
-    {{ form.csrf_token }}
-  {% endif %}
-</form>
+      {% if g.fas_user %}
+        <p>
+        {% if nextaction == 'vote' %}
+          <input type="hidden" name="action" value="submit" />
+          <input class="btn btn-primary btn-block m-t-1" type="submit" name="{{nextaction}}" value="Submit your vote" />
+        {% else %}
+          <input type="hidden" name="action" value="preview" />
+          <input class="btn btn-info btn-block m-t-1" type="submit" name="{{nextaction}}" value="Preview your vote" />
+        {% endif %}
+        </p>
+        {{ form.csrf_token }}
+      {% endif %}
+    </form>
+  </div>
 </div>
-</div>
+
 <!-- Make this conditional on whether the user is logged in and can vote in the election -->
 {% if election.legal_voters.count() != 0 %}
   <p>
@@ -41,8 +42,6 @@
       <li>{{group.group_name}}</li>
     {% endfor %}
   </ul>
-{% else %}
-  <p />
 {% endif %}
 
 {% if election.voting_type == 'range' %}
