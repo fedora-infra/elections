@@ -3,6 +3,7 @@
 Flask>=0.10
 flask-oidc
 Flask-wtf
+fedora-messaging
 kitchen
 python-fedora
 SQLAlchemy
