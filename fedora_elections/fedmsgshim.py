@@ -8,7 +8,7 @@
 import warnings
 import logging
 
-from fedora_messaging.api import Message, publish
+import fedora_messaging.api
 from fedora_messaging.exceptions import PublishReturned, ConnectionException
 
 
@@ -18,11 +18,11 @@ _log = logging.getLogger(__name__)
 def publish(topic, msg):  # pragma: no cover
     _log.debug('Publishing a message for %r: %s', topic, msg)
     try:
-        message = Message(
+        message = fedora_messaging.api.Message(
             topic='fedora_elections.%s' % topic,
             body=msg
         )
-        publish(message)
+        fedora_messaging.api.publish(message)
     except PublishReturned as e:
         _log.exception(
             'Fedora Messaging broker rejected message %s: %s',
