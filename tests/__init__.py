@@ -34,6 +34,7 @@ from datetime import date
 from datetime import timedelta
 from functools import wraps
 
+import six
 from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -117,7 +118,7 @@ class ModelFlasktests(Modeltests):
     def setup_db(self):
         """ Add a calendar and some meetings so that we can play with
         something. """
-        from test_vote import Votetests
+        from tests.test_vote import Votetests
         votes = Votetests('test_init_vote')
         votes.session = self.session
         votes.test_init_vote()
@@ -184,7 +185,7 @@ class FakeUser(object):
         :arg groups: list of the groups in which this fake user is
             supposed to be.
         """
-        if isinstance(groups, basestring):
+        if isinstance(groups, six.string_types):
             groups = [groups]
         self.groups = groups
         self.username = username

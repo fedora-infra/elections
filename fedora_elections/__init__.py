@@ -23,6 +23,7 @@
 #                   Frank Chiulli <fchiulli@fedoraproject.org>
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
+from __future__ import unicode_literals, absolute_import
 
 __version__ = '2.7'
 
@@ -36,10 +37,11 @@ import arrow  # noqa
 
 from datetime import datetime, time, timedelta  # noqa
 from functools import wraps  # noqa
-from urlparse import urlparse, urljoin  # noqa
+from six.moves.urllib.parse import urlparse, urljoin, urlencode  # noqa
 
 import flask  # noqa
 import munch  # noqa
+import six  # noqa
 
 from fedora.client import AuthError, AppError  # noqa
 from fedora.client.fas2 import AccountSystem  # noqa
@@ -126,7 +128,7 @@ def is_admin(user, user_groups=None):
         return False
 
     admins = APP.config['FEDORA_ELECTIONS_ADMIN_GROUP']
-    if isinstance(admins, basestring):  # pragma: no cover
+    if isinstance(admins, six.string_types):  # pragma: no cover
         admins = set([admins])
     else:
         admins = set(admins)
@@ -189,7 +191,8 @@ def rjust_filter(text, length):
 
 @APP.template_filter('avatar')
 def avatar_filter(openid, size=64, default='retro'):
-    query = urllib.urlencode({'s': size, 'd': default})
+    query = urlencode({'s': size, 'd': default})
+    openid = openid.encode("utf-8")
     hashhex = hashlib.sha256(openid).hexdigest()
     return "https://seccdn.libravatar.org/avatar/%s?%s" % (hashhex, query)
 
@@ -344,5 +347,5 @@ def auth_logout():
 
 
 # Finalize the import of other controllers
-import admin  # noqa
-import elections  # noqa
+import fedora_elections.admin  # noqa
+import fedora_elections.elections  # noqa

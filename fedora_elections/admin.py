@@ -23,6 +23,7 @@
 #                   Frank Chiulli <fchiulli@fedoraproject.org>
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
+from __future__ import unicode_literals, absolute_import
 
 from datetime import datetime, time
 from functools import wraps

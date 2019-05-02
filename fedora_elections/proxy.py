@@ -25,6 +25,7 @@ redirects are using ``https``.
 
 Source: http://flask.pocoo.org/snippets/35/ by Peter Hansen
 '''
+from __future__ import unicode_literals, absolute_import
 
 
 class ReverseProxied(object):

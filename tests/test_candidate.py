@@ -35,7 +35,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 from fedora_elections import models
 from tests import Modeltests, TODAY
-from test_election import Electiontests
+from tests.test_election import Electiontests
 
 
 # pylint: disable=R0904
