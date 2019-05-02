@@ -23,6 +23,7 @@ def publish(topic, msg):  # pragma: no cover
             body=msg
         )
         fedora_messaging.api.publish(message)
+        _log.debug("Sent to fedora_messaging")
     except PublishReturned as e:
         _log.exception(
             'Fedora Messaging broker rejected message %s: %s',
