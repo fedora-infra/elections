@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 
-import fedora_elections
-
 
 def build_name_map(election):
     """ Returns a mapping of candidate ids to fas human_names. """

@@ -6,7 +6,6 @@
 """
 from __future__ import unicode_literals, absolute_import
 
-import warnings
 import logging
 
 import fedora_messaging.api

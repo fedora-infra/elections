@@ -214,13 +214,14 @@ def set_session():  # pragma: no-cover
     flask.session.permanent = True
 
     if OIDC.user_loggedin:
-        if not hasattr(flask.session, 'fas_user') or not flask.session.fas_user:
+        if not hasattr(flask.session, 'fas_user') \
+                or not flask.session.fas_user:
             flask.session.fas_user = munch.Munch({
                 'username': OIDC.user_getfield('nickname'),
                 'email': OIDC.user_getfield('email') or '',
                 'timezone': OIDC.user_getfield('zoneinfo'),
-                'cla_done': \
-                    'http://admin.fedoraproject.org/accounts/cla/done' \
+                'cla_done':
+                    'http://admin.fedoraproject.org/accounts/cla/done'
                     in (OIDC.user_getfield('cla') or []),
             })
         flask.g.fas_user = flask.session.fas_user
