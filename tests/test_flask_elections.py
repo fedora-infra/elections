@@ -49,9 +49,10 @@ class FlaskElectionstests(ModelFlasktests):
         """ Test the vote function without data. """
         output = self.app.get('/vote/test_election')
         self.assertEqual(output.status_code, 302)
+        output_text = output.get_data(as_text=True)
         self.assertIn(
             '/login?next=http%3A%2F%2Flocalhost%2Fvote%2Ftest_election',
-            output.data)
+            output_text)
 
         user = FakeUser(['packager'], username='pingou')
         with user_set(fedora_elections.APP, user, oidc_id_token='foobar'):
@@ -62,17 +63,19 @@ class FlaskElectionstests(ModelFlasktests):
                 self.assertEqual(output.status_code, 302)
 
                 output = self.app.get('/vote/test_election', follow_redirects=True)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'The election, test_election, does not exist.'
-                    in output.data)
+                    in output_text)
 
     def test_vote(self):
         """ Test the vote function. """
         output = self.app.get('/vote/test_election')
         self.assertEqual(output.status_code, 302)
+        output_text = output.get_data(as_text=True)
         self.assertIn(
             '/login?next=http%3A%2F%2Flocalhost%2Fvote%2Ftest_election',
-            output.data)
+            output_text)
 
         self.setup_db()
 
@@ -84,9 +87,10 @@ class FlaskElectionstests(ModelFlasktests):
 
             output = self.app.get(
                 '/vote/test_election', follow_redirects=True)
+            output_text = output.get_data(as_text=True)
             self.assertTrue(
                 'You must sign the CLA to vote'
-                in output.data)
+                in output_text)
 
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user, oidc_id_token='foobar'):
@@ -99,9 +103,10 @@ class FlaskElectionstests(ModelFlasktests):
 
                 output = self.app.get(
                     '/vote/test_election', follow_redirects=True)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'You need to be in one another group than '
-                    'CLA to vote' in output.data)
+                    'CLA to vote' in output_text)
 
         user = FakeUser(['packager'], username='pingou')
         with user_set(fedora_elections.APP, user, oidc_id_token='foobar'):
@@ -115,9 +120,10 @@ class FlaskElectionstests(ModelFlasktests):
                 # Election closed and results open
                 output = self.app.get(
                     '/vote/test_election3', follow_redirects=True)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'You are not among the groups that are '
-                    'allowed to vote for this election' in output.data)
+                    'allowed to vote for this election' in output_text)
 
         user = FakeUser(['voters'], username='pingou')
         with user_set(fedora_elections.APP, user, oidc_id_token='foobar'):
@@ -131,75 +137,84 @@ class FlaskElectionstests(ModelFlasktests):
                 # Election closed and results open
                 output = self.app.get(
                     '/vote/test_election', follow_redirects=True)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     '<span class="label label-danger">Election Closed</span>'
-                    in output.data)
+                    in output_text)
 
                 # Election closed and results are embargoed
                 output = self.app.get(
                     '/vote/test_election2', follow_redirects=True)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     '<span class="label label-danger">Election Closed</span>'
-                    in output.data)
+                    in output_text)
 
                 # Election still pending
                 output = self.app.get(
                     '/vote/test_election4', follow_redirects=True)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Voting has not yet started, sorry.'
-                    in output.data)
+                    in output_text)
 
                 # Election in progress
                 output = self.app.get('/vote/test_election3')
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'test election 3 shortdesc' in output.data)
+                    'test election 3 shortdesc' in output_text)
                 self.assertTrue(
                     '<input type="hidden" name="action" value="preview" />'
-                    in output.data)
+                    in output_text)
 
                 # Election in progress
                 output = self.app.get('/vote/test_election5')
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'test election 5 shortdesc' in output.data)
+                    'test election 5 shortdesc' in output_text)
                 self.assertTrue(
                     '<input type="hidden" name="action" value="preview" />'
-                    in output.data)
+                    in output_text)
 
     def test_election_results(self):
         """ Test the election_results function - the preview part. """
         output = self.app.get(
             '/about/test_election', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
+        output_text = output.get_data(as_text=True)
         self.assertTrue(
             'The election, test_election,  does not exist.'
-            in output.data)
+            in output_text)
 
         self.setup_db()
 
         output = self.app.get('/about/test_election')
         self.assertEqual(output.status_code, 200)
+        output_text = output.get_data(as_text=True)
         self.assertTrue(
             '<th class="nowrap" title="Number of votes received">Votes</th>'
-            in output.data)
+            in output_text)
         self.assertTrue(
             '<h3>Some statistics about this election</h3>'
-            in output.data)
+            in output_text)
 
         output = self.app.get(
             '/about/test_election2', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
+        output_text = output.get_data(as_text=True)
         self.assertTrue(
             'The results for this election cannot be viewed because they are '
-            in output.data)
+            in output_text)
 
         user = FakeUser(['packager'], username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/about/test_election2', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
+            output_text = output.get_data(as_text=True)
             self.assertTrue(
                 'The results for this election cannot be viewed because they are '
-                in output.data)
+                in output_text)
 
         user = FakeUser(
             fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
@@ -211,55 +226,60 @@ class FlaskElectionstests(ModelFlasktests):
                 output = self.app.get(
                     '/about/test_election2', follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'You are only seeing these results because you are an admin.'
-                    in output.data)
+                    in output_text)
                 self.assertTrue(
                     'The results for this election are currently embargoed '
-                    in output.data)
+                    in output_text)
                 self.assertTrue(
                     '<th class="nowrap" title="Number of votes received">Votes</th>'
-                    in output.data)
+                    in output_text)
                 self.assertTrue(
                     '<h3>Some statistics about this election</h3>'
-                    in output.data)
+                    in output_text)
 
         user = FakeUser(['gitr2spec'], username='kevin')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/about/test_election3', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
+            output_text = output.get_data(as_text=True)
             self.assertTrue(
                 '<span class="label label-success">Election Open</span>'
-                 in output.data)
+                 in output_text)
 
     def test_election_results_text(self):
         """ Test the election_results_text function - the preview part. """
         output = self.app.get(
             '/results/test_election/text', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
+        output_text = output.get_data(as_text=True)
         self.assertTrue(
             'The election, test_election, does not exist.'
-            in output.data)
+            in output_text)
 
         self.setup_db()
 
         output = self.app.get(
             '/results/test_election/text', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
+        output_text = output.get_data(as_text=True)
         self.assertTrue(
             'The text results are only available to the '
-            'admins' in output.data)
+            'admins' in output_text)
 
         user = FakeUser(['packager'], username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/results/test_election2/text', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
+            output_text = output.get_data(as_text=True)
             self.assertTrue(
                 'The text results are only available to the '
-                'admins' in output.data)
-            self.assertTrue('<h2>Elections' in output.data)
+                'admins' in output_text)
+            self.assertTrue('<h2>Elections' in output_text)
 
         user = FakeUser(
             fedora_elections.APP.config['FEDORA_ELECTIONS_ADMIN_GROUP'],
@@ -271,6 +291,7 @@ class FlaskElectionstests(ModelFlasktests):
                 output = self.app.get(
                     '/results/test_election/text', follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 exp = """<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -307,12 +328,13 @@ candidates for running this elections!
 
 </body>
 </html>"""
-                print(output.data)
-                self.assertEqual(output.data, exp)
+                print(output_text)
+                self.assertEqual(output_text, exp)
 
                 output = self.app.get(
                     '/results/test_election2/text', follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 exp = """<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -346,17 +368,18 @@ candidates for running this elections!
 </body>
 </html>"""
 
-                self.assertEqual(output.data, exp)
+                self.assertEqual(output_text, exp)
 
         user = FakeUser(['gitr2spec'], username='kevin')
         with user_set(fedora_elections.APP, user):
             output = self.app.get(
                 '/results/test_election3/text', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
+            output_text = output.get_data(as_text=True)
             self.assertTrue(
                 'Sorry but this election is in progress,'
-                ' and you may not see its results yet.' in output.data)
-            self.assertTrue('Open elections' in output.data)
+                ' and you may not see its results yet.' in output_text)
+            self.assertTrue('Open elections' in output_text)
 
 
 if __name__ == '__main__':

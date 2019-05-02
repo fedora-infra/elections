@@ -49,9 +49,10 @@ class FlaskIrcElectionstests(ModelFlasktests):
         """ Test the vote_irc function - the preview part. """
         output = self.app.get('/vote/test_election')
         self.assertEqual(output.status_code, 302)
+        output_text = output.get_data(as_text=True)
         self.assertIn(
             '/login?next=http%3A%2F%2Flocalhost%2Fvote%2Ftest_election',
-            output.data)
+            output_text)
 
         self.setup_db()
 
@@ -60,15 +61,15 @@ class FlaskIrcElectionstests(ModelFlasktests):
             with patch(
                     'fedora_elections.OIDC.user_getfield',
                     MagicMock(return_value=['packager'])):
-                output = self.app.get(
-                    '/vote/test_election7')
+                output = self.app.get('/vote/test_election7')
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'test election 7 shortdesc' in output.data)
+                    'test election 7 shortdesc' in output_text)
                 self.assertTrue(
                     '<input type="hidden" name="action" value="preview" />'
-                    in output.data)
+                    in output_text)
 
-                csrf_token = output.data.split(
+                csrf_token = output_text.split(
                     'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
                 # Invalid vote: No candidate
@@ -78,8 +79,9 @@ class FlaskIrcElectionstests(ModelFlasktests):
 
                 output = self.app.post('/vote/test_election7', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'test election 7 shortdesc' in output.data)
+                    'test election 7 shortdesc' in output_text)
 
                 # Valid input
                 data = {
@@ -91,22 +93,24 @@ class FlaskIrcElectionstests(ModelFlasktests):
 
                 output = self.app.post('/vote/test_election7', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'test election 7 shortdesc' in output.data)
+                    'test election 7 shortdesc' in output_text)
                 self.assertTrue(
                     '<input type="hidden" name="action" value="submit" />'
-                    in output.data)
+                    in output_text)
                 self.assertTrue(
                     'Please confirm your vote!'
-                    in output.data)
+                    in output_text)
 
     def test_vote_irc_process(self):
         """ Test the vote_irc function - the voting part. """
         output = self.app.get('/vote/test_election')
         self.assertEqual(output.status_code, 302)
+        output_text = output.get_data(as_text=True)
         self.assertIn(
             '/login?next=http%3A%2F%2Flocalhost%2Fvote%2Ftest_election',
-            output.data)
+            output_text)
 
         self.setup_db()
 
@@ -125,8 +129,9 @@ class FlaskIrcElectionstests(ModelFlasktests):
                     '/vote/test_election7', data=data,
                     follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
 
-                csrf_token = output.data.split(
+                csrf_token = output_text.split(
                     'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
                 # Valid input
@@ -141,10 +146,11 @@ class FlaskIrcElectionstests(ModelFlasktests):
                     '/vote/test_election7', data=data,
                     follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Your vote has been recorded.  Thank you!'
-                    in output.data)
-                self.assertTrue('Open elections' in output.data)
+                    in output_text)
+                self.assertTrue('Open elections' in output_text)
 
     def test_vote_irc_revote(self):
         """ Test the vote_irc function - the re-voting part. """
@@ -157,7 +163,8 @@ class FlaskIrcElectionstests(ModelFlasktests):
                     'fedora_elections.OIDC.user_getfield',
                     MagicMock(return_value=['packager'])):
                 retrieve_csrf = self.app.post('/vote/test_election7')
-                csrf_token = retrieve_csrf.data.split(
+                output_text = retrieve_csrf.get_data(as_text=True)
+                csrf_token = output_text.split(
                     'name="csrf_token" type="hidden" value="')[1].split('">')[0]
                 # Valid input
                 data = {
@@ -184,16 +191,18 @@ class FlaskIrcElectionstests(ModelFlasktests):
                 output = self.app.post('/vote/test_election7', data=newdata, follow_redirects=True)
             #Next, we need to check if the vote has been recorded
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Your vote has been recorded.  Thank you!'
-                    in output.data)
-                self.assertTrue('Open elections' in output.data)
+                    in output_text)
+                self.assertTrue('Open elections' in output_text)
                 vote = fedora_elections.models.Vote
                 votes = vote.of_user_on_election(self.session, "nerdsville", '7')
                 self.assertEqual(votes[0].value, -1)
                 self.assertEqual(votes[1].value, 1)
 
             #If we haven't failed yet, HOORAY!
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskIrcElectionstests)

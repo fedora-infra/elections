@@ -65,8 +65,9 @@ class FlaskAdmintests(ModelFlasktests):
                     'fedora_elections.OIDC.user_getfield',
                     MagicMock(return_value=['elections'])):
                 output = self.app.get('/admin/test_election/')
+                output_text = output.get_data(as_text=True)
                 self.assertEqual(output.status_code, 200)
-                self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output.data)
+                self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output_text)
 
     def test_admin_no_cla(self):
         """ Test the admin_new_election function. """
@@ -98,16 +99,17 @@ class FlaskAdmintests(ModelFlasktests):
                     MagicMock(return_value=['elections'])):
                 output = self.app.get('/admin/new')
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    '<h2>Create new election</h2>' in output.data)
+                    '<h2>Create new election</h2>' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" required type="text" ', output.data)
+                        'name="shortdesc" required type="text" ', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" type="text" ', output.data)
+                        'name="shortdesc" type="text" ', output_text)
 
                 # No csrf provided
                 data = {
@@ -125,16 +127,17 @@ class FlaskAdmintests(ModelFlasktests):
 
                 output = self.app.post('/admin/new', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    '<h2>Create new election</h2>' in output.data)
+                    '<h2>Create new election</h2>' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" required type="text" ', output.data)
+                        'name="shortdesc" required type="text" ', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" type="text" ', output.data)
+                        'name="shortdesc" type="text" ', output_text)
 
                 csrf_token = self.get_csrf(output=output)
 
@@ -154,19 +157,20 @@ class FlaskAdmintests(ModelFlasktests):
 
                 output = self.app.post('/admin/new', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    '<h2>Create new election</h2>' in output.data)
+                    '<h2>Create new election</h2>' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" required type="text" ', output.data)
+                        'name="shortdesc" required type="text" ', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" type="text" ', output.data)
+                        'name="shortdesc" type="text" ', output_text)
                 self.assertTrue(
                     '<div class="form-control-feedback">This field is required.</div>'
-                    in output.data)
+                    in output_text)
 
                 # Invalid alias
                 data = {
@@ -185,19 +189,20 @@ class FlaskAdmintests(ModelFlasktests):
 
                 output = self.app.post('/admin/new', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    '<h2>Create new election</h2>' in output.data)
+                    '<h2>Create new election</h2>' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" required type="text" ', output.data)
+                        'name="shortdesc" required type="text" ', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" type="text" ', output.data)
+                        'name="shortdesc" type="text" ', output_text)
                 self.assertTrue(
                     '<div class="form-control-feedback">The alias cannot be <code>new</code>.</div>'
-                    in output.data)
+                    in output_text)
 
                 # Invalid: end_date earlier than start_date
                 data = {
@@ -216,19 +221,20 @@ class FlaskAdmintests(ModelFlasktests):
 
                 output = self.app.post('/admin/new', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    '<h2>Create new election</h2>' in output.data)
+                    '<h2>Create new election</h2>' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" required type="text" ', output.data)
+                        'name="shortdesc" required type="text" ', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" type="text" ', output.data)
+                        'name="shortdesc" type="text" ', output_text)
                 self.assertTrue(
                     'class="form-control-feedback">End date must be later than start date.</div>'
-                    in output.data)
+                    in output_text)
 
                 # Invalid: alias already taken
                 data = {
@@ -247,19 +253,20 @@ class FlaskAdmintests(ModelFlasktests):
 
                 output = self.app.post('/admin/new', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    '<h2>Create new election</h2>' in output.data)
+                    '<h2>Create new election</h2>' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" required type="text" ', output.data)
+                        'name="shortdesc" required type="text" ', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" type="text" ', output.data)
+                        'name="shortdesc" type="text" ', output_text)
                 self.assertTrue(
                     '<div class="form-control-feedback">There is already another election with '
-                    'this alias.</div>' in output.data)
+                    'this alias.</div>' in output_text)
 
                 # Invalid: shortdesc already taken
                 data = {
@@ -278,19 +285,20 @@ class FlaskAdmintests(ModelFlasktests):
 
                 output = self.app.post('/admin/new', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    '<h2>Create new election</h2>' in output.data)
+                    '<h2>Create new election</h2>' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" required type="text" ', output.data)
+                        'name="shortdesc" required type="text" ', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" type="text" ', output.data)
+                        'name="shortdesc" type="text" ', output_text)
                 self.assertTrue(
                     '<div class="form-control-feedback">There is already another election with '
-                    'this summary.</div>' in output.data)
+                    'this summary.</div>' in output_text)
 
                 # All good  -  max_votes is ignored as it is not a integer
                 data = {
@@ -313,23 +321,24 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/new', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Election "new_election" added'
-                    in output.data)
+                    in output_text)
                 self.assertTrue(
-                    'There are no candidates.' in output.data)
+                    'There are no candidates.' in output_text)
                 self.assertIn(
                     'input class="form-control" id="admin_grp" '
                     'name="admin_grp" type="text" '
-                    'value="sysadmin-main, testers">', output.data)
+                    'value="sysadmin-main, testers">', output_text)
                 self.assertIn(
                     'input class="form-control" id="lgl_voters" '
                     'name="lgl_voters" type="text" '
-                    'value="packager, testers">', output.data)
+                    'value="packager, testers">', output_text)
                 self.assertIn(
                     'input class="form-control" id="max_votes" '
                     'name="max_votes" type="text" '
-                    'value="">', output.data)
+                    'value="">', output_text)
 
                 # All good  -  max_votes is ignored as it is not a integer
                 data = {
@@ -351,23 +360,24 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/new', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Election "new_election2" added'
-                    in output.data)
+                    in output_text)
                 self.assertTrue(
-                    'There are no candidates.' in output.data)
+                    'There are no candidates.' in output_text)
                 self.assertIn(
                     'input class="form-control" id="admin_grp" '
                     'name="admin_grp" type="text" '
-                    'value="sysadmin-main, testers">', output.data)
+                    'value="sysadmin-main, testers">', output_text)
                 self.assertIn(
                     'input class="form-control" id="lgl_voters" '
                     'name="lgl_voters" type="text" '
-                    'value="packager, testers">', output.data)
+                    'value="packager, testers">', output_text)
                 self.assertIn(
                     'input class="form-control" id="max_votes" '
                     'name="max_votes" type="text" '
-                    'value="">', output.data)
+                    'value="">', output_text)
 
     def test_admin_edit_election(self):
         """ Test the admin_edit_election function. """
@@ -390,16 +400,17 @@ class FlaskAdmintests(ModelFlasktests):
                     MagicMock(return_value=['elections'])):
                 output = self.app.get('/admin/test_election/')
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'Election Details' in output.data)
+                    'Election Details' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" required type="text" ', output.data)
+                        'name="shortdesc" required type="text" ', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" type="text" ', output.data)
+                        'name="shortdesc" type="text" ', output_text)
 
                 data = {
                     'alias': 'test_election',
@@ -416,16 +427,17 @@ class FlaskAdmintests(ModelFlasktests):
 
                 output = self.app.post('/admin/test_election/', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'Election Details' in output.data)
+                    'Election Details' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" required type="text" ', output.data)
+                        'name="shortdesc" required type="text" ', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" type="text" ', output.data)
+                        'name="shortdesc" type="text" ', output_text)
 
                 csrf_token = self.get_csrf()
 
@@ -444,34 +456,36 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/test_election/', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'Election Details' in output.data)
+                    'Election Details' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" required type="text" ', output.data)
+                        'name="shortdesc" required type="text" ', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="shortdesc" '
-                        'name="shortdesc" type="text" ', output.data)
+                        'name="shortdesc" type="text" ', output_text)
                 self.assertIn(
                     '<div class="form-control-feedback">This field is required.</div>',
-                    output.data)
+                    output_text)
 
                 # Check election before edit
                 output = self.app.get('/admin/test_election/')
                 self.assertEqual(output.status_code, 200)
-                self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output.data)
+                output_text = output.get_data(as_text=True)
+                self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" required type="text" '
-                        'value="1">', output.data)
+                        'value="1">', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" type="text" '
-                        'value="1">', output.data)
+                        'value="1">', output_text)
 
                 data = {
                     'alias': 'test_election',
@@ -491,21 +505,22 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/test_election/', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Election "test_election" saved'
-                    in output.data)
+                    in output_text)
                 # We edited the seats_elected from 1 to 2
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" required type="text" '
-                        'value="2">', output.data)
+                        'value="2">', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" type="text" '
-                        'value="2">', output.data)
-                self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output.data)
+                        'value="2">', output_text)
+                self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output_text)
 
     def test_admin_edit_election_admin_groups(self):
         """ Test the admin_edit_election function when editing admin groups.
@@ -536,17 +551,18 @@ class FlaskAdmintests(ModelFlasktests):
                 # Check election before edit
                 output = self.app.get('/admin/test_election2/')
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" required type="text" '
-                        'value="1">', output.data)
+                        'value="1">', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" type="text" '
-                        'value="1">', output.data)
-                self.assertTrue('Candidates <span class="label' in output.data)
+                        'value="1">', output_text)
+                self.assertTrue('Candidates <span class="label' in output_text)
 
                 # Add a new admin group: sysadmin-main
                 data = {
@@ -567,24 +583,25 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/test_election2/', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Election "test_election2" saved'
-                    in output.data)
+                    in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" required type="text" '
-                        'value="2">', output.data)
+                        'value="2">', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" type="text" '
-                        'value="2">', output.data)
+                        'value="2">', output_text)
                 # We edited the admin groups
                 self.assertIn(
                     'input class="form-control" id="admin_grp" '
                     'name="admin_grp" type="text" '
-                    'value="sysadmin-main, testers">', output.data)
+                    'value="sysadmin-main, testers">', output_text)
 
                 # Remove an existing group: testers
                 data = {
@@ -605,24 +622,25 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/test_election2/', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Election "test_election2" saved'
-                    in output.data)
+                    in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" required type="text" '
-                        'value="2">', output.data)
+                        'value="2">', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" type="text" '
-                        'value="2">', output.data)
+                        'value="2">', output_text)
                 # We edited the admin groups
                 self.assertIn(
                     'input class="form-control" id="admin_grp" '
                     'name="admin_grp" type="text" '
-                    'value="sysadmin-main">', output.data)
+                    'value="sysadmin-main">', output_text)
 
     def test_admin_edit_election_legal_voters(self):
         """ Test the admin_edit_election function when editing legal voters.
@@ -652,23 +670,24 @@ class FlaskAdmintests(ModelFlasktests):
                 # Check election before edit
                 output = self.app.get('/admin/test_election3/')
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
-                        'name="seats_elected" required type="text"', output.data)
+                        'name="seats_elected" required type="text"', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
-                        'name="seats_elected" type="text"', output.data)
+                        'name="seats_elected" type="text"', output_text)
                 self.assertTrue('Candidates <span class="label'
-                    in output.data)
+                    in output_text)
                 self.assertTrue(
                     '<input class="form-control" id="admin_grp" name="admin_grp" type="text" value="">'
-                    in output.data)
+                    in output_text)
                 self.assertIn(
                     'input class="form-control" id="lgl_voters" '
                     'name="lgl_voters" type="text" value="voters">',
-                    output.data)
+                    output_text)
 
                 # Add a new admin group: sysadmin-main
                 data = {
@@ -689,14 +708,15 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/test_election3/', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Election "test_election3" saved'
-                    in output.data)
+                    in output_text)
                 # We edited the legal_voters
                 self.assertIn(
                     'input class="form-control" id="lgl_voters" '
                     'name="lgl_voters" type="text" '
-                    'value="sysadmin-main, voters">', output.data)
+                    'value="sysadmin-main, voters">', output_text)
 
                 # Remove an existing group: voters
                 data = {
@@ -717,14 +737,15 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/test_election3/', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Election "test_election3" saved'
-                    in output.data)
+                    in output_text)
                 # We edited the legal_voters
                 self.assertIn(
                     'input class="form-control" id="lgl_voters" '
                     'name="lgl_voters" type="text" '
-                    'value="sysadmin-main">', output.data)
+                    'value="sysadmin-main">', output_text)
 
     def test_admin_add_candidate(self):
         """ Test the admin_add_candidate function. """
@@ -746,16 +767,17 @@ class FlaskAdmintests(ModelFlasktests):
                     MagicMock(return_value=['elections'])):
                 output = self.app.get('/admin/test_election/candidates/new')
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
 
-                self.assertTrue('Add candidate' in output.data)
+                self.assertTrue('Add candidate' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'required type="text"', output.data)
+                        'required type="text"', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'type="text"', output.data)
+                        'type="text"', output_text)
 
                 data = {
                     'name': 'pingou',
@@ -765,15 +787,16 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/test_election/candidates/new', data=data)
                 self.assertEqual(output.status_code, 200)
-                self.assertTrue('Add candidate' in output.data)
+                output_text = output.get_data(as_text=True)
+                self.assertTrue('Add candidate' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'required type="text"', output.data)
+                        'required type="text"', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'type="text"', output.data)
+                        'type="text"', output_text)
 
                 csrf_token = self.get_csrf(output=output)
 
@@ -786,18 +809,19 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/test_election/candidates/new', data=data)
                 self.assertEqual(output.status_code, 200)
-                self.assertTrue('Add candidate' in output.data)
+                output_text = output.get_data(as_text=True)
+                self.assertTrue('Add candidate' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'required type="text"', output.data)
+                        'required type="text"', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'type="text"', output.data)
+                        'type="text"', output_text)
                 self.assertTrue(
                     '<div class="form-control-feedback">This field is required.</div>'
-                    in output.data)
+                    in output_text)
 
                 data = {
                     'name': 'pingou',
@@ -809,10 +833,11 @@ class FlaskAdmintests(ModelFlasktests):
                     '/admin/test_election/candidates/new', data=data,
                     follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Candidate "pingou" saved'
-                    in output.data)
-                self.assertTrue('Candidates <span class="label label-pill label-default">4</span>' in output.data)
+                    in output_text)
+                self.assertTrue('Candidates <span class="label label-pill label-default">4</span>' in output_text)
 
     def test_admin_add_multi_candidate(self):
         """ Test the admin_add_multi_candidate function. """
@@ -834,16 +859,17 @@ class FlaskAdmintests(ModelFlasktests):
                     MagicMock(return_value=['elections'])):
                 output = self.app.get('/admin/test_election/candidates/new/multi')
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
 
-                self.assertTrue('Add candidates' in output.data)
+                self.assertTrue('Add candidates' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="candidate" '
-                        'name="candidate" required type="text"', output.data)
+                        'name="candidate" required type="text"', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="candidate" '
-                        'name="candidate" type="text"', output.data)
+                        'name="candidate" type="text"', output_text)
 
                 data = {
                     'candidate': 'pingou',
@@ -852,15 +878,16 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/test_election/candidates/new/multi', data=data)
                 self.assertEqual(output.status_code, 200)
-                self.assertTrue('Add candidates' in output.data)
+                output_text = output.get_data(as_text=True)
+                self.assertTrue('Add candidates' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="candidate" '
-                        'name="candidate" required type="text"', output.data)
+                        'name="candidate" required type="text"', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="candidate" '
-                        'name="candidate" type="text"', output.data)
+                        'name="candidate" type="text"', output_text)
 
                 csrf_token = self.get_csrf(output=output)
 
@@ -872,18 +899,19 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/test_election/candidates/new/multi', data=data)
                 self.assertEqual(output.status_code, 200)
-                self.assertTrue('Add candidates' in output.data)
+                output_text = output.get_data(as_text=True)
+                self.assertTrue('Add candidates' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="candidate" '
-                        'name="candidate" required type="text"', output.data)
+                        'name="candidate" required type="text"', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="candidate" '
-                        'name="candidate" type="text"', output.data)
+                        'name="candidate" type="text"', output_text)
                 self.assertTrue(
                     '<div class="form-control-feedback">This field is required.</div>'
-                    in output.data)
+                    in output_text)
 
                 data = {
                     'candidate': 'pingou|patrick!https://fedoraproject.org|'
@@ -895,10 +923,11 @@ class FlaskAdmintests(ModelFlasktests):
                     '/admin/test_election/candidates/new/multi', data=data,
                     follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Added 3 candidates'
-                    in output.data)
-                self.assertTrue('Candidates <span class="label label-pill label-default">6</span>' in output.data)
+                    in output_text)
+                self.assertTrue('Candidates <span class="label label-pill label-default">6</span>' in output_text)
 
     def test_admin_edit_candidate(self):
         """ Test the admin_edit_candidate function. """
@@ -926,31 +955,32 @@ class FlaskAdmintests(ModelFlasktests):
 
                 output = self.app.get('/admin/test_election/candidates/1/edit')
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
 
-                self.assertTrue('Edit candidate' in output.data)
+                self.assertTrue('Edit candidate' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'required type="text"', output.data)
+                        'required type="text"', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'type="text"', output.data)
+                        'type="text"', output_text)
 
                 data = {
                     'name': 'Toshio Kuratomi',
                     'url': 'https://fedoraproject.org/wiki/User:Toshio',
                 }
 
-                self.assertTrue('Edit candidate' in output.data)
+                self.assertTrue('Edit candidate' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'required type="text"', output.data)
+                        'required type="text"', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'type="text"', output.data)
+                        'type="text"', output_text)
 
                 csrf_token = self.get_csrf(output=output)
 
@@ -962,34 +992,36 @@ class FlaskAdmintests(ModelFlasktests):
                 output = self.app.post(
                     '/admin/test_election/candidates/1/edit', data=data)
                 self.assertEqual(output.status_code, 200)
-                self.assertTrue('Edit candidate' in output.data)
+                output_text = output.get_data(as_text=True)
+                self.assertTrue('Edit candidate' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'required type="text"', output.data)
+                        'required type="text"', output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="name" name="name" '
-                        'type="text"', output.data)
+                        'type="text"', output_text)
                 self.assertTrue(
                     '<div class="form-control-feedback">This field is required.</div>'
-                    in output.data)
+                    in output_text)
 
                 # Check election before edit
                 output = self.app.get('/admin/test_election/')
                 self.assertEqual(output.status_code, 200)
-                self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output.data)
+                output_text = output.get_data(as_text=True)
+                self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" required type="text" value="1"',
-                        output.data)
+                        output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" type="text" value="1"',
-                        output.data)
-                self.assertTrue('<div class="list-group-item">Toshio' in output.data)
+                        output_text)
+                self.assertTrue('<div class="list-group-item">Toshio' in output_text)
 
                 data = {
                     'name': 'Toshio Kuratomi',
@@ -1001,11 +1033,12 @@ class FlaskAdmintests(ModelFlasktests):
                     '/admin/test_election/candidates/1/edit', data=data,
                     follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Candidate "Toshio Kuratomi" saved'
-                    in output.data)
-                self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output.data)
-                self.assertTrue('<div class="list-group-item">Toshio' in output.data)
+                    in output_text)
+                self.assertTrue('Candidates <span class="label label-pill label-default">3</span>' in output_text)
+                self.assertTrue('<div class="list-group-item">Toshio' in output_text)
 
     def test_admin_delete_candidate(self):
         """ Test the admin_delete_candidate function. """
@@ -1033,18 +1066,20 @@ class FlaskAdmintests(ModelFlasktests):
 
                 output = self.app.get('/admin/test_election/candidates/1/delete')
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
 
-                self.assertTrue('<h2>Delete candidate</h2>' in output.data)
+                self.assertTrue('<h2>Delete candidate</h2>' in output_text)
                 self.assertTrue(
                     'p>Are you sure you want to delete candidate "Toshio"?</p'
-                    in output.data)
+                    in output_text)
 
                 output = self.app.post('/admin/test_election/candidates/1/delete')
                 self.assertEqual(output.status_code, 200)
-                self.assertTrue('<h2>Delete candidate</h2>' in output.data)
+                output_text = output.get_data(as_text=True)
+                self.assertTrue('<h2>Delete candidate</h2>' in output_text)
                 self.assertTrue(
                     'p>Are you sure you want to delete candidate "Toshio"?</p'
-                    in output.data)
+                    in output_text)
 
                 csrf_token = self.get_csrf(output=output)
 
@@ -1057,27 +1092,29 @@ class FlaskAdmintests(ModelFlasktests):
                     '/admin/test_election/candidates/1/delete', data=data,
                     follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
-                self.assertTrue('<h2>test election shortdesc</h2>' in output.data)
+                output_text = output.get_data(as_text=True)
+                self.assertTrue('<h2>test election shortdesc</h2>' in output_text)
                 self.assertTrue(
                     'Could not delete this candidate. Is it '
-                    'already part of an election?' in output.data)
+                    'already part of an election?' in output_text)
 
                 # Check election before edit
                 output = self.app.get('/admin/test_election4/')
-                self.assertTrue('Candidates <span class="label label-pill label-default">2</span>' in output.data)
+                output_text = output.get_data(as_text=True)
+                self.assertTrue('Candidates <span class="label label-pill label-default">2</span>' in output_text)
                 if self.get_wtforms_version() >= (2, 2):
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" required type="text" value="1"',
-                        output.data)
+                        output_text)
                 else:
                     self.assertIn(
                         'input class="form-control" id="seats_elected" '
                         'name="seats_elected" type="text" value="1"',
-                        output.data)
-                self.assertTrue('<div class="list-group-item">Toshio' in output.data)
+                        output_text)
+                self.assertTrue('<div class="list-group-item">Toshio' in output_text)
                 self.assertTrue(
-                    'value="test election 4 shortdesc">' in output.data)
+                    'value="test election 4 shortdesc">' in output_text)
 
                 # Delete one candidate
                 data = {
@@ -1088,13 +1125,14 @@ class FlaskAdmintests(ModelFlasktests):
                     '/admin/test_election4/candidates/10/delete', data=data,
                     follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Candidate "Toshio" deleted'
-                    in output.data)
+                    in output_text)
                 self.assertTrue(
-                    'value="test election 4 shortdesc">' in output.data)
-                self.assertTrue('Candidates <span class="label label-pill label-default">1</span>' in output.data)
-                self.assertFalse('<div class="list-group-item">Toshio' in output.data)
+                    'value="test election 4 shortdesc">' in output_text)
+                self.assertTrue('Candidates <span class="label label-pill label-default">1</span>' in output_text)
+                self.assertFalse('<div class="list-group-item">Toshio' in output_text)
 
 
 if __name__ == '__main__':

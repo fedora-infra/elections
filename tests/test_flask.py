@@ -64,51 +64,57 @@ class Flasktests(ModelFlasktests):
         """ Test the index function. """
         output = self.app.get('/')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<title>Fedora elections</title>' in output.data)
-        self.assertFalse('<h3>Current elections</h3>' in output.data)
-        self.assertFalse('<h3>Next' in output.data)
-        self.assertFalse('<h3>Last' in output.data)
-        self.assertTrue('<a href="/login">Log In</a>' in output.data)
+        output_text = output.get_data(as_text=True)
+        self.assertIn('<title>Fedora elections</title>', output_text)
+        self.assertNotIn('<h3>Current elections</h3>', output_text)
+        self.assertNotIn('<h3>Next', output_text)
+        self.assertNotIn('<h3>Last', output_text)
+        self.assertIn('<a href="/login">Log In</a>', output_text)
 
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
             output = self.app.get('/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<title>Fedora elections</title>' in output.data)
-            self.assertTrue(
-                '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
+            output_text = output.get_data(as_text=True)
+            self.assertIn('<title>Fedora elections</title>', output_text)
+            self.assertIn(
+                '<a class="dropdown-item" href="/logout">log out</a>',
+                output_text)
 
     def test_index_filled(self):
         """ Test the index function. """
         self.setup_db()
         output = self.app.get('/')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h2>Elections' in output.data)
-        self.assertTrue('<h4><strong>Open elections</strong></h4>' in output.data)
-        self.assertTrue('<strong>Upcoming elections</strong></h4>' in output.data)
-        self.assertTrue('<a href="/login">Log In</a>' in output.data)
+        output_text = output.get_data(as_text=True)
+        self.assertTrue('<h2>Elections' in output_text)
+        self.assertTrue('<h4><strong>Open elections</strong></h4>' in output_text)
+        self.assertTrue('<strong>Upcoming elections</strong></h4>' in output_text)
+        self.assertTrue('<a href="/login">Log In</a>' in output_text)
 
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
             output = self.app.get('/')
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h2>Elections' in output.data)
-            self.assertTrue('<h4><strong>Open elections</strong></h4>' in output.data)
-            self.assertTrue('<strong>Upcoming elections</strong></h4>' in output.data)
-            self.assertTrue('<a class="btn btn-sm btn-primary m-l-2" href="/vote/' in output.data)
+            output_text = output.get_data(as_text=True)
+            self.assertTrue('<h2>Elections' in output_text)
+            self.assertTrue('<h4><strong>Open elections</strong></h4>' in output_text)
+            self.assertTrue('<strong>Upcoming elections</strong></h4>' in output_text)
+            self.assertTrue('<a class="btn btn-sm btn-primary m-l-2" href="/vote/' in output_text)
             self.assertTrue(
-                '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
-            self.assertEqual(output.data.count('Vote now!'), 4)
+                '<a class="dropdown-item" href="/logout">log out</a>' in output_text)
+            self.assertEqual(output_text.count('Vote now!'), 4)
 
         user = FakeUser([], username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get('/')
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h2>Elections' in output.data)
-            self.assertTrue('<h4><strong>Open elections</strong></h4>' in output.data)
-            self.assertTrue('<strong>Upcoming elections</strong></h4>' in output.data)
+            output_text = output.get_data(as_text=True)
+            self.assertTrue('<h2>Elections' in output_text)
+            self.assertTrue('<h4><strong>Open elections</strong></h4>' in output_text)
+            self.assertTrue('<strong>Upcoming elections</strong></h4>' in output_text)
             self.assertTrue(
-                '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
+                '<a class="dropdown-item" href="/logout">log out</a>' in output_text)
 
     def test_is_admin(self):
         """ Test the is_admin function. """
@@ -208,15 +214,17 @@ class Flasktests(ModelFlasktests):
             flask.g.fas_user = FakeUser(['gitr2spec'])
             output = self.app.get('/login')
             self.assertEqual(output.status_code, 302)
+            output_text = output.get_data(as_text=True)
             self.assertIn(
                 'https://iddev.fedorainfracloud.org/openidc/Authorization?',
-                output.data)
+                output_text)
 
             output = self.app.get('/login?next=http://localhost/')
             self.assertEqual(output.status_code, 302)
+            output_text = output.get_data(as_text=True)
             self.assertIn(
                 'https://iddev.fedorainfracloud.org/openidc/Authorization?',
-                output.data)
+                output_text)
 
         # self.setup_db()
         # user = FakeUser([], username='pingou')
@@ -232,19 +240,21 @@ class Flasktests(ModelFlasktests):
         with user_set(fedora_elections.APP, user):
             output = self.app.get('/logout', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<title>Fedora elections</title>' in output.data)
+            output_text = output.get_data(as_text=True)
+            self.assertTrue('<title>Fedora elections</title>' in output_text)
             self.assertTrue(
                 'You have been logged out'
-                in output.data)
+                in output_text)
 
         user = None
         with user_set(fedora_elections.APP, user):
             output = self.app.get('/logout', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<title>Fedora elections</title>' in output.data)
+            output_text = output.get_data(as_text=True)
+            self.assertTrue('<title>Fedora elections</title>' in output_text)
             self.assertFalse(
                 'You have been logged out'
-                in output.data)
+                in output_text)
 
     def test_about_election(self):
         """ Test the about_election function. """
@@ -259,26 +269,28 @@ class Flasktests(ModelFlasktests):
         #we get redirected to the main page.
         output = self.app.get('/about/blah', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
+        output_text = output.get_data(as_text=True)
         self.assertTrue(
             'The election, blah,  does not exist.'
-            in output.data)
-        self.assertTrue('<h2>Elections' in output.data)
-        self.assertTrue('<h4><strong>Open elections</strong></h4>' in output.data)
-        self.assertTrue('<strong>Upcoming elections</strong></h4>' in output.data)
+            in output_text)
+        self.assertTrue('<h2>Elections' in output_text)
+        self.assertTrue('<h4><strong>Open elections</strong></h4>' in output_text)
+        self.assertTrue('<strong>Upcoming elections</strong></h4>' in output_text)
 
         #test_election does exist, so check if it shows
         # with the correct candidates
         output = self.app.get('/about/test_election')
         self.assertEqual(output.status_code, 200)
+        output_text = output.get_data(as_text=True)
         self.assertTrue(
-            '<title>Election Information</title>' in output.data)
+            '<title>Election Information</title>' in output_text)
         self.assertTrue(
             '<a href="https://fedoraproject.org/wiki/User:Toshio">'
-             in output.data)
+             in output_text)
         self.assertTrue(
             '<a href="https://fedoraproject.org/wiki/User:Ralph">'
-            in output.data)
-        self.assertTrue('<a href="/login">Log In</a>' in output.data)
+            in output_text)
+        self.assertTrue('<a href="/login">Log In</a>' in output_text)
 
     def test_archived_election(self):
         """ Test the archived_elections function. """
@@ -287,23 +299,25 @@ class Flasktests(ModelFlasktests):
 
         output = self.app.get('/archives', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
+        output_text = output.get_data(as_text=True)
         self.assertTrue(
             'There are no archived elections.'
-            in output.data)
-        self.assertTrue('<title>Fedora elections</title>' in output.data)
-        self.assertTrue('<h2>Elections' in output.data)
+            in output_text)
+        self.assertTrue('<title>Fedora elections</title>' in output_text)
+        self.assertTrue('<h2>Elections' in output_text)
 
         self.setup_db()
 
         output = self.app.get('/archives')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<title>Fedora elections</title>' in output.data)
+        output_text = output.get_data(as_text=True)
+        self.assertTrue('<title>Fedora elections</title>' in output_text)
         self.assertTrue(
-            'test election 2 shortdesc' in output.data)
+            'test election 2 shortdesc' in output_text)
         self.assertTrue(
-            'test election shortdesc' in output.data)
-        self.assertEqual(output.data.count('href="/about/'), 2)
-        self.assertTrue('<a href="/login">Log In</a>' in output.data)
+            'test election shortdesc' in output_text)
+        self.assertEqual(output_text.count('href="/about/'), 2)
+        self.assertTrue('<a href="/login">Log In</a>' in output_text)
 
     def test_open_elections(self):
         """ Test the open_elections function. """
@@ -311,33 +325,36 @@ class Flasktests(ModelFlasktests):
 
         output = self.app.get('/')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h2>Elections' in output.data)
-        self.assertTrue('<h4><strong>Open elections</strong></h4>' in output.data)
-        self.assertTrue('<strong>Upcoming elections</strong></h4>' in output.data)
-        self.assertTrue('href="/vote/' in output.data)
-        self.assertTrue('<a href="/login">Log In</a>' in output.data)
+        output_text = output.get_data(as_text=True)
+        self.assertTrue('<h2>Elections' in output_text)
+        self.assertTrue('<h4><strong>Open elections</strong></h4>' in output_text)
+        self.assertTrue('<strong>Upcoming elections</strong></h4>' in output_text)
+        self.assertTrue('href="/vote/' in output_text)
+        self.assertTrue('<a href="/login">Log In</a>' in output_text)
 
         user = FakeUser([], username='pingou')
         with user_set(fedora_elections.APP, user):
             output = self.app.get('/')
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h2>Elections' in output.data)
-            self.assertTrue('<h4><strong>Open elections</strong></h4>' in output.data)
-            self.assertTrue('<strong>Upcoming elections</strong></h4>' in output.data)
-            self.assertTrue('href="/vote/' in output.data)
+            output_text = output.get_data(as_text=True)
+            self.assertTrue('<h2>Elections' in output_text)
+            self.assertTrue('<h4><strong>Open elections</strong></h4>' in output_text)
+            self.assertTrue('<strong>Upcoming elections</strong></h4>' in output_text)
+            self.assertTrue('href="/vote/' in output_text)
             self.assertTrue(
-                '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
-            self.assertEqual(output.data.count('Vote now!'), 4)
+                '<a class="dropdown-item" href="/logout">log out</a>' in output_text)
+            self.assertEqual(output_text.count('Vote now!'), 4)
 
         user = FakeUser([], username='toshio')
         with user_set(fedora_elections.APP, user):
             output = self.app.get('/')
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h2>Elections' in output.data)
-            self.assertTrue('<h4><strong>Open elections</strong></h4>' in output.data)
-            self.assertTrue('<strong>Upcoming elections</strong></h4>' in output.data)
+            output_text = output.get_data(as_text=True)
+            self.assertTrue('<h2>Elections' in output_text)
+            self.assertTrue('<h4><strong>Open elections</strong></h4>' in output_text)
+            self.assertTrue('<strong>Upcoming elections</strong></h4>' in output_text)
             self.assertTrue(
-                '<a class="dropdown-item" href="/logout">log out</a>' in output.data)
+                '<a class="dropdown-item" href="/logout">log out</a>' in output_text)
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Flasktests)

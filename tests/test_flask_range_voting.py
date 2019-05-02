@@ -49,9 +49,10 @@ class FlaskRangeElectionstests(ModelFlasktests):
         """ Test the vote_range function - the preview part. """
         output = self.app.get('/vote/test_election')
         self.assertEqual(output.status_code, 302)
+        output_text = output.get_data(as_text=True)
         self.assertIn(
             '/login?next=http%3A%2F%2Flocalhost%2Fvote%2Ftest_election',
-            output.data)
+            output_text)
 
         self.setup_db()
 
@@ -60,13 +61,13 @@ class FlaskRangeElectionstests(ModelFlasktests):
             with patch(
                     'fedora_elections.OIDC.user_getfield',
                     MagicMock(return_value=['voters'])):
-                output = self.app.get(
-                    '/vote/test_election3')
+                output = self.app.get('/vote/test_election3')
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'test election 3 shortdesc' in output.data)
+                    'test election 3 shortdesc' in output_text)
                 self.assertTrue(
                     '<input type="hidden" name="action" value="preview" />'
-                    in output.data)
+                    in output_text)
 
                 # Invalid candidate id
                 data = {
@@ -78,11 +79,12 @@ class FlaskRangeElectionstests(ModelFlasktests):
 
                 output = self.app.post('/vote/test_election3', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertEqual(
-                    output.data.count('<div class="form-control-feedback">Not a valid choice</div>'),
+                    output_text.count('<div class="form-control-feedback">Not a valid choice</div>'),
                     3)
 
-                csrf_token = output.data.split(
+                csrf_token = output_text.split(
                     'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
                 # Invalid candidate id
@@ -96,8 +98,9 @@ class FlaskRangeElectionstests(ModelFlasktests):
 
                 output = self.app.post('/vote/test_election3', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertEqual(
-                    output.data.count('<div class="form-control-feedback">Not a valid choice</div>'),
+                    output_text.count('<div class="form-control-feedback">Not a valid choice</div>'),
                     3)
 
                 # Invalid vote: too low
@@ -111,13 +114,14 @@ class FlaskRangeElectionstests(ModelFlasktests):
 
                 output = self.app.post('/vote/test_election3', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'test election 3 shortdesc' in output.data)
+                    'test election 3 shortdesc' in output_text)
                 self.assertTrue(
                     '<input type="hidden" name="action" value="preview" />'
-                    in output.data)
+                    in output_text)
                 self.assertEqual(
-                    output.data.count('<div class="form-control-feedback">Not a valid choice</div>'),
+                    output_text.count('<div class="form-control-feedback">Not a valid choice</div>'),
                     1)
 
                 # Invalid vote: 2 are too high
@@ -131,13 +135,14 @@ class FlaskRangeElectionstests(ModelFlasktests):
 
                 output = self.app.post('/vote/test_election3', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'test election 3 shortdesc' in output.data)
+                    'test election 3 shortdesc' in output_text)
                 self.assertTrue(
                     '<input type="hidden" name="action" value="preview" />'
-                    in output.data)
+                    in output_text)
                 self.assertEqual(
-                    output.data.count('<div class="form-control-feedback">Not a valid choice</div>'),
+                    output_text.count('<div class="form-control-feedback">Not a valid choice</div>'),
                     2)
 
                 # Invalid vote: Not numeric
@@ -151,13 +156,14 @@ class FlaskRangeElectionstests(ModelFlasktests):
 
                 output = self.app.post('/vote/test_election3', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'test election 3 shortdesc' in output.data)
+                    'test election 3 shortdesc' in output_text)
                 self.assertTrue(
                     '<input type="hidden" name="action" value="preview" />'
-                    in output.data)
+                    in output_text)
                 self.assertEqual(
-                    output.data.count('<div class="form-control-feedback">Not a valid choice</div>'),
+                    output_text.count('<div class="form-control-feedback">Not a valid choice</div>'),
                     1)
 
                 # Valid input
@@ -171,19 +177,21 @@ class FlaskRangeElectionstests(ModelFlasktests):
 
                 output = self.app.post('/vote/test_election3', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
-                    'test election 3 shortdesc' in output.data)
+                    'test election 3 shortdesc' in output_text)
                 self.assertTrue(
                     '<input type="hidden" name="action" value="submit" />'
-                    in output.data)
+                    in output_text)
 
     def test_vote_range_process(self):
         """ Test the vote_range function - the voting part. """
         output = self.app.get('/vote/test_election')
         self.assertEqual(output.status_code, 302)
+        output_text = output.get_data(as_text=True)
         self.assertIn(
             '/login?next=http%3A%2F%2Flocalhost%2Fvote%2Ftest_election',
-            output.data)
+            output_text)
 
         self.setup_db()
 
@@ -202,11 +210,12 @@ class FlaskRangeElectionstests(ModelFlasktests):
 
                 output = self.app.post('/vote/test_election3', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertEqual(
-                    output.data.count('<div class="form-control-feedback">Not a valid choice</div>'),
+                    output_text.count('<div class="form-control-feedback">Not a valid choice</div>'),
                     3)
 
-                csrf_token = output.data.split(
+                csrf_token = output_text.split(
                     'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
                 # Invalid vote: invalid username
@@ -219,8 +228,9 @@ class FlaskRangeElectionstests(ModelFlasktests):
 
                 output = self.app.post('/vote/test_election3', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertEqual(
-                    output.data.count('<div class="form-control-feedback">Not a valid choice</div>'),
+                    output_text.count('<div class="form-control-feedback">Not a valid choice</div>'),
                     3)
 
                 # Invalid vote: too low
@@ -235,8 +245,9 @@ class FlaskRangeElectionstests(ModelFlasktests):
                 output = self.app.post(
                     '/vote/test_election3', data=data)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertEqual(
-                    output.data.count('<div class="form-control-feedback">Not a valid choice</div>'),
+                    output_text.count('<div class="form-control-feedback">Not a valid choice</div>'),
                     1)
 
                 # Invalid vote: 2 are too high
@@ -251,8 +262,9 @@ class FlaskRangeElectionstests(ModelFlasktests):
                 output = self.app.post(
                     '/vote/test_election3', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertEqual(
-                    output.data.count('<div class="form-control-feedback">Not a valid choice</div>'),
+                    output_text.count('<div class="form-control-feedback">Not a valid choice</div>'),
                     2)
 
                 # Invalid vote: Not numeric
@@ -267,8 +279,9 @@ class FlaskRangeElectionstests(ModelFlasktests):
                 output = self.app.post(
                     '/vote/test_election3', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertEqual(
-                    output.data.count('<div class="form-control-feedback">Not a valid choice</div>'),
+                    output_text.count('<div class="form-control-feedback">Not a valid choice</div>'),
                     1)
 
                 # Valid input
@@ -283,10 +296,11 @@ class FlaskRangeElectionstests(ModelFlasktests):
                 output = self.app.post(
                     '/vote/test_election3', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Your vote has been recorded.  Thank you!'
-                    in output.data)
-                self.assertTrue('Open elections' in output.data)
+                    in output_text)
+                self.assertTrue('Open elections' in output_text)
 
     def test_vote_range_revote(self):
         """ Test the vote_range function - the re-voting part. """
@@ -299,7 +313,7 @@ class FlaskRangeElectionstests(ModelFlasktests):
                     'fedora_elections.OIDC.user_getfield',
                     MagicMock(return_value=['voters'])):
                 retrieve_csrf = self.app.post('/vote/test_election3')
-                csrf_token = retrieve_csrf.data.split(
+                csrf_token = retrieve_csrf.get_data(as_text=True).split(
                     'name="csrf_token" type="hidden" value="')[1].split('">')[0]
                 data = {
                     '4': 1,
@@ -338,10 +352,11 @@ class FlaskRangeElectionstests(ModelFlasktests):
                 output = self.app.post('/vote/test_election3', data=newdata, follow_redirects=True)
             #Next, we need to check if the vote has been recorded
                 self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
                 self.assertTrue(
                     'Your vote has been recorded.  Thank you!'
-                    in output.data)
-                self.assertTrue('Open elections' in output.data)
+                    in output_text)
+                self.assertTrue('Open elections' in output_text)
                 vote = fedora_elections.models.Vote
                 votes = vote.of_user_on_election(self.session, "nerdsville", '3')
                 self.assertEqual(votes[0].value, 2)
