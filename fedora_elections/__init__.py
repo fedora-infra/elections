@@ -48,7 +48,6 @@ from fedora.client.fas2 import AccountSystem  # noqa
 from flask_oidc import OpenIDConnect  # noqa
 
 import fedora_elections.fedmsgshim  # noqa
-import fedora_elections.mail_logging  # noqa
 import fedora_elections.proxy  # noqa
 
 APP = flask.Flask(__name__)
@@ -59,18 +58,8 @@ if 'FEDORA_ELECTIONS_CONFIG' in os.environ:  # pragma: no cover
 # set up FAS
 OIDC = OpenIDConnect(APP, credentials_store=flask.session)
 
-# Set up the logging
-if not APP.debug:
-    APP.logger.addHandler(fedora_elections.mail_logging.get_mail_handler(
-        smtp_server=APP.config.get('SMTP_SERVER', '127.0.0.1'),
-        mail_admin=APP.config.get('MAIL_ADMIN', 'admin@fedoraproject.org')
-    ))
-
-# Log to stderr as well
-STDERR_LOG = logging.StreamHandler(sys.stderr)
-STDERR_LOG.setLevel(logging.INFO)
-APP.logger.addHandler(STDERR_LOG)
-
+logging.basicConfig()
+logging.config.dictConfig(APP.config.get("LOGGING") or {"version": 1})
 LOG = APP.logger
 
 APP.wsgi_app = fedora_elections.proxy.ReverseProxied(APP.wsgi_app)
