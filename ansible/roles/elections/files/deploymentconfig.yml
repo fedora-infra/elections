@@ -1,0 +1,94 @@
+---
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: elections
+    service: elections
+  name: elections
+spec:
+  replicas: 1
+  selector:
+    app: elections
+    deploymentconfig: elections
+  strategy:
+    type: Recreate
+    recreateParams:
+      mid:
+        failurePolicy: Abort
+        execNewPod:
+          containerName: elections
+          command: ["/opt/app-root/src/alembic_upgrade.sh"]
+          env:
+          - name: PYTHONPATH
+            value: /opt/app-root/src
+          volumes:
+            - config-volume
+            - elections-secret-volume
+  template:
+    metadata:
+      labels:
+        app: elections
+        deploymentconfig: elections
+    spec:
+      containers:
+      - name: elections
+        image: elections:latest
+        ports:
+        - containerPort: 8080
+        resources: {}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /opt/app-root/config/
+          readOnly: true
+        - name: elections-secret-volume
+          mountPath: /opt/app-root/secret/
+          readOnly: true
+        - name: fedora-messaging-ca-volume
+          mountPath: /etc/pki/rabbitmq/ca
+          readOnly: true
+        - name: fedora-messaging-key-volume
+          mountPath: /etc/pki/rabbitmq/key
+          readOnly: true
+        - name: fedora-messaging-cert-volume
+          mountPath: /etc/pki/rabbitmq/cert
+          readOnly: true
+        readinessProbe:
+          timeoutSeconds: 1
+          initialDelaySeconds: 5
+          httpGet:
+            path: /
+            port: 8080
+        livenessProbe:
+          timeoutSeconds: 1
+          initialDelaySeconds: 30
+          httpGet:
+            path: /
+            port: 8080
+      volumes:
+      - name: config-volume
+        configMap:
+          name: elections-configmap
+      - name: elections-secret-volume
+        secret:
+          secretName: elections-secret
+      - name: fedora-messaging-ca-volume
+        secret:
+          secretName: elections-fedora-messaging-ca
+      - name: fedora-messaging-key-volume
+        secret:
+         secretName: elections-fedora-messaging-key
+      - name: fedora-messaging-cert-volume
+        secret:
+          secretName: elections-fedora-messaging-crt
+
+  triggers:
+  - type: ConfigChange
+  - type: ImageChange
+    imageChangeParams:
+      automatic: true
+      containerNames:
+      - elections
+      from:
+        kind: ImageStreamTag
+        name: elections:latest
