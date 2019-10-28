@@ -135,7 +135,7 @@ def get_range_voting_form(candidates, max_range):
     for candidate in candidates:
         title = candidate.fas_name or candidate.name
         if candidate.url:
-            title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
+            title = '%s <a href="%s" target="_blank">[Info]</a>' % (title, candidate.url)
         field = wtforms.SelectField(
             title,
             choices=[(str(item), item) for item in range(max_range + 1)]
@@ -160,7 +160,7 @@ def get_simple_voting_form(candidates, fasusers):
             except (KeyError, AuthError) as err:
                 APP.logger.debug(err)
         if candidate.url:
-            title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
+            title = '%s <a href="%s" target="_blank">[Info]</a>' % (title, candidate.url)
         titles.append((str(candidate.id), title))
     field = wtforms.RadioField(
         'Candidates',
@@ -192,7 +192,7 @@ def get_select_voting_form(candidates, max_selection):
     for candidate in candidates:
         title = candidate.fas_name or candidate.name
         if candidate.url:
-            title = '%s <a href="%s">[Info]</a>' % (title, candidate.url)
+            title = '%s <a href="%s" target="_blank">[Info]</a>' % (title, candidate.url)
         field = wtforms.BooleanField(
             title,
         )
