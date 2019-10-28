@@ -13,11 +13,11 @@ spec:
     type: Git
     git:
       uri: https://pagure.io/elections.git
-{% if env == 'staging' %}
-      ref: "staging"
-{% else %}
+      #{% if env == 'staging' %}
+      #ref: "staging"
+      #{% else %}
       ref: "production"
-{% endif %}
+      #{% endif %}
   strategy:
     type: Source
     sourceStrategy:
