@@ -13,7 +13,7 @@
 
     <p class="text-xs-center">{{election.description}}</p>
 
-    <p class="text-xs-center"><a href="{{election.url}}">[More Information]</a></p>
+    <p class="text-xs-center"><a href="{{election.url}}" target="_blank">[More Information]</a></p>
 
     <p>Here are the candidates for the {{ election.seats_elected }} seat(s) open:</p>
     <form action="{{ url_for('vote', election_alias=election.alias) }}" method="post">
