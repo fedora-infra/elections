@@ -68,7 +68,7 @@
   <h4><strong>Candidates</strong></h4>
   <div class="list-group">
     {% for candidate in election.candidates %}
-      <a {% if candidate.url %}href="{{ candidate.url }}" target="_blank"{%endif%} class="list-group-item">
+      <a {% if candidate.url %}href="{{ candidate.url }}" target="_blank" rel="noopener noreferrer"{%endif%} class="list-group-item">
           {% if election.candidates_are_fasusers %}
             {{ usernamemap['%s' % candidate.id] }}
           {% else %}
