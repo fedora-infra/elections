@@ -1,7 +1,7 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.7
+Version:        2.9
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
@@ -112,6 +112,11 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Mon Nov 18 2019 Ben Cotton <bcotton@fedoraproject.org> 2.9-1
+- Update to 2.9 (2.8 existed, in a sense)
+- Open "more info" links in a new window
+- Make it more clear that names are clickable links
+
 * Tue Oct 17 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.7-1
 - Update to 2.7
 - Fix spelling error (VoidWhisperer)

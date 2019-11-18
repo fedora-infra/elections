@@ -25,7 +25,7 @@
 #
 from __future__ import unicode_literals, absolute_import
 
-__version__ = '2.7'
+__version__ = '2.9'
 
 import logging  # noqa
 import os  # noqa
