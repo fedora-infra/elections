@@ -69,11 +69,7 @@
   <div class="list-group">
     {% for candidate in election.candidates %}
       <a {% if candidate.url %}href="{{ candidate.url }}" target="_blank" rel="noopener noreferrer"{%endif%} class="list-group-item">
-          {% if election.candidates_are_fasusers %}
-            {{ usernamemap['%s' % candidate.id] }}
-          {% else %}
-            {{ candidate.name }}
-          {% endif %}
+          {{ candidate.fas_name or candidate.name }}
           {% if candidate.url %}(click for more info){% endif %}
       </a>
     {% endfor %}
@@ -150,11 +146,7 @@
             {% if candidate.url %}
               <a href="{{ candidate.url }}">
             {% endif %}
-            {% if election.candidates_are_fasusers %}
-              {{ usernamemap['%s' % candidate.id] }}
-            {% else %}
-              {{candidate.name}}
-            {% endif %}
+            {{ candidate.fas_name or candidate.name }}
             {% if candidate.url %}
               </a>
             {% endif %}

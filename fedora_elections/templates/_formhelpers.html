@@ -11,10 +11,9 @@
 </div>
 {% endmacro %}
 
-{% macro render_field_in_row(field, usernamemap=None, after="") %}
+{% macro render_field_in_row(field, after="") %}
 <tr>
-    <td>{% if usernamemap %} {{ usernamemap[field.name] }} {%
-        else %} {{ field.label }} {% endif %}</td>
+    <td>{{ field.label }}</td>
     <td>{{ field(class_="c-select", **kwargs)|safe }}</td>
 {% if after %} <td>{{ after }}</td>{% endif %}
 {% if field.errors %}{% for error in field.errors
@@ -24,8 +23,7 @@
 
 {% macro render_bootstrap_textfield_in_row(field, after="", addon=None) %}
 <div class="form-group {% if field.errors %}has-danger{% endif %}">
-  {% if usernamemap %} {{ usernamemap[field.name] }} {%
-      else %} {{ field.label() }} {% endif %}
+      {{ field.label() }}
       {% if addon %}
       <div class="input-group">
       {% endif %}
@@ -45,8 +43,7 @@
 
 {% macro render_bootstrap_selectfield_in_row(field, after="") %}
 <div class="form-group {% if field.errors %}has-danger{% endif %}">
-  {% if usernamemap %} {{ usernamemap[field.name] }} {%
-      else %} {{ field.label() }} {% endif %}
+    {{ field.label() }}
     {{ field(class_="c-select fullwidth", **kwargs)|safe }}
     {% if after %} <div><small class="text-muted">{{ after }}</small></div>{% endif %}
     {% if field.errors %}
@@ -59,8 +56,7 @@
 
 {% macro render_bootstrap_checkbox_in_row(field, after="") %}
 <div class="form-group {% if field.errors %}has-danger{% endif %}">
-  {% if usernamemap %} {{ usernamemap[field.name] }} {%
-      else %} {{ field.label() }} {% endif %}
+     {{ field.label() }}
       <br/>
     {{ field(**kwargs)|safe }}
     {% if after %} <div><small class="text-muted">{{ after }}</small></div>{% endif %}
@@ -72,11 +68,9 @@
 </div>
 {% endmacro %}
 
-{% macro render_field_data_in_row(field, usernamemap=None, after="") %}
+{% macro render_field_data_in_row(field, after="") %}
 <div class="list-group-item {% if field.errors %}has-danger list-group-item-danger{% endif %}">
-    {% if usernamemap %} {{ usernamemap[field.name] }} {%
-        else %} {{ field.label }} {% endif %}
-          {{ field(class_="c-select pull-xs-right")}}
+      {{ field.label }} {{ field(class_="c-select pull-xs-right")}}
       {% if after %} <div><small class="text-muted">{{ after }}</small></div>{% endif %}
       {% if field.errors %}
         {% for error in field.errors%}
@@ -86,7 +80,7 @@
 </div>
 {% endmacro %}
 
-{% macro render_radio_field_in_row(field, usernamemap=None, after="") %}
+{% macro render_radio_field_in_row(field, after="") %}
 <div class="list-group-item {% if field.errors %}has-danger list-group-item-danger{% endif %}">
           {{ field(class_="pull-xs-right")}}
       {% if after %} <div><small class="text-muted">{{ after }}</small></div>{% endif %}

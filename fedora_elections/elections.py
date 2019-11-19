@@ -38,7 +38,6 @@ from fedora_elections import (
 )
 from fedora_elections import forms
 from fedora_elections import models
-from fedora_elections.utils import build_name_map
 
 import flask
 
@@ -145,14 +144,11 @@ def election_results_text(election_alias):
         flask.flash("The text results are only available to the admins", "error")
         return safe_redirect_back()
 
-    usernamemap = build_name_map(election)
-
     stats = models.Vote.get_election_stats(SESSION, election.id)
 
     return flask.render_template(
         "results_text.html",
         election=election,
-        usernamemap=usernamemap,
         stats=stats,
         candidates=sorted(
             election.candidates, key=lambda x: x.vote_count, reverse=True
@@ -191,15 +187,12 @@ def vote_range(election, revote):
             flask.flash("Please confirm your vote!")
             next_action = "vote"
 
-    usernamemap = build_name_map(election)
-
     return flask.render_template(
         "vote_range.html",
         election=election,
         form=form,
         num_candidates=num_candidates,
         max_range=max_selection,
-        usernamemap=usernamemap,
         nextaction=next_action,
     )
 
@@ -248,15 +241,12 @@ def vote_select(election, revote):
                 flask.flash("Please confirm your vote!")
                 next_action = "vote"
 
-    usernamemap = build_name_map(election)
-
     return flask.render_template(
         "vote_simple.html",
         election=election,
         form=form,
         num_candidates=num_candidates,
         max_selection=max_selection,
-        usernamemap=usernamemap,
         nextaction=next_action,
     )
 

@@ -52,9 +52,7 @@ The results for the elections are as follows:
   {%- if lastrow[-1] == 1 %}
 - --------+----------------------
   {%- endif %}
-{{ candidate.vote_count | rjust(8) }}  | {% if election.candidates_are_fasusers -%}
-      {{ usernamemap[candidate.id] }} {%- else -%} {{candidate.name}}
-    {%- endif %}
+{{ candidate.vote_count | rjust(8) }}  | {{ candidate.fas_name or candidate.name }}
 {%- endfor %}
 
 

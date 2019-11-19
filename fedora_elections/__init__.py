@@ -83,9 +83,6 @@ SESSION = models.create_session(APP.config["DB_URL"])
 from fedora_elections import forms  # noqa
 
 
-from fedora_elections.utils import build_name_map  # noqa
-
-
 def is_authenticated():
     """Return a boolean specifying if the user is authenticated or not."""
     return hasattr(flask.g, "fas_user") and flask.g.fas_user is not None
@@ -274,8 +271,6 @@ def about_election(election_alias):
             evolution_data.append([cnt, stats["vote_timestamps"].count(day)])
             cnt += 1
 
-    usernamemap = build_name_map(election)
-
     voted = []
     if is_authenticated():
         votes = models.Vote.of_user_on_election(
@@ -287,7 +282,6 @@ def about_election(election_alias):
     return flask.render_template(
         "about.html",
         election=election,
-        usernamemap=usernamemap,
         stats=stats,
         voted=voted,
         evolution_label=evolution_label,
