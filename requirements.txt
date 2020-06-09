@@ -7,7 +7,7 @@ fedora-messaging
 kitchen
 python-fedora
 SQLAlchemy
-wtforms
+wtforms==2.2.1
 arrow
 blinker # required by Flask for the unit-tests (for signaling)
 six
