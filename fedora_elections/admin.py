@@ -36,8 +36,9 @@ from fedora_elections import fedmsgshim
 from fedora_elections import forms
 from fedora_elections import models
 from fedora_elections import (
-    APP, SESSION, FAS2, is_authenticated, is_admin
+    APP, SESSION, ACCOUNTS, is_authenticated, is_admin
 )
+from fasjson_client.errors import APIError
 
 
 def election_admin_required(f):
@@ -230,9 +231,14 @@ def admin_add_candidate(election_alias):
         fas_name = None
         if election.candidates_are_fasusers:  # pragma: no cover
             try:
-                fas_name = FAS2.person_by_username(
-                    form.name.data)['human_name']
-            except (KeyError, AuthError):
+                if APP.config.get('FASJSON'):
+                    user = ACCOUNTS.get_user(
+                        username=form.name.data).result
+                    fas_name = f'{user['givenname']} {user['surname']}'
+                else:
+                    fas_name = ACCOUNTS.person_by_username(
+                        form.name.data)['human_name']
+            except (KeyError, AuthError, APIError):
                 flask.flash(
                     'User `%s` does not have a FAS account.'
                     % form.name.data, 'error')
@@ -286,9 +292,14 @@ def admin_add_multi_candidate(election_alias):
             fas_name = None
             if election.candidates_are_fasusers:  # pragma: no cover
                 try:
-                    fas_name = FAS2.person_by_username(
-                        candidate[0])['human_name']
-                except (KeyError, AuthError):
+                    if APP.config.get('FASJSON'):
+                        user = ACCOUNTS.get_user(
+                            username=candidate[0]).result
+                        fas_name = f'{user['givenname']} {user['surname']}'
+                    else:
+                        fas_name = ACCOUNTS.person_by_username(
+                            candidate[0])['human_name']
+                except (KeyError, AuthError, APIError):
                     SESSION.rollback()
                     flask.flash(
                         'User `%s` does not have a FAS account.'
@@ -356,9 +367,14 @@ def admin_edit_candidate(election_alias, candidate_id):
 
         if election.candidates_are_fasusers:  # pragma: no cover
             try:
-                candidate.fas_name = FAS2.person_by_username(
-                    candidate.name)['human_name']
-            except (KeyError, AuthError):
+                if APP.config.get('FASJSON'):
+                    user = ACCOUNTS.get_user(
+                        username=candidate.name).result
+                    candidate.fas_name = f'{user['givenname']} {user['surname']}'
+                else:
+                    candidate.fas_name = ACCOUNTS.person_by_username(
+                        candidate.name)['human_name']
+            except (KeyError, AuthError, APIError):
                 SESSION.rollback()
                 flask.flash(
                     'User `%s` does not have a FAS account.'
