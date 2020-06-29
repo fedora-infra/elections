@@ -218,6 +218,7 @@ class Candidatetests(Modeltests):
             {
                 'name': 'Ralph',
                 'url': 'https://fedoraproject.org/wiki/User:Ralph',
+                'fas_name': None,
             }
         )
 
@@ -227,6 +228,7 @@ class Candidatetests(Modeltests):
             {
                 'name': 'Kevin',
                 'url': 'https://fedoraproject.org/wiki/User:Kevin',
+                'fas_name': None,
             }
         )
 

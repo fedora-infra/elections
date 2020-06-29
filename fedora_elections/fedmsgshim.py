@@ -15,13 +15,9 @@ from fedora_messaging.exceptions import PublishReturned, ConnectionException
 _log = logging.getLogger(__name__)
 
 
-def publish(topic, msg):  # pragma: no cover
-    _log.debug('Publishing a message for %r: %s', topic, msg)
+def publish(message):  # pragma: no cover
+    _log.debug('Publishing a message for %r: %s', message.topic, message.body)
     try:
-        message = fedora_messaging.api.Message(
-            topic='fedora_elections.%s' % topic,
-            body=msg
-        )
         fedora_messaging.api.publish(message)
         _log.debug("Sent to fedora_messaging")
     except PublishReturned as e:

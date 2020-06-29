@@ -33,6 +33,10 @@ from datetime import timedelta
 
 import flask
 from mock import patch, MagicMock
+from fedora_messaging.testing import mock_sends
+from fedora_elections_messages import (
+    NewElectionV1, EditElectionV1, NewCandidateV1, EditCandidateV1, DeleteCandidateV1,
+)
 
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
@@ -318,8 +322,9 @@ class FlaskAdmintests(ModelFlasktests):
                     'csrf_token': csrf_token,
                 }
 
-                output = self.app.post(
-                    '/admin/new', data=data, follow_redirects=True)
+                with mock_sends(NewElectionV1):
+                    output = self.app.post(
+                        '/admin/new', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertTrue(
@@ -357,8 +362,9 @@ class FlaskAdmintests(ModelFlasktests):
                     'csrf_token': csrf_token,
                 }
 
-                output = self.app.post(
-                    '/admin/new', data=data, follow_redirects=True)
+                with mock_sends(NewElectionV1):
+                    output = self.app.post(
+                        '/admin/new', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertTrue(
@@ -502,8 +508,9 @@ class FlaskAdmintests(ModelFlasktests):
                     'csrf_token': csrf_token,
                 }
 
-                output = self.app.post(
-                    '/admin/test_election/', data=data, follow_redirects=True)
+                with mock_sends(EditElectionV1):
+                    output = self.app.post(
+                        '/admin/test_election/', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertTrue(
@@ -580,8 +587,9 @@ class FlaskAdmintests(ModelFlasktests):
                     'csrf_token': csrf_token,
                 }
 
-                output = self.app.post(
-                    '/admin/test_election2/', data=data, follow_redirects=True)
+                with mock_sends(EditElectionV1):
+                    output = self.app.post(
+                        '/admin/test_election2/', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertTrue(
@@ -619,8 +627,9 @@ class FlaskAdmintests(ModelFlasktests):
                     'csrf_token': csrf_token,
                 }
 
-                output = self.app.post(
-                    '/admin/test_election2/', data=data, follow_redirects=True)
+                with mock_sends(EditElectionV1):
+                    output = self.app.post(
+                        '/admin/test_election2/', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertTrue(
@@ -705,8 +714,9 @@ class FlaskAdmintests(ModelFlasktests):
                     'csrf_token': csrf_token,
                 }
 
-                output = self.app.post(
-                    '/admin/test_election3/', data=data, follow_redirects=True)
+                with mock_sends(EditElectionV1):
+                    output = self.app.post(
+                        '/admin/test_election3/', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertTrue(
@@ -734,8 +744,9 @@ class FlaskAdmintests(ModelFlasktests):
                     'csrf_token': csrf_token,
                 }
 
-                output = self.app.post(
-                    '/admin/test_election3/', data=data, follow_redirects=True)
+                with mock_sends(EditElectionV1):
+                    output = self.app.post(
+                        '/admin/test_election3/', data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertTrue(
@@ -829,9 +840,10 @@ class FlaskAdmintests(ModelFlasktests):
                     'csrf_token': csrf_token,
                 }
 
-                output = self.app.post(
-                    '/admin/test_election/candidates/new', data=data,
-                    follow_redirects=True)
+                with mock_sends(NewCandidateV1):
+                    output = self.app.post(
+                        '/admin/test_election/candidates/new', data=data,
+                        follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertTrue(
@@ -919,9 +931,10 @@ class FlaskAdmintests(ModelFlasktests):
                     'csrf_token': csrf_token,
                 }
 
-                output = self.app.post(
-                    '/admin/test_election/candidates/new/multi', data=data,
-                    follow_redirects=True)
+                with mock_sends(NewCandidateV1, NewCandidateV1, NewCandidateV1):
+                    output = self.app.post(
+                        '/admin/test_election/candidates/new/multi', data=data,
+                        follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertTrue(
@@ -1029,9 +1042,10 @@ class FlaskAdmintests(ModelFlasktests):
                     'csrf_token': csrf_token,
                 }
 
-                output = self.app.post(
-                    '/admin/test_election/candidates/1/edit', data=data,
-                    follow_redirects=True)
+                with mock_sends(EditCandidateV1):
+                    output = self.app.post(
+                        '/admin/test_election/candidates/1/edit', data=data,
+                        follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertTrue(
@@ -1121,9 +1135,10 @@ class FlaskAdmintests(ModelFlasktests):
                     'csrf_token': csrf_token,
                 }
 
-                output = self.app.post(
-                    '/admin/test_election4/candidates/10/delete', data=data,
-                    follow_redirects=True)
+                with mock_sends(DeleteCandidateV1):
+                    output = self.app.post(
+                        '/admin/test_election4/candidates/10/delete', data=data,
+                        follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertTrue(

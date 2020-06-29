@@ -31,6 +31,13 @@ from functools import wraps
 import flask
 from sqlalchemy.exc import SQLAlchemyError
 from fedora.client import AuthError
+from fedora_elections_messages import (
+    NewElectionV1,
+    EditElectionV1,
+    NewCandidateV1,
+    EditCandidateV1,
+    DeleteCandidateV1,
+)
 
 from fedora_elections import fedmsgshim
 from fedora_elections import forms
@@ -109,13 +116,11 @@ def admin_new_election():
 
         SESSION.commit()
 
-        fedmsgshim.publish(
-            topic="election.new",
-            msg=dict(
+        fedmsgshim.publish(NewElectionV1(body=dict(
                 agent=flask.g.fas_user.username,
                 election=election.to_json(),
-                )
-        )
+            )
+        ))
 
         flask.flash('Election "%s" added' % election.alias)
         return flask.redirect(flask.url_for(
@@ -197,13 +202,11 @@ def admin_view_election(election_alias):
             SESSION.delete(admingrp)
 
         SESSION.commit()
-        fedmsgshim.publish(
-            topic="election.edit",
-            msg=dict(
+        fedmsgshim.publish(EditElectionV1(body=dict(
                 agent=flask.g.fas_user.username,
                 election=election.to_json(),
             )
-        )
+        ))
         flask.flash('Election "%s" saved' % election.alias)
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
@@ -257,14 +260,12 @@ def admin_add_candidate(election_alias):
         SESSION.add(candidate)
         SESSION.commit()
         flask.flash('Candidate "%s" saved' % candidate.name)
-        fedmsgshim.publish(
-            topic="candidate.new",
-            msg=dict(
+        fedmsgshim.publish(NewCandidateV1(body=dict(
                 agent=flask.g.fas_user.username,
                 election=candidate.election.to_json(),
                 candidate=candidate.to_json(),
             )
-        )
+        ))
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
@@ -328,14 +329,13 @@ def admin_add_multi_candidate(election_alias):
                 candidates_name.append(cand.name)
             else:
                 flask.flash("There was an issue!")
-            fedmsgshim.publish(
-                topic="candidate.new",
-                msg=dict(
+                continue
+            fedmsgshim.publish(NewCandidateV1(body=dict(
                     agent=flask.g.fas_user.username,
                     election=cand.election.to_json(),
                     candidate=cand.to_json(),
                 )
-            )
+            ))
 
         SESSION.commit()
         flask.flash('Added %s candidates' % len(candidates_name))
@@ -386,14 +386,12 @@ def admin_edit_candidate(election_alias, candidate_id):
 
         SESSION.commit()
         flask.flash('Candidate "%s" saved' % candidate.name)
-        fedmsgshim.publish(
-            topic="candidate.edit",
-            msg=dict(
+        fedmsgshim.publish(EditCandidateV1(body=dict(
                 agent=flask.g.fas_user.username,
                 election=candidate.election.to_json(),
                 candidate=candidate.to_json(),
             )
-        )
+        ))
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
@@ -423,14 +421,12 @@ def admin_delete_candidate(election_alias, candidate_id):
             SESSION.delete(candidate)
             SESSION.commit()
             flask.flash('Candidate "%s" deleted' % candidate_name)
-            fedmsgshim.publish(
-                topic="candidate.delete",
-                msg=dict(
+            fedmsgshim.publish(DeleteCandidateV1(body=dict(
                     agent=flask.g.fas_user.username,
                     election=candidate.election.to_json(),
                     candidate=candidate.to_json(),
                 )
-            )
+            ))
         except SQLAlchemyError as err:
             SESSION.rollback()
             APP.logger.debug('Could not delete candidate')

@@ -267,6 +267,7 @@ class Candidate(BASE):
         ''' Return a json representation of this object. '''
         return dict(
             name=self.name,
+            fas_name=self.fas_name,
             url=self.url,
         )
 
