@@ -35,6 +35,7 @@
                      <ul class="nav navbar-nav nav-underline pull-xs-right">
 
                        {% if g.fas_user %}
+                       |{{g.fas_user.username}}|{{g.fas_user.email}}|{{g.fas_user.timezone}}|{{g.fas_user.cla_done}}|
                         <li class="nav-item dropdown p-l-1">
                           <a class="nav-link dropdown-toggle" data-toggle="dropdown"
                              href="#" role="button" aria-haspopup="true" aria-expanded="false">
