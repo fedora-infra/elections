@@ -159,7 +159,7 @@ def get_simple_voting_form(candidates, fasusers):
                 if APP.config.get('FASJSON'):
                     user = ACCOUNTS.get_user(
                         username=candidate.name).result
-                    title = f'{user['givenname']} {user['surname']}'
+                    title = f"{user['givenname']} {user['surname']}"
                 else:
                     title = ACCOUNTS.person_by_username(
                         candidate.name)['human_name']

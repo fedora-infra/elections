@@ -234,7 +234,7 @@ def admin_add_candidate(election_alias):
                 if APP.config.get('FASJSON'):
                     user = ACCOUNTS.get_user(
                         username=form.name.data).result
-                    fas_name = f'{user['givenname']} {user['surname']}'
+                    fas_name = f"{user['givenname']} {user['surname']}"
                 else:
                     fas_name = ACCOUNTS.person_by_username(
                         form.name.data)['human_name']
@@ -295,7 +295,7 @@ def admin_add_multi_candidate(election_alias):
                     if APP.config.get('FASJSON'):
                         user = ACCOUNTS.get_user(
                             username=candidate[0]).result
-                        fas_name = f'{user['givenname']} {user['surname']}'
+                        fas_name = f"{user['givenname']} {user['surname']}"
                     else:
                         fas_name = ACCOUNTS.person_by_username(
                             candidate[0])['human_name']
@@ -370,7 +370,7 @@ def admin_edit_candidate(election_alias, candidate_id):
                 if APP.config.get('FASJSON'):
                     user = ACCOUNTS.get_user(
                         username=candidate.name).result
-                    candidate.fas_name = f'{user['givenname']} {user['surname']}'
+                    candidate.fas_name = f"{user['givenname']} {user['surname']}"
                 else:
                     candidate.fas_name = ACCOUNTS.person_by_username(
                         candidate.name)['human_name']
