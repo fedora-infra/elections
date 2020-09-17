@@ -212,7 +212,9 @@ def set_session():  # pragma: no-cover
         if not hasattr(flask.session, 'fas_user') \
                 or not flask.session.fas_user:
             flask.session.fas_user = munch.Munch({
-                'username': OIDC.user_getfield('nickname'),
+                'username': OIDC.user_getfield(
+                    'username' if APP.config.get('FASJSON') else 'nickname'
+                ),
                 'email': OIDC.user_getfield('email') or '',
                 'timezone': OIDC.user_getfield('zoneinfo'),
                 'cla_done':
