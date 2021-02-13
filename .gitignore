@@ -4,7 +4,9 @@
 *.egg-info
 build/
 dist/
-*coverage*
+.coverage
+coverage.xml
+client_secrets.json
 alembic.ini
 .vagrant/
 .tox/
