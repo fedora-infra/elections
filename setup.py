@@ -28,7 +28,7 @@ setup(
     install_requires=[
         'Flask', 'SQLAlchemy>=0.7', 'python-fedora', 'kitchen',
         'python-openid', 'python-openid-teams', 'python-openid-cla',
-        'Flask-wtf', 'wtforms',
+        'Flask-wtf', 'wtforms', 'fedora-elections-messages',
     ],
     test_suite="tests",
 )

@@ -43,6 +43,7 @@ import flask  # noqa
 import munch  # noqa
 import six  # noqa
 
+from fasjson_client import Client
 from fedora.client import AuthError, AppError  # noqa
 from fedora.client.fas2 import AccountSystem  # noqa
 from flask_oidc import OpenIDConnect  # noqa
@@ -64,13 +65,18 @@ LOG = APP.logger
 
 APP.wsgi_app = fedora_elections.proxy.ReverseProxied(APP.wsgi_app)
 
-# FAS for usernames.
-FAS2 = AccountSystem(
-    APP.config['FAS_BASE_URL'],
-    username=APP.config['FAS_USERNAME'],
-    password=APP.config['FAS_PASSWORD'],
-    insecure=not APP.config['FAS_CHECK_CERT']
-)
+if APP.config.get('FASJSON'):
+    ACCOUNTS = Client(
+        url=APP.config['FAS_BASE_URL']
+    )
+else:
+    # FAS for usernames.
+    ACCOUNTS = AccountSystem(
+        APP.config['FAS_BASE_URL'],
+        username=APP.config['FAS_USERNAME'],
+        password=APP.config['FAS_PASSWORD'],
+        insecure=not APP.config['FAS_CHECK_CERT']
+    )
 
 
 # modular imports
@@ -210,8 +216,8 @@ def set_session():  # pragma: no-cover
                 'email': OIDC.user_getfield('email') or '',
                 'timezone': OIDC.user_getfield('zoneinfo'),
                 'cla_done':
-                    'http://admin.fedoraproject.org/accounts/cla/done'
-                    in (OIDC.user_getfield('cla') or []),
+                    'FPCA'
+                    in (OIDC.user_getfield('agreements') or []),
             })
         flask.g.fas_user = flask.session.fas_user
     else:

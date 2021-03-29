@@ -31,13 +31,21 @@ from functools import wraps
 import flask
 from sqlalchemy.exc import SQLAlchemyError
 from fedora.client import AuthError
+from fedora_elections_messages import (
+    NewElectionV1,
+    EditElectionV1,
+    NewCandidateV1,
+    EditCandidateV1,
+    DeleteCandidateV1,
+)
 
 from fedora_elections import fedmsgshim
 from fedora_elections import forms
 from fedora_elections import models
 from fedora_elections import (
-    APP, SESSION, FAS2, is_authenticated, is_admin
+    APP, SESSION, ACCOUNTS, is_authenticated, is_admin
 )
+from fasjson_client.errors import APIError
 
 
 def election_admin_required(f):
@@ -108,13 +116,11 @@ def admin_new_election():
 
         SESSION.commit()
 
-        fedmsgshim.publish(
-            topic="election.new",
-            msg=dict(
+        fedmsgshim.publish(NewElectionV1(body=dict(
                 agent=flask.g.fas_user.username,
                 election=election.to_json(),
-                )
-        )
+            )
+        ))
 
         flask.flash('Election "%s" added' % election.alias)
         return flask.redirect(flask.url_for(
@@ -196,13 +202,11 @@ def admin_view_election(election_alias):
             SESSION.delete(admingrp)
 
         SESSION.commit()
-        fedmsgshim.publish(
-            topic="election.edit",
-            msg=dict(
+        fedmsgshim.publish(EditElectionV1(body=dict(
                 agent=flask.g.fas_user.username,
                 election=election.to_json(),
             )
-        )
+        ))
         flask.flash('Election "%s" saved' % election.alias)
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
@@ -230,9 +234,14 @@ def admin_add_candidate(election_alias):
         fas_name = None
         if election.candidates_are_fasusers:  # pragma: no cover
             try:
-                fas_name = FAS2.person_by_username(
-                    form.name.data)['human_name']
-            except (KeyError, AuthError):
+                if APP.config.get('FASJSON'):
+                    user = ACCOUNTS.get_user(
+                        username=form.name.data).result
+                    fas_name = f"{user['givenname']} {user['surname']}"
+                else:
+                    fas_name = ACCOUNTS.person_by_username(
+                        form.name.data)['human_name']
+            except (KeyError, AuthError, APIError):
                 flask.flash(
                     'User `%s` does not have a FAS account.'
                     % form.name.data, 'error')
@@ -251,14 +260,12 @@ def admin_add_candidate(election_alias):
         SESSION.add(candidate)
         SESSION.commit()
         flask.flash('Candidate "%s" saved' % candidate.name)
-        fedmsgshim.publish(
-            topic="candidate.new",
-            msg=dict(
+        fedmsgshim.publish(NewCandidateV1(body=dict(
                 agent=flask.g.fas_user.username,
                 election=candidate.election.to_json(),
                 candidate=candidate.to_json(),
             )
-        )
+        ))
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
@@ -286,9 +293,14 @@ def admin_add_multi_candidate(election_alias):
             fas_name = None
             if election.candidates_are_fasusers:  # pragma: no cover
                 try:
-                    fas_name = FAS2.person_by_username(
-                        candidate[0])['human_name']
-                except (KeyError, AuthError):
+                    if APP.config.get('FASJSON'):
+                        user = ACCOUNTS.get_user(
+                            username=candidate[0]).result
+                        fas_name = f"{user['givenname']} {user['surname']}"
+                    else:
+                        fas_name = ACCOUNTS.person_by_username(
+                            candidate[0])['human_name']
+                except (KeyError, AuthError, APIError):
                     SESSION.rollback()
                     flask.flash(
                         'User `%s` does not have a FAS account.'
@@ -317,14 +329,13 @@ def admin_add_multi_candidate(election_alias):
                 candidates_name.append(cand.name)
             else:
                 flask.flash("There was an issue!")
-            fedmsgshim.publish(
-                topic="candidate.new",
-                msg=dict(
+                continue
+            fedmsgshim.publish(NewCandidateV1(body=dict(
                     agent=flask.g.fas_user.username,
                     election=cand.election.to_json(),
                     candidate=cand.to_json(),
                 )
-            )
+            ))
 
         SESSION.commit()
         flask.flash('Added %s candidates' % len(candidates_name))
@@ -356,9 +367,14 @@ def admin_edit_candidate(election_alias, candidate_id):
 
         if election.candidates_are_fasusers:  # pragma: no cover
             try:
-                candidate.fas_name = FAS2.person_by_username(
-                    candidate.name)['human_name']
-            except (KeyError, AuthError):
+                if APP.config.get('FASJSON'):
+                    user = ACCOUNTS.get_user(
+                        username=candidate.name).result
+                    candidate.fas_name = f"{user['givenname']} {user['surname']}"
+                else:
+                    candidate.fas_name = ACCOUNTS.person_by_username(
+                        candidate.name)['human_name']
+            except (KeyError, AuthError, APIError):
                 SESSION.rollback()
                 flask.flash(
                     'User `%s` does not have a FAS account.'
@@ -370,14 +386,12 @@ def admin_edit_candidate(election_alias, candidate_id):
 
         SESSION.commit()
         flask.flash('Candidate "%s" saved' % candidate.name)
-        fedmsgshim.publish(
-            topic="candidate.edit",
-            msg=dict(
+        fedmsgshim.publish(EditCandidateV1(body=dict(
                 agent=flask.g.fas_user.username,
                 election=candidate.election.to_json(),
                 candidate=candidate.to_json(),
             )
-        )
+        ))
         return flask.redirect(flask.url_for(
             'admin_view_election', election_alias=election.alias))
 
@@ -407,14 +421,12 @@ def admin_delete_candidate(election_alias, candidate_id):
             SESSION.delete(candidate)
             SESSION.commit()
             flask.flash('Candidate "%s" deleted' % candidate_name)
-            fedmsgshim.publish(
-                topic="candidate.delete",
-                msg=dict(
+            fedmsgshim.publish(DeleteCandidateV1(body=dict(
                     agent=flask.g.fas_user.username,
                     election=candidate.election.to_json(),
                     candidate=candidate.to_json(),
                 )
-            )
+            ))
         except SQLAlchemyError as err:
             SESSION.rollback()
             APP.logger.debug('Could not delete candidate')

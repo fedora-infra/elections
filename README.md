@@ -16,6 +16,7 @@ development environment to test your changes. This is simplified by using
 [Vagrant](https://www.vagrantup.com/ "Vagrant by Hashicorp"), a powerful and
 useful tool for creating development environments on your workstation.
 
+
 ### Using Vagrant
 
 You can quickly start hacking on the Fedora Elections web application using the
@@ -45,6 +46,7 @@ vagrant ssh
 
 Once that is running, go to [localhost:5005](http://localhost:5005/) in your
 browser to see your running Fedora Elections test instance.
+
 
 ### A note about fonts
 
@@ -104,9 +106,33 @@ You can obtain the code via:
 git clone https://pagure.io/elections.git
 ```
 
+### Install pip requirements w/ tox for testing
+
+Set up venv (replacing `<base_path_for_venv>` and `<venv_name>`):
+
+```
+pip install --user virtualenv tox
+mkvirtualenv <base_path_for_venv>/<venv_name>
+. <base_path_for_venv>/<venv_name>
+```
+
+Install requirements:
+
+```
+pip install -r requirements.txt
+```
+
 ### Configure the application
 
 An example configuration file is provided [here](https://pagure.io/elections/blob/master/f/files/fedora-elections.cfg "files/fedora-elections.cfg").
+
+### Register the application using openid-connect
+
+From root of project, run:
+
+```
+oidc-register https://iddev.fedorainfracloud.org/ http://localhost:5005
+```
 
 ### Create database
 
@@ -114,20 +140,6 @@ Run:
 
 ```
 python createdb.py
-```
-
-### Register the application using openid-connect
-
-Run:
-
-```
-oidc-register https://iddev.fedorainfracloud.org/ http://localhost:5005/oidc_callback
-```
-
-Copy the corresponding ``client_secrets.json`` in the sources:
-
-```
-cp client_secrets.json fedora_elections/client_secrets.json
 ```
 
 ### Create a local configuration file
@@ -189,6 +201,18 @@ Now, restart Apache:
 
 ```
 sudo systemctl restart httpd
+```
+
+
+### Running tests
+fedora-elections uses `tox` to simplify testing, and support testing across multiple environments.
+
+Refer to earlier in this section on "How to launch Fedora Elections" in this document to get set up with `tox`
+
+To run tests, simply run:
+
+```
+tox
 ```
 
 

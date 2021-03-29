@@ -10,8 +10,9 @@ except ImportError:
 
 
 from fedora.client import AuthError
-from fedora_elections import SESSION, FAS2, APP
+from fedora_elections import SESSION, ACCOUNTS, APP
 from fedora_elections.models import Election
+from fasjson_client.errors import APIError
 
 
 class ElectionForm(FlaskForm):
@@ -155,9 +156,14 @@ def get_simple_voting_form(candidates, fasusers):
         if fasusers:  # pragma: no cover
             # We can't cover FAS integration
             try:
-                title = \
-                    FAS2.person_by_username(candidate.name)['human_name']
-            except (KeyError, AuthError) as err:
+                if APP.config.get('FASJSON'):
+                    user = ACCOUNTS.get_user(
+                        username=candidate.name).result
+                    title = f"{user['givenname']} {user['surname']}"
+                else:
+                    title = ACCOUNTS.person_by_username(
+                        candidate.name)['human_name']
+            except (KeyError, AuthError, APIError) as err:
                 APP.logger.debug(err)
         if candidate.url:
             title = '%s <a href="%s" target="_blank" rel="noopener noreferrer">[Info]</a>' % (title, candidate.url)
