@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
-
 from datetime import datetime
 
 import sqlalchemy as sa
 from sqlalchemy import create_engine
 from sqlalchemy import func as safunc
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import scoped_session
-from sqlalchemy.orm import relationship
 from sqlalchemy.orm import backref
+from sqlalchemy.orm import relationship
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
 
 BASE = declarative_base()
 

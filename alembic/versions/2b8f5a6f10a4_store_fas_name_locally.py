@@ -5,13 +5,13 @@ Revises: d07c5ef2d03
 Create Date: 2016-01-21 16:53:38.956503
 
 """
+from alembic import op
+
+import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "2b8f5a6f10a4"
 down_revision = "d07c5ef2d03"
-
-from alembic import op
-import sqlalchemy as sa
 
 
 def upgrade():

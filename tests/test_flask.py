@@ -20,23 +20,18 @@
 
  fedora_elections.model.Election test script
 """
-__requires__ = ["SQLAlchemy >= 0.7", "jinja2 >= 2.4"]
-import pkg_resources
-
-import unittest
-import sys
 import os
-
-from datetime import time
-from datetime import timedelta
+import sys
+import unittest
 
 import flask
-from mock import patch, MagicMock
+
+from mock import MagicMock, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
-import fedora_elections
-from tests import ModelFlasktests, FakeUser, user_set
+import fedora_elections  # noqa:E402
+from tests import ModelFlasktests, FakeUser, user_set  # noqa:E402
 
 
 # pylint: disable=R0904
@@ -53,6 +48,8 @@ class Flasktests(ModelFlasktests):
             self.assertTrue(fedora_elections.is_safe_url("http://localhost/test"))
             self.assertFalse(fedora_elections.is_safe_url("http://fedoraproject.org/"))
             self.assertFalse(fedora_elections.is_safe_url("https://fedoraproject.org/"))
+            self.assertFalse(fedora_elections.is_safe_url("https://google.fr"))
+            self.assertTrue(fedora_elections.is_safe_url("/admin/"))
 
     def test_index_empty(self):
         """ Test the index function. """
@@ -194,13 +191,6 @@ class Flasktests(ModelFlasktests):
 
                 # This is user is an admin for election #2
                 self.assertTrue(fedora_elections.is_election_admin(flask.g.fas_user, 2))
-
-    def test_is_safe_url(self):
-        """ Test the is_safe_url function. """
-        app = flask.Flask("fedora_elections")
-        with app.test_request_context():
-            self.assertFalse(fedora_elections.is_safe_url("https://google.fr"))
-            self.assertTrue(fedora_elections.is_safe_url("/admin/"))
 
     def test_auth_login(self):
         """ Test the auth_login function. """

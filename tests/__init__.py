@@ -20,33 +20,22 @@
 
  fedora_elections test script
 """
-from __future__ import print_function
-
-__requires__ = ["SQLAlchemy >= 0.7"]
-import pkg_resources
-
 import logging
-import unittest
-import sys
 import os
-
-from datetime import date
-from datetime import timedelta
-from functools import wraps
-
-import six
+import sys
+import unittest
 from contextlib import contextmanager
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import scoped_session
+from datetime import date
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
-import fedora_elections
-import fedora_elections.admin
-import fedora_elections.elections
-import fedora_elections.forms
-from fedora_elections import models
+import fedora_elections  # noqa: E402
+import fedora_elections.admin  # noqa:E402
+import fedora_elections.elections  # noqa:E402
+import fedora_elections.forms  # noqa:E402
+from fedora_elections import models  # noqa:E402
+
+import six  # noqa:E402
 
 
 DB_PATH = "sqlite:///:memory:"
@@ -60,7 +49,7 @@ if os.environ.get("BUILD_ID"):
         if req.status_code == 200:
             DB_PATH = req.text
             print("Using faitout at: %s" % DB_PATH)
-    except:
+    except Exception:
         pass
 
 

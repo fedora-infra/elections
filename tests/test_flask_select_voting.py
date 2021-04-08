@@ -20,24 +20,17 @@
 
  fedora_elections.elections test script
 """
-__requires__ = ["SQLAlchemy >= 0.7", "jinja2 >= 2.4"]
-import pkg_resources
 
-import logging
-import unittest
-import sys
 import os
+import sys
+import unittest
 
-from datetime import time
-from datetime import timedelta
-
-import flask
-from mock import patch, MagicMock
+from mock import MagicMock, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
-import fedora_elections
-from tests import ModelFlasktests, Modeltests, TODAY, FakeUser, user_set
+import fedora_elections  # noqa:E402
+from tests import ModelFlasktests, FakeUser, user_set  # noqa:E402
 
 
 # pylint: disable=R0904

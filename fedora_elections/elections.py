@@ -23,25 +23,24 @@
 #                   Frank Chiulli <fchiulli@fedoraproject.org>
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
-from __future__ import unicode_literals, absolute_import
 
 from datetime import datetime
 from functools import wraps
 
-import flask
-
-from fedora_elections import forms
-from fedora_elections import models
 from fedora_elections import (
-    OIDC,
     APP,
+    OIDC,
     SESSION,
-    is_authenticated,
     is_admin,
+    is_authenticated,
     is_election_admin,
     safe_redirect_back,
 )
+from fedora_elections import forms
+from fedora_elections import models
 from fedora_elections.utils import build_name_map
+
+import flask
 
 
 def login_required(f):

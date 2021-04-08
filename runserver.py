@@ -1,12 +1,9 @@
 #!/usr/bin/env python2
 
-# These two lines are needed to run on EL6
-__requires__ = ["SQLAlchemy >= 0.8", "jinja2 >= 2.4"]
-import pkg_resources
-
 import argparse
-import sys
 import os
+
+from fedora_elections import APP
 
 
 parser = argparse.ArgumentParser(description="Run the Fedora election app")
@@ -47,8 +44,6 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-
-from fedora_elections import APP
 
 if args.profile:
     from werkzeug.contrib.profiler import ProfilerMiddleware

@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
+
+from fasjson_client.errors import APIError
+
+from fedora.client import AuthError
+
+from fedora_elections import ACCOUNTS, APP, SESSION
+from fedora_elections.models import Election
 
 import flask
-import wtforms
 
 try:
     from flask_wtf import FlaskForm
 except ImportError:
     from flask_wtf import Form as FlaskForm
 
-
-from fedora.client import AuthError
-from fedora_elections import SESSION, ACCOUNTS, APP
-from fedora_elections.models import Election
-from fasjson_client.errors import APIError
+import wtforms
 
 
 class ElectionForm(FlaskForm):

@@ -23,33 +23,32 @@
 #                   Frank Chiulli <fchiulli@fedoraproject.org>
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
-from __future__ import unicode_literals, absolute_import
 
 __version__ = "2.9"
 
-import logging  # noqa
-import os  # noqa
-import sys  # noqa
-import urllib  # noqa
-import hashlib  # noqa
-import arrow  # noqa
-
-
+import hashlib
+import logging
+import os
 from datetime import datetime, time, timedelta  # noqa
-from functools import wraps  # noqa
-from six.moves.urllib.parse import urlparse, urljoin, urlencode  # noqa
 
-import flask  # noqa
-import munch  # noqa
-import six  # noqa
+import arrow
 
 from fasjson_client import Client
-from fedora.client import AuthError, AppError  # noqa
-from fedora.client.fas2 import AccountSystem  # noqa
-from flask_oidc import OpenIDConnect  # noqa
 
-import fedora_elections.fedmsgshim  # noqa
-import fedora_elections.proxy  # noqa
+from fedora.client.fas2 import AccountSystem
+
+import fedora_elections.fedmsgshim
+import fedora_elections.proxy
+
+import flask
+
+from flask_oidc import OpenIDConnect
+
+import munch
+
+import six
+from six.moves.urllib.parse import urlencode, urljoin, urlparse
+
 
 APP = flask.Flask(__name__)
 APP.config.from_object("fedora_elections.default_config")

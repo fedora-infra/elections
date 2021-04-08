@@ -6,6 +6,7 @@ Setup script
 
 import os
 import re
+
 from setuptools import setup
 
 versionfile = os.path.join(os.path.dirname(__file__), "fedora_elections", "__init__.py")

@@ -20,32 +20,27 @@
 
  fedora_elections.admin test script
 """
-__requires__ = ["SQLAlchemy >= 0.7", "jinja2 >= 2.4"]
-import pkg_resources
-
-import logging
-import unittest
-import sys
 import os
-
-from datetime import time
+import sys
+import unittest
 from datetime import timedelta
 
-import flask
-from mock import patch, MagicMock
-from fedora_messaging.testing import mock_sends
 from fedora_elections_messages import (
-    NewElectionV1,
+    DeleteCandidateV1,
+    EditCandidateV1,
     EditElectionV1,
     NewCandidateV1,
-    EditCandidateV1,
-    DeleteCandidateV1,
+    NewElectionV1,
 )
+
+from fedora_messaging.testing import mock_sends
+
+from mock import MagicMock, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
-import fedora_elections
-from tests import ModelFlasktests, Modeltests, TODAY, FakeUser, user_set
+import fedora_elections  # noqa:E402
+from tests import ModelFlasktests, TODAY, FakeUser, user_set  # noqa:E402
 
 
 # pylint: disable=R0904
@@ -784,8 +779,8 @@ class FlaskAdmintests(ModelFlasktests):
                     )
                 self.assertTrue('Candidates <span class="label' in output_text)
                 self.assertTrue(
-                    '<input class="form-control" id="admin_grp" name="admin_grp" type="text" value="">'
-                    in output_text
+                    '<input class="form-control" id="admin_grp" name="admin_grp" '
+                    'type="text" value="">' in output_text
                 )
                 self.assertIn(
                     'input class="form-control" id="lgl_voters" '

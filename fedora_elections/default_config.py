@@ -5,7 +5,8 @@ Fedora elections default configuration.
 """
 import os
 from datetime import timedelta
-from fedora_elections.mail_logging import MSG_FORMAT, ContextInjector
+
+from fedora_elections.mail_logging import ContextInjector, MSG_FORMAT
 
 # Set the time after which the session expires
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)

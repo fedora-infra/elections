@@ -23,27 +23,31 @@
 #                   Frank Chiulli <fchiulli@fedoraproject.org>
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
-from __future__ import unicode_literals, absolute_import
 
 from datetime import datetime, time
 from functools import wraps
 
-import flask
-from sqlalchemy.exc import SQLAlchemyError
-from fedora.client import AuthError
-from fedora_elections_messages import (
-    NewElectionV1,
-    EditElectionV1,
-    NewCandidateV1,
-    EditCandidateV1,
-    DeleteCandidateV1,
-)
+from fasjson_client.errors import APIError
 
+from fedora.client import AuthError
+
+from fedora_elections import ACCOUNTS, APP, SESSION, is_admin, is_authenticated
 from fedora_elections import fedmsgshim
 from fedora_elections import forms
 from fedora_elections import models
-from fedora_elections import APP, SESSION, ACCOUNTS, is_authenticated, is_admin
-from fasjson_client.errors import APIError
+
+from fedora_elections_messages import (
+    DeleteCandidateV1,
+    EditCandidateV1,
+    EditElectionV1,
+    NewCandidateV1,
+    NewElectionV1,
+)
+
+
+import flask
+
+from sqlalchemy.exc import SQLAlchemyError
 
 
 def election_admin_required(f):

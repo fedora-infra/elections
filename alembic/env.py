@@ -1,7 +1,10 @@
 from __future__ import with_statement
-from alembic import context
-from sqlalchemy import create_engine, pool
+
 from logging.config import fileConfig
+
+from alembic import context
+
+from sqlalchemy import create_engine, pool
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -11,8 +14,8 @@ config = context.config
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
 
-import fedora_elections
-import fedora_elections.models
+import fedora_elections  # noqa:E402
+import fedora_elections.models  # noqa:E402
 
 # add your model's MetaData object here
 # for 'autogenerate' support

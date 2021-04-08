@@ -4,12 +4,10 @@
   :Author: Pierre-Yves Chibon <pingou@pingoured.fr>
 
 """
-from __future__ import unicode_literals, absolute_import
-
 import logging
 
 import fedora_messaging.api
-from fedora_messaging.exceptions import PublishReturned, ConnectionException
+from fedora_messaging.exceptions import ConnectionException, PublishReturned
 
 
 _log = logging.getLogger(__name__)

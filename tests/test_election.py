@@ -20,20 +20,15 @@
 
  fedora_elections.model.Election test script
 """
-__requires__ = ["SQLAlchemy >= 0.7", "jinja2 >= 2.4"]
-import pkg_resources
-
-import unittest
-import sys
 import os
-
-from datetime import time
+import sys
+import unittest
 from datetime import timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
-from fedora_elections import models
-from tests import Modeltests, TODAY
+from fedora_elections import models  # noqa:E402
+from tests import Modeltests, TODAY  # noqa:E402
 
 
 # pylint: disable=R0904
