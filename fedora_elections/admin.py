@@ -42,9 +42,7 @@ from fedora_elections_messages import (
 from fedora_elections import fedmsgshim
 from fedora_elections import forms
 from fedora_elections import models
-from fedora_elections import (
-    APP, SESSION, ACCOUNTS, is_authenticated, is_admin
-)
+from fedora_elections import APP, SESSION, ACCOUNTS, is_authenticated, is_admin
 from fasjson_client.errors import APIError
 
 
@@ -52,15 +50,15 @@ def election_admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not is_authenticated():
-            return flask.redirect(flask.url_for(
-                'auth_login', next=flask.request.url))
+            return flask.redirect(flask.url_for("auth_login", next=flask.request.url))
         if not is_admin(flask.g.fas_user):
             flask.abort(403)
         return f(*args, **kwargs)
+
     return decorated_function
 
 
-@APP.route('/admin/new', methods=('GET', 'POST'))
+@APP.route("/admin/new", methods=("GET", "POST"))
 @election_admin_required
 def admin_new_election():
     form = forms.ElectionForm()
@@ -92,12 +90,11 @@ def admin_new_election():
 
         # Fix start_date and end_date to use datetime
         election.start_date = datetime.combine(election.start_date, time())
-        election.end_date = datetime.combine(election.end_date,
-                                             time(23, 59, 59))
+        election.end_date = datetime.combine(election.end_date, time(23, 59, 59))
         SESSION.add(election)
 
         # Add admin groups if there are any
-        for admin_grp in form.admin_grp.data.split(','):
+        for admin_grp in form.admin_grp.data.split(","):
             if admin_grp.strip():
                 admin = models.ElectionAdminGroup(
                     election=election,
@@ -106,7 +103,7 @@ def admin_new_election():
                 SESSION.add(admin)
 
         # Add legal voters groups if there are any
-        for voter_grp in form.lgl_voters.data.split(','):
+        for voter_grp in form.lgl_voters.data.split(","):
             if voter_grp.strip():
                 lglvoters = models.LegalVoter(
                     election=election,
@@ -116,28 +113,31 @@ def admin_new_election():
 
         SESSION.commit()
 
-        fedmsgshim.publish(NewElectionV1(body=dict(
-                agent=flask.g.fas_user.username,
-                election=election.to_json(),
+        fedmsgshim.publish(
+            NewElectionV1(
+                body=dict(
+                    agent=flask.g.fas_user.username,
+                    election=election.to_json(),
+                )
             )
-        ))
+        )
 
         flask.flash('Election "%s" added' % election.alias)
-        return flask.redirect(flask.url_for(
-            'admin_view_election', election_alias=election.alias))
+        return flask.redirect(
+            flask.url_for("admin_view_election", election_alias=election.alias)
+        )
     return flask.render_template(
-        'admin/election_form.html',
-        form=form,
-        submit_text='Create election')
+        "admin/election_form.html", form=form, submit_text="Create election"
+    )
 
 
-@APP.route('/admin/<election_alias>/', methods=('GET', 'POST'))
+@APP.route("/admin/<election_alias>/", methods=("GET", "POST"))
 @election_admin_required
 def admin_view_election(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
     if not election:
         flask.abort(404)
-    if flask.request.method == 'GET':
+    if flask.request.method == "GET":
         form = forms.ElectionForm(election.id, obj=election)
     else:
         form = forms.ElectionForm(election.id)
@@ -152,20 +152,17 @@ def admin_view_election(election_alias):
         else:
             form.max_votes.data = None
 
-        form.candidates_are_fasusers.data = int(
-            form.candidates_are_fasusers.data)
+        form.candidates_are_fasusers.data = int(form.candidates_are_fasusers.data)
         form.populate_obj(election)
 
         # Fix start_date and end_date to use datetime
         election.start_date = datetime.combine(election.start_date, time())
-        election.end_date = datetime.combine(election.end_date,
-                                             time(23, 59, 59))
+        election.end_date = datetime.combine(election.end_date, time(23, 59, 59))
         SESSION.add(election)
 
         admin_groups = set(election.admin_groups_list)
 
-        new_groups = set(
-            [grp.strip() for grp in form.admin_grp.data.split(',')])
+        new_groups = set([grp.strip() for grp in form.admin_grp.data.split(",")])
 
         # Add the new admin groups
         for admin_grp in new_groups.difference(admin_groups):
@@ -178,14 +175,15 @@ def admin_view_election(election_alias):
         # Remove the admin groups that were removed with this edition
         for admin_grp in admin_groups.difference(new_groups):
             admingrp = models.ElectionAdminGroup.by_election_id_and_name(
-                SESSION, election.id, admin_grp)
+                SESSION, election.id, admin_grp
+            )
             SESSION.delete(admingrp)
 
         legal_voters = set(election.legal_voters_list)
 
         new_lgl_voters_groups = set(
-            [grp.strip() for grp in form.lgl_voters.data.split(',')
-             if grp.strip()])
+            [grp.strip() for grp in form.lgl_voters.data.split(",") if grp.strip()]
+        )
 
         # Add the new legal voter groups
         for lgl_grp in new_lgl_voters_groups.difference(legal_voters):
@@ -198,30 +196,36 @@ def admin_view_election(election_alias):
         # Remove the legal voter groups that were removed with this edition
         for lgl_grp in legal_voters.difference(new_lgl_voters_groups):
             admingrp = models.LegalVoter.by_election_id_and_name(
-                SESSION, election.id, lgl_grp)
+                SESSION, election.id, lgl_grp
+            )
             SESSION.delete(admingrp)
 
         SESSION.commit()
-        fedmsgshim.publish(EditElectionV1(body=dict(
-                agent=flask.g.fas_user.username,
-                election=election.to_json(),
+        fedmsgshim.publish(
+            EditElectionV1(
+                body=dict(
+                    agent=flask.g.fas_user.username,
+                    election=election.to_json(),
+                )
             )
-        ))
+        )
         flask.flash('Election "%s" saved' % election.alias)
-        return flask.redirect(flask.url_for(
-            'admin_view_election', election_alias=election.alias))
+        return flask.redirect(
+            flask.url_for("admin_view_election", election_alias=election.alias)
+        )
 
-    form.admin_grp.data = ', '.join(election.admin_groups_list)
-    form.lgl_voters.data = ', '.join(election.legal_voters_list)
+    form.admin_grp.data = ", ".join(election.admin_groups_list)
+    form.lgl_voters.data = ", ".join(election.legal_voters_list)
 
     return flask.render_template(
-        'admin/view_election.html',
+        "admin/view_election.html",
         election=election,
         form=form,
-        submit_text='Edit election')
+        submit_text="Edit election",
+    )
 
 
-@APP.route('/admin/<election_alias>/candidates/new', methods=('GET', 'POST'))
+@APP.route("/admin/<election_alias>/candidates/new", methods=("GET", "POST"))
 @election_admin_required
 def admin_add_candidate(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
@@ -234,21 +238,18 @@ def admin_add_candidate(election_alias):
         fas_name = None
         if election.candidates_are_fasusers:  # pragma: no cover
             try:
-                if APP.config.get('FASJSON'):
-                    user = ACCOUNTS.get_user(
-                        username=form.name.data).result
+                if APP.config.get("FASJSON"):
+                    user = ACCOUNTS.get_user(username=form.name.data).result
                     fas_name = f"{user['givenname']} {user['surname']}"
                 else:
-                    fas_name = ACCOUNTS.person_by_username(
-                        form.name.data)['human_name']
+                    fas_name = ACCOUNTS.person_by_username(form.name.data)["human_name"]
             except (KeyError, AuthError, APIError):
                 flask.flash(
-                    'User `%s` does not have a FAS account.'
-                    % form.name.data, 'error')
+                    "User `%s` does not have a FAS account." % form.name.data, "error"
+                )
                 return flask.redirect(
-                    flask.url_for(
-                        'admin_add_candidate',
-                        election_alias=election_alias))
+                    flask.url_for("admin_add_candidate", election_alias=election_alias)
+                )
 
         candidate = models.Candidate(
             election=election,
@@ -260,23 +261,25 @@ def admin_add_candidate(election_alias):
         SESSION.add(candidate)
         SESSION.commit()
         flask.flash('Candidate "%s" saved' % candidate.name)
-        fedmsgshim.publish(NewCandidateV1(body=dict(
-                agent=flask.g.fas_user.username,
-                election=candidate.election.to_json(),
-                candidate=candidate.to_json(),
+        fedmsgshim.publish(
+            NewCandidateV1(
+                body=dict(
+                    agent=flask.g.fas_user.username,
+                    election=candidate.election.to_json(),
+                    candidate=candidate.to_json(),
+                )
             )
-        ))
-        return flask.redirect(flask.url_for(
-            'admin_view_election', election_alias=election.alias))
+        )
+        return flask.redirect(
+            flask.url_for("admin_view_election", election_alias=election.alias)
+        )
 
     return flask.render_template(
-        'admin/candidate.html',
-        form=form,
-        submit_text='Add candidate')
+        "admin/candidate.html", form=form, submit_text="Add candidate"
+    )
 
 
-@APP.route('/admin/<election_alias>/candidates/new/multi',
-           methods=('GET', 'POST'))
+@APP.route("/admin/<election_alias>/candidates/new/multi", methods=("GET", "POST"))
 @election_admin_required
 def admin_add_multi_candidate(election_alias):
     election = models.Election.get(SESSION, alias=election_alias)
@@ -293,29 +296,29 @@ def admin_add_multi_candidate(election_alias):
             fas_name = None
             if election.candidates_are_fasusers:  # pragma: no cover
                 try:
-                    if APP.config.get('FASJSON'):
-                        user = ACCOUNTS.get_user(
-                            username=candidate[0]).result
+                    if APP.config.get("FASJSON"):
+                        user = ACCOUNTS.get_user(username=candidate[0]).result
                         fas_name = f"{user['givenname']} {user['surname']}"
                     else:
-                        fas_name = ACCOUNTS.person_by_username(
-                            candidate[0])['human_name']
+                        fas_name = ACCOUNTS.person_by_username(candidate[0])[
+                            "human_name"
+                        ]
                 except (KeyError, AuthError, APIError):
                     SESSION.rollback()
                     flask.flash(
-                        'User `%s` does not have a FAS account.'
-                        % candidate[0], 'error')
+                        "User `%s` does not have a FAS account." % candidate[0], "error"
+                    )
                     return flask.redirect(
                         flask.url_for(
-                            'admin_add_candidate',
-                            election_alias=election_alias))
+                            "admin_add_candidate", election_alias=election_alias
+                        )
+                    )
 
             # No url
             if len(candidate) == 1:
                 cand = models.Candidate(
-                    election=election,
-                    name=candidate[0],
-                    fas_name=fas_name)
+                    election=election, name=candidate[0], fas_name=fas_name
+                )
                 SESSION.add(cand)
                 candidates_name.append(cand.name)
             # With url
@@ -324,32 +327,38 @@ def admin_add_multi_candidate(election_alias):
                     election=election,
                     name=candidate[0],
                     url=candidate[1],
-                    fas_name=fas_name)
+                    fas_name=fas_name,
+                )
                 SESSION.add(cand)
                 candidates_name.append(cand.name)
             else:
                 flask.flash("There was an issue!")
                 continue
-            fedmsgshim.publish(NewCandidateV1(body=dict(
-                    agent=flask.g.fas_user.username,
-                    election=cand.election.to_json(),
-                    candidate=cand.to_json(),
+            fedmsgshim.publish(
+                NewCandidateV1(
+                    body=dict(
+                        agent=flask.g.fas_user.username,
+                        election=cand.election.to_json(),
+                        candidate=cand.to_json(),
+                    )
                 )
-            ))
+            )
 
         SESSION.commit()
-        flask.flash('Added %s candidates' % len(candidates_name))
-        return flask.redirect(flask.url_for(
-            'admin_view_election', election_alias=election.alias))
+        flask.flash("Added %s candidates" % len(candidates_name))
+        return flask.redirect(
+            flask.url_for("admin_view_election", election_alias=election.alias)
+        )
 
     return flask.render_template(
-        'admin/candidate_multi.html',
-        form=form,
-        submit_text='Add candidates')
+        "admin/candidate_multi.html", form=form, submit_text="Add candidates"
+    )
 
 
-@APP.route('/admin/<election_alias>/candidates/<int:candidate_id>/edit',
-           methods=('GET', 'POST'))
+@APP.route(
+    "/admin/<election_alias>/candidates/<int:candidate_id>/edit",
+    methods=("GET", "POST"),
+)
 @election_admin_required
 def admin_edit_candidate(election_alias, candidate_id):
     election = models.Election.get(SESSION, alias=election_alias)
@@ -367,42 +376,50 @@ def admin_edit_candidate(election_alias, candidate_id):
 
         if election.candidates_are_fasusers:  # pragma: no cover
             try:
-                if APP.config.get('FASJSON'):
-                    user = ACCOUNTS.get_user(
-                        username=candidate.name).result
+                if APP.config.get("FASJSON"):
+                    user = ACCOUNTS.get_user(username=candidate.name).result
                     candidate.fas_name = f"{user['givenname']} {user['surname']}"
                 else:
-                    candidate.fas_name = ACCOUNTS.person_by_username(
-                        candidate.name)['human_name']
+                    candidate.fas_name = ACCOUNTS.person_by_username(candidate.name)[
+                        "human_name"
+                    ]
             except (KeyError, AuthError, APIError):
                 SESSION.rollback()
                 flask.flash(
-                    'User `%s` does not have a FAS account.'
-                    % candidate.name, 'error')
-                return flask.redirect(flask.url_for(
-                    'admin_edit_candidate',
-                    election_alias=election_alias,
-                    candidate_id=candidate_id))
+                    "User `%s` does not have a FAS account." % candidate.name, "error"
+                )
+                return flask.redirect(
+                    flask.url_for(
+                        "admin_edit_candidate",
+                        election_alias=election_alias,
+                        candidate_id=candidate_id,
+                    )
+                )
 
         SESSION.commit()
         flask.flash('Candidate "%s" saved' % candidate.name)
-        fedmsgshim.publish(EditCandidateV1(body=dict(
-                agent=flask.g.fas_user.username,
-                election=candidate.election.to_json(),
-                candidate=candidate.to_json(),
+        fedmsgshim.publish(
+            EditCandidateV1(
+                body=dict(
+                    agent=flask.g.fas_user.username,
+                    election=candidate.election.to_json(),
+                    candidate=candidate.to_json(),
+                )
             )
-        ))
-        return flask.redirect(flask.url_for(
-            'admin_view_election', election_alias=election.alias))
+        )
+        return flask.redirect(
+            flask.url_for("admin_view_election", election_alias=election.alias)
+        )
 
     return flask.render_template(
-        'admin/candidate.html',
-        form=form,
-        submit_text='Edit candidate')
+        "admin/candidate.html", form=form, submit_text="Edit candidate"
+    )
 
 
-@APP.route('/admin/<election_alias>/candidates/<int:candidate_id>/delete',
-           methods=('GET', 'POST'))
+@APP.route(
+    "/admin/<election_alias>/candidates/<int:candidate_id>/delete",
+    methods=("GET", "POST"),
+)
 @election_admin_required
 def admin_delete_candidate(election_alias, candidate_id):
     election = models.Election.get(SESSION, alias=election_alias)
@@ -421,24 +438,28 @@ def admin_delete_candidate(election_alias, candidate_id):
             SESSION.delete(candidate)
             SESSION.commit()
             flask.flash('Candidate "%s" deleted' % candidate_name)
-            fedmsgshim.publish(DeleteCandidateV1(body=dict(
-                    agent=flask.g.fas_user.username,
-                    election=candidate.election.to_json(),
-                    candidate=candidate.to_json(),
+            fedmsgshim.publish(
+                DeleteCandidateV1(
+                    body=dict(
+                        agent=flask.g.fas_user.username,
+                        election=candidate.election.to_json(),
+                        candidate=candidate.to_json(),
+                    )
                 )
-            ))
+            )
         except SQLAlchemyError as err:
             SESSION.rollback()
-            APP.logger.debug('Could not delete candidate')
+            APP.logger.debug("Could not delete candidate")
             APP.logger.exception(err)
             flask.flash(
-                'Could not delete this candidate. Is it already part of an '
-                'election?', 'error'
+                "Could not delete this candidate. Is it already part of an "
+                "election?",
+                "error",
             )
-        return flask.redirect(flask.url_for(
-            'admin_view_election', election_alias=election.alias))
+        return flask.redirect(
+            flask.url_for("admin_view_election", election_alias=election.alias)
+        )
 
     return flask.render_template(
-        'admin/delete_candidate.html',
-        form=form,
-        candidate=candidate)
+        "admin/delete_candidate.html", form=form, candidate=candidate
+    )

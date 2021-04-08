@@ -22,7 +22,7 @@
 """
 from __future__ import print_function
 
-__requires__ = ['SQLAlchemy >= 0.7']
+__requires__ = ["SQLAlchemy >= 0.7"]
 import pkg_resources
 
 import logging
@@ -40,8 +40,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 
-sys.path.insert(0, os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 import fedora_elections
 import fedora_elections.admin
@@ -50,16 +49,17 @@ import fedora_elections.forms
 from fedora_elections import models
 
 
-DB_PATH = 'sqlite:///:memory:'
-FAITOUT_URL = 'http://faitout.fedorainfracloud.org/'
+DB_PATH = "sqlite:///:memory:"
+FAITOUT_URL = "http://faitout.fedorainfracloud.org/"
 
-if os.environ.get('BUILD_ID'):
+if os.environ.get("BUILD_ID"):
     try:
         import requests
-        req = requests.get('%s/new' % FAITOUT_URL)
+
+        req = requests.get("%s/new" % FAITOUT_URL)
         if req.status_code == 200:
             DB_PATH = req.text
-            print('Using faitout at: %s' % DB_PATH)
+            print("Using faitout at: %s" % DB_PATH)
     except:
         pass
 
@@ -75,6 +75,7 @@ def user_set(APP, user, oidc_id_token=None):
     # flask.ext.fas_openid.FAS which otherwise kills our effort to set a
     # flask.g.fas_user.
     from flask import appcontext_pushed, g
+
     APP.before_request_funcs[None] = []
 
     def handler(sender, **kwargs):
@@ -88,7 +89,7 @@ def user_set(APP, user, oidc_id_token=None):
 class Modeltests(unittest.TestCase):
     """ Model tests. """
 
-    def __init__(self, method_name='runTest'):
+    def __init__(self, method_name="runTest"):
         """ Constructor. """
         unittest.TestCase.__init__(self, method_name)
         self.session = None
@@ -104,22 +105,23 @@ class Modeltests(unittest.TestCase):
         self.session.close()
         if os.path.exists(DB_PATH):
             os.unlink(DB_PATH)
-        if DB_PATH.startswith('postgres'):
-            if 'localhost' in DB_PATH:
+        if DB_PATH.startswith("postgres"):
+            if "localhost" in DB_PATH:
                 models.drop_tables(DB_PATH, self.session.bind)
             else:
-                db_name = DB_PATH.rsplit('/', 1)[1]
-                requests.get('%s/clean/%s' % (FAITOUT_URL, db_name))
+                db_name = DB_PATH.rsplit("/", 1)[1]
+                requests.get("%s/clean/%s" % (FAITOUT_URL, db_name))
 
 
 class ModelFlasktests(Modeltests):
     """ Model flask application tests. """
 
     def setup_db(self):
-        """ Add a calendar and some meetings so that we can play with
-        something. """
+        """Add a calendar and some meetings so that we can play with
+        something."""
         from tests.test_vote import Votetests
-        votes = Votetests('test_init_vote')
+
+        votes = Votetests("test_init_vote")
         votes.session = self.session
         votes.test_init_vote()
 
@@ -127,9 +129,8 @@ class ModelFlasktests(Modeltests):
         """ Set up the environnment, ran before every tests. """
         super(ModelFlasktests, self).setUp()
 
-        fedora_elections.APP.config['TESTING'] = True
-        fedora_elections.APP.config[
-            'FEDORA_ELECTIONS_ADMIN_GROUP'] = 'elections'
+        fedora_elections.APP.config["TESTING"] = True
+        fedora_elections.APP.config["FEDORA_ELECTIONS_ADMIN_GROUP"] = "elections"
         fedora_elections.APP.debug = True
         fedora_elections.APP.logger.handlers = []
         fedora_elections.APP.logger.setLevel(logging.CRITICAL)
@@ -144,7 +145,8 @@ class ModelFlasktests(Modeltests):
     def get_wtforms_version(self):
         """Returns the wtforms version as a tuple."""
         import wtforms
-        wtforms_v = wtforms.__version__.split('.')
+
+        wtforms_v = wtforms.__version__.split(".")
         for idx, val in enumerate(wtforms_v):
             try:
                 val = int(val)
@@ -153,35 +155,38 @@ class ModelFlasktests(Modeltests):
             wtforms_v[idx] = val
         return tuple(wtforms_v)
 
-    def get_csrf(self, url='/admin/new', output=None):
+    def get_csrf(self, url="/admin/new", output=None):
         """Retrieve a CSRF token from given URL."""
         if output is None:
             output = self.app.get(url)
             self.assertEqual(output.status_code, 200)
 
-        return output.get_data(as_text=True).split(
-            'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+        return (
+            output.get_data(as_text=True)
+            .split('name="csrf_token" type="hidden" value="')[1]
+            .split('">')[0]
+        )
 
 
 class FakeGroup(object):
-    """ Fake object used to make the FakeUser object closer to the
+    """Fake object used to make the FakeUser object closer to the
     expectations.
     """
 
     def __init__(self, name):
-        """ Constructor.
+        """Constructor.
         :arg name: the name given to the name attribute of this object.
         """
         self.name = name
-        self.group_type = 'cla'
+        self.group_type = "cla"
 
 
 # pylint: disable=R0903
 class FakeUser(object):
     """ Fake user used to test the fedocallib library. """
 
-    def __init__(self, groups=[], username='username', cla_done=True):
-        """ Constructor.
+    def __init__(self, groups=[], username="username", cla_done=True):
+        """Constructor.
         :arg groups: list of the groups in which this fake user is
             supposed to be.
         """
@@ -190,11 +195,9 @@ class FakeUser(object):
         self.groups = groups
         self.username = username
         self.name = username
-        self.approved_memberships = [
-            FakeGroup('packager'),
-            FakeGroup('design-team')]
+        self.approved_memberships = [FakeGroup("packager"), FakeGroup("design-team")]
         self.dic = {}
-        self.dic['timezone'] = 'Europe/Paris'
+        self.dic["timezone"] = "Europe/Paris"
         self.cla_done = cla_done
         self.email = "test@example.com"
 
@@ -202,6 +205,6 @@ class FakeUser(object):
         return self.dic[key]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Modeltests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)

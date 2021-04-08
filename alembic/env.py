@@ -27,7 +27,7 @@ target_metadata = fedora_elections.models.BASE
 
 DBURL = config.get_main_option("sqlalchemy.url")
 if not DBURL:
-    DBURL = fedora_elections.APP.config['DB_URL']
+    DBURL = fedora_elections.APP.config["DB_URL"]
 
 
 def run_migrations_offline():
@@ -58,9 +58,7 @@ def run_migrations_online():
     connectable = create_engine(DBURL, poolclass=pool.NullPool)
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=target_metadata)
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

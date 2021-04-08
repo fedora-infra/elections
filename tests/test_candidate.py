@@ -20,7 +20,7 @@
 
  fedora_elections.model.Candidate test script
 """
-__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
+__requires__ = ["SQLAlchemy >= 0.7", "jinja2 >= 2.4"]
 import pkg_resources
 
 import unittest
@@ -30,8 +30,7 @@ import os
 from datetime import time
 from datetime import timedelta
 
-sys.path.insert(0, os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 from fedora_elections import models
 from tests import Modeltests, TODAY
@@ -46,7 +45,7 @@ class Candidatetests(Modeltests):
 
     def test_init_candidate(self):
         """ Test the Candidate init function. """
-        elections = Electiontests('test_init_election')
+        elections = Electiontests("test_init_election")
         elections.session = self.session
         elections.test_init_election()
 
@@ -56,8 +55,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:1
             election_id=1,
-            name='Toshio',
-            url='https://fedoraproject.org/wiki/User:Toshio',
+            name="Toshio",
+            url="https://fedoraproject.org/wiki/User:Toshio",
         )
         self.session.add(obj)
         self.session.commit()
@@ -65,8 +64,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:2
             election_id=1,
-            name='Kevin',
-            url='https://fedoraproject.org/wiki/User:Kevin',
+            name="Kevin",
+            url="https://fedoraproject.org/wiki/User:Kevin",
         )
         self.session.add(obj)
         self.session.commit()
@@ -74,8 +73,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:3
             election_id=1,
-            name='Ralph',
-            url='https://fedoraproject.org/wiki/User:Ralph',
+            name="Ralph",
+            url="https://fedoraproject.org/wiki/User:Ralph",
         )
         self.session.add(obj)
         self.session.commit()
@@ -87,8 +86,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:4
             election_id=3,
-            name='Toshio',
-            url='https://fedoraproject.org/wiki/User:Toshio',
+            name="Toshio",
+            url="https://fedoraproject.org/wiki/User:Toshio",
         )
         self.session.add(obj)
         self.session.commit()
@@ -96,8 +95,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:5
             election_id=3,
-            name='Kevin',
-            url='https://fedoraproject.org/wiki/User:Kevin',
+            name="Kevin",
+            url="https://fedoraproject.org/wiki/User:Kevin",
         )
         self.session.add(obj)
         self.session.commit()
@@ -105,8 +104,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:6
             election_id=3,
-            name='Ralph',
-            url='https://fedoraproject.org/wiki/User:Ralph',
+            name="Ralph",
+            url="https://fedoraproject.org/wiki/User:Ralph",
         )
         self.session.add(obj)
         self.session.commit()
@@ -118,8 +117,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:7
             election_id=5,
-            name='Toshio',
-            url='https://fedoraproject.org/wiki/User:Toshio',
+            name="Toshio",
+            url="https://fedoraproject.org/wiki/User:Toshio",
         )
         self.session.add(obj)
         self.session.commit()
@@ -127,8 +126,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:8
             election_id=5,
-            name='Kevin',
-            url='https://fedoraproject.org/wiki/User:Kevin',
+            name="Kevin",
+            url="https://fedoraproject.org/wiki/User:Kevin",
         )
         self.session.add(obj)
         self.session.commit()
@@ -136,8 +135,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:9
             election_id=5,
-            name='Ralph',
-            url='https://fedoraproject.org/wiki/User:Ralph',
+            name="Ralph",
+            url="https://fedoraproject.org/wiki/User:Ralph",
         )
         self.session.add(obj)
         self.session.commit()
@@ -149,8 +148,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:10
             election_id=4,
-            name='Toshio',
-            url='https://fedoraproject.org/wiki/User:Toshio',
+            name="Toshio",
+            url="https://fedoraproject.org/wiki/User:Toshio",
         )
         self.session.add(obj)
         self.session.commit()
@@ -158,8 +157,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:11
             election_id=4,
-            name='Kevin',
-            url='https://fedoraproject.org/wiki/User:Kevin',
+            name="Kevin",
+            url="https://fedoraproject.org/wiki/User:Kevin",
         )
         self.session.add(obj)
         self.session.commit()
@@ -171,8 +170,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:12
             election_id=6,
-            name='Toshio',
-            url='https://fedoraproject.org/wiki/User:Toshio',
+            name="Toshio",
+            url="https://fedoraproject.org/wiki/User:Toshio",
         )
         self.session.add(obj)
         self.session.commit()
@@ -180,8 +179,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:13
             election_id=6,
-            name='Kevin',
-            url='https://fedoraproject.org/wiki/User:Kevin',
+            name="Kevin",
+            url="https://fedoraproject.org/wiki/User:Kevin",
         )
         self.session.add(obj)
         self.session.commit()
@@ -193,8 +192,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:14
             election_id=7,
-            name='Toshio',
-            url='https://fedoraproject.org/wiki/User:Toshio',
+            name="Toshio",
+            url="https://fedoraproject.org/wiki/User:Toshio",
         )
         self.session.add(obj)
         self.session.commit()
@@ -202,8 +201,8 @@ class Candidatetests(Modeltests):
 
         obj = models.Candidate(  # id:15
             election_id=7,
-            name='Kevin',
-            url='https://fedoraproject.org/wiki/User:Kevin',
+            name="Kevin",
+            url="https://fedoraproject.org/wiki/User:Kevin",
         )
         self.session.add(obj)
         self.session.commit()
@@ -216,20 +215,20 @@ class Candidatetests(Modeltests):
         self.assertEqual(
             obj.to_json(),
             {
-                'name': 'Ralph',
-                'url': 'https://fedoraproject.org/wiki/User:Ralph',
-                'fas_name': None,
-            }
+                "name": "Ralph",
+                "url": "https://fedoraproject.org/wiki/User:Ralph",
+                "fas_name": None,
+            },
         )
 
         obj = models.Candidate.get(self.session, 2)
         self.assertEqual(
             obj.to_json(),
             {
-                'name': 'Kevin',
-                'url': 'https://fedoraproject.org/wiki/User:Kevin',
-                'fas_name': None,
-            }
+                "name": "Kevin",
+                "url": "https://fedoraproject.org/wiki/User:Kevin",
+                "fas_name": None,
+            },
         )
 
     def test_vote_count(self):
@@ -243,6 +242,6 @@ class Candidatetests(Modeltests):
         self.assertEqual(obj.vote_count, 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Candidatetests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)

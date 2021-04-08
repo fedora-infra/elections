@@ -7,7 +7,9 @@ def build_name_map(election):
     if not election.candidates_are_fasusers:
         return {}
 
-    return dict([
-        (str(candidate.id), candidate.fas_name or candidate.name)
-        for candidate in election.candidates
-    ])
+    return dict(
+        [
+            (str(candidate.id), candidate.fas_name or candidate.name)
+            for candidate in election.candidates
+        ]
+    )

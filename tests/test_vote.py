@@ -20,7 +20,7 @@
 
  fedora_elections.model.Vote test script
 """
-__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
+__requires__ = ["SQLAlchemy >= 0.7", "jinja2 >= 2.4"]
 import pkg_resources
 
 import unittest
@@ -30,8 +30,7 @@ import os
 from datetime import time
 from datetime import timedelta
 
-sys.path.insert(0, os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 from fedora_elections import models
 from tests import Modeltests, TODAY
@@ -46,15 +45,15 @@ class Votetests(Modeltests):
 
     def test_init_vote(self):
         """ Test the Vote init function. """
-        candidates = Candidatetests('test_init_candidate')
+        candidates = Candidatetests("test_init_candidate")
         candidates.session = self.session
         candidates.test_init_candidate()
 
         obj = models.Vote(  # id:1
             election_id=1,
-            voter='toshio',
+            voter="toshio",
             candidate_id=1,
-            value='3',
+            value="3",
         )
         self.session.add(obj)
         self.session.commit()
@@ -62,9 +61,9 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:2
             election_id=1,
-            voter='toshio',
+            voter="toshio",
             candidate_id=2,
-            value='3',
+            value="3",
         )
         self.session.add(obj)
         self.session.commit()
@@ -72,9 +71,9 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:3
             election_id=1,
-            voter='toshio',
+            voter="toshio",
             candidate_id=3,
-            value='3',
+            value="3",
         )
         self.session.add(obj)
         self.session.commit()
@@ -82,7 +81,7 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:4
             election_id=1,
-            voter='ralph',
+            voter="ralph",
             candidate_id=2,
             value=2,
         )
@@ -92,7 +91,7 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:5
             election_id=1,
-            voter='ralph',
+            voter="ralph",
             candidate_id=3,
             value=1,
         )
@@ -104,9 +103,9 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:1
             election_id=3,
-            voter='toshio',
+            voter="toshio",
             candidate_id=1,
-            value='3',
+            value="3",
         )
         self.session.add(obj)
         self.session.commit()
@@ -114,9 +113,9 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:2
             election_id=3,
-            voter='toshio',
+            voter="toshio",
             candidate_id=2,
-            value='3',
+            value="3",
         )
         self.session.add(obj)
         self.session.commit()
@@ -124,9 +123,9 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:4
             election_id=3,
-            voter='toshio',
+            voter="toshio",
             candidate_id=3,
-            value='3',
+            value="3",
         )
         self.session.add(obj)
         self.session.commit()
@@ -136,9 +135,9 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:1
             election_id=5,
-            voter='toshio',
+            voter="toshio",
             candidate_id=7,
-            value='1',
+            value="1",
         )
         self.session.add(obj)
         self.session.commit()
@@ -146,9 +145,9 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:2
             election_id=5,
-            voter='toshio',
+            voter="toshio",
             candidate_id=8,
-            value='1',
+            value="1",
         )
         self.session.add(obj)
         self.session.commit()
@@ -156,9 +155,9 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:4
             election_id=5,
-            voter='kevin',
+            voter="kevin",
             candidate_id=9,
-            value='1',
+            value="1",
         )
         self.session.add(obj)
         self.session.commit()
@@ -168,9 +167,9 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:1
             election_id=6,
-            voter='toshio',
+            voter="toshio",
             candidate_id=12,
-            value='1',
+            value="1",
         )
         self.session.add(obj)
         self.session.commit()
@@ -180,9 +179,9 @@ class Votetests(Modeltests):
 
         obj = models.Vote(  # id:1
             election_id=7,
-            voter='toshio',
+            voter="toshio",
             candidate_id=12,
-            value='1',
+            value="1",
         )
         self.session.add(obj)
         self.session.commit()
@@ -205,34 +204,29 @@ class Votetests(Modeltests):
         """ Test the Vote.of_user_on_election function. """
         self.test_init_vote()
 
-        obj = models.Vote.of_user_on_election(
-            self.session, 'toshio', 1, count=True)
+        obj = models.Vote.of_user_on_election(self.session, "toshio", 1, count=True)
         self.assertEqual(obj, 3)
 
-        obj = models.Vote.of_user_on_election(
-            self.session, 'toshio', 1, count=False)
+        obj = models.Vote.of_user_on_election(self.session, "toshio", 1, count=False)
         self.assertEqual(len(obj), 3)
-        self.assertEqual(obj[0].voter, 'toshio')
-        self.assertEqual(obj[0].candidate.name, 'Toshio')
-        self.assertEqual(obj[1].voter, 'toshio')
-        self.assertEqual(obj[1].candidate.name, 'Kevin')
-        self.assertEqual(obj[2].voter, 'toshio')
-        self.assertEqual(obj[2].candidate.name, 'Ralph')
+        self.assertEqual(obj[0].voter, "toshio")
+        self.assertEqual(obj[0].candidate.name, "Toshio")
+        self.assertEqual(obj[1].voter, "toshio")
+        self.assertEqual(obj[1].candidate.name, "Kevin")
+        self.assertEqual(obj[2].voter, "toshio")
+        self.assertEqual(obj[2].candidate.name, "Ralph")
 
     def test_get_election_stats(self):
         """ Test the get_election_stats function. """
         self.test_init_vote()
 
         obj = models.Vote.get_election_stats(self.session, 1)
-        self.assertEqual(obj['n_voters'], 2)
-        self.assertEqual(obj['n_votes'], 5)
-        self.assertEqual(
-            obj['candidate_voters'],
-            {'Toshio': 1, 'Ralph': 2, 'Kevin': 2}
-        )
-        self.assertEqual(obj['n_candidates'], 3)
+        self.assertEqual(obj["n_voters"], 2)
+        self.assertEqual(obj["n_votes"], 5)
+        self.assertEqual(obj["candidate_voters"], {"Toshio": 1, "Ralph": 2, "Kevin": 2})
+        self.assertEqual(obj["n_candidates"], 3)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Votetests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)

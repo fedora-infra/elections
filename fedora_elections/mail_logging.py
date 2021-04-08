@@ -19,9 +19,9 @@
 # of Red Hat, Inc.
 #
 
-'''
+"""
 Mail handler for logging.
-'''
+"""
 from __future__ import unicode_literals, absolute_import
 
 import logging
@@ -43,7 +43,7 @@ except (OSError, ImportError):
 
 
 class ContextInjector(logging.Filter):
-    """ Logging filter that adds context to log records.
+    """Logging filter that adds context to log records.
 
     Filters are typically used to "filter" log records.  They declare a filter
     method that can return True or False.  Only records with 'True' will
@@ -72,7 +72,7 @@ class ContextInjector(logging.Filter):
 
         record.host = current_hostname
         record.proc = current_process
-        record.pid = '-'
+        record.pid = "-"
         if not isinstance(current_process, str):
             record.pid = current_process.pid
             record.proc_name = current_process.name
@@ -83,9 +83,9 @@ class ContextInjector(logging.Filter):
     @staticmethod
     def format_callstack():
         for i, frame in enumerate(f[0] for f in inspect.stack()):
-            if '__name__' not in frame.f_globals:
+            if "__name__" not in frame.f_globals:
                 continue
-            modname = frame.f_globals['__name__'].split('.')[0]
+            modname = frame.f_globals["__name__"].split(".")[0]
             if modname != "logging":
                 break
 
@@ -137,13 +137,10 @@ Callstack that lead to the logging statement
 
 
 def get_mail_handler(smtp_server, mail_admin):
-    """ Set up the handler sending emails for big exception
-    """
+    """Set up the handler sending emails for big exception"""
     mail_handler = logging.handlers.SMTPHandler(
-        smtp_server,
-        'nobody@fedoraproject.org',
-        mail_admin,
-        'elections error')
+        smtp_server, "nobody@fedoraproject.org", mail_admin, "elections error"
+    )
     mail_handler.setFormatter(logging.Formatter(MSG_FORMAT))
     mail_handler.setLevel(logging.ERROR)
     mail_handler.addFilter(ContextInjector())

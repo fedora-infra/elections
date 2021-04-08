@@ -16,7 +16,7 @@ BASE = declarative_base()
 
 
 def create_tables(db_url, alembic_ini=None, debug=False):
-    """ Create the tables in the database using the information from the
+    """Create the tables in the database using the information from the
     url obtained.
 
     :arg db_url, URL used to connect to the database. The URL contains
@@ -33,13 +33,14 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     engine = create_engine(db_url, echo=debug)
     BASE.metadata.create_all(engine)
     # engine.execute(collection_package_create_view(driver=engine.driver))
-    if db_url.startswith('sqlite:'):  # pragma: no cover
+    if db_url.startswith("sqlite:"):  # pragma: no cover
         # Ignore the warning about con_record
         # pylint: disable=W0613
         def _fk_pragma_on_connect(dbapi_con, con_record):
-            ''' Tries to enforce referential constraints on sqlite. '''
-            dbapi_con.execute('pragma foreign_keys=ON')
-        sa.event.listen(engine, 'connect', _fk_pragma_on_connect)
+            """ Tries to enforce referential constraints on sqlite. """
+            dbapi_con.execute("pragma foreign_keys=ON")
+
+        sa.event.listen(engine, "connect", _fk_pragma_on_connect)
 
     if alembic_ini is not None:  # pragma: no cover
         # then, load the Alembic configuration and generate the
@@ -49,6 +50,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
         # pylint: disable=F0401
         from alembic.config import Config
         from alembic import command
+
         alembic_cfg = Config(alembic_ini)
         command.stamp(alembic_cfg, "head")
 
@@ -57,7 +59,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
 
 
 def create_session(db_url, debug=False, pool_recycle=3600):
-    """ Create the Session object to use to query the database.
+    """Create the Session object to use to query the database.
 
     :arg db_url: URL used to connect to the database. The URL contains
     information with regards to the database engine, the host to connect
@@ -68,14 +70,13 @@ def create_session(db_url, debug=False, pool_recycle=3600):
     :return a Session that can be used to query the database.
 
     """
-    engine = sa.create_engine(
-        db_url, echo=debug, pool_recycle=pool_recycle)
+    engine = sa.create_engine(db_url, echo=debug, pool_recycle=pool_recycle)
     scopedsession = scoped_session(sessionmaker(bind=engine))
     return scopedsession
 
 
 class Election(BASE):
-    __tablename__ = 'elections'
+    __tablename__ = "elections"
 
     id = sa.Column(sa.Integer, primary_key=True)
     shortdesc = sa.Column(sa.Unicode(150), unique=True, nullable=False)
@@ -86,22 +87,21 @@ class Election(BASE):
     end_date = sa.Column(sa.DateTime, nullable=False)
     seats_elected = sa.Column(sa.Integer, nullable=False, default=1)
     embargoed = sa.Column(sa.Integer, nullable=False, default=0)
-    voting_type = sa.Column(sa.Unicode(100), nullable=False, default=u'range')
+    voting_type = sa.Column(sa.Unicode(100), nullable=False, default="range")
     url_badge = sa.Column(sa.Unicode(250), nullable=True)
     max_votes = sa.Column(sa.Integer, nullable=True)
-    candidates_are_fasusers = sa.Column(
-        sa.Integer, nullable=False, default=0)
+    candidates_are_fasusers = sa.Column(sa.Integer, nullable=False, default=0)
     fas_user = sa.Column(sa.Unicode(50), nullable=False)
 
     def to_json(self):
-        ''' Return a json representation of this object. '''
+        """ Return a json representation of this object. """
         return dict(
             shortdesc=self.shortdesc,
             alias=self.alias,
             description=self.description,
             url=self.url,
-            start_date=self.start_date.strftime('%Y-%m-%d %H:%M'),
-            end_date=self.end_date.strftime('%Y-%m-%d %H:%M'),
+            start_date=self.start_date.strftime("%Y-%m-%d %H:%M"),
+            end_date=self.end_date.strftime("%Y-%m-%d %H:%M"),
             embargoed=self.embargoed,
             voting_type=self.voting_type,
         )
@@ -118,25 +118,23 @@ class Election(BASE):
     def status(self):
         now = datetime.utcnow()
         if now.date() < self.start_date.date():
-            return 'Pending'
+            return "Pending"
         else:
             if now.date() <= self.end_date.date():
-                return 'In progress'
+                return "In progress"
             else:
                 if self.embargoed:
-                    return 'Embargoed'
+                    return "Embargoed"
                 else:
-                    return 'Ended'
+                    return "Ended"
 
     @property
     def locked(self):
         return datetime.utcnow() >= self.start_date
 
     @classmethod
-    def search(cls, session, alias=None, shortdesc=None,
-               fas_user=None):
-        """ Search the election and filter based on the arguments passed.
-        """
+    def search(cls, session, alias=None, shortdesc=None, fas_user=None):
+        """Search the election and filter based on the arguments passed."""
         query = session.query(cls)
 
         if alias is not None:
@@ -161,110 +159,94 @@ class Election(BASE):
 
     @classmethod
     def get_older_election(cls, session, limit):
-        """ Return all the election which end_date if older than the
+        """Return all the election which end_date if older than the
         provided limit.
         """
-        query = session.query(
-            cls
-        ).filter(
-            cls.end_date < limit
-        ).order_by(
-            sa.desc(cls.start_date)
+        query = (
+            session.query(cls)
+            .filter(cls.end_date < limit)
+            .order_by(sa.desc(cls.start_date))
         )
 
         return query.all()
 
     @classmethod
     def get_open_election(cls, session, limit):
-        """ Return all the election which start_date is lower and the
+        """Return all the election which start_date is lower and the
         end_date if greater or equal to the provided limit.
         """
-        query = session.query(
-            cls
-        ).filter(
-            cls.start_date < limit
-        ).filter(
-            cls.end_date >= limit
-        ).order_by(
-            sa.desc(cls.start_date)
+        query = (
+            session.query(cls)
+            .filter(cls.start_date < limit)
+            .filter(cls.end_date >= limit)
+            .order_by(sa.desc(cls.start_date))
         )
 
         return query.all()
 
     @classmethod
     def get_next_election(cls, session, limit):
-        """ Return all the future elections whose start_date is greater than
+        """Return all the future elections whose start_date is greater than
         the provided limit.
         """
-        query = session.query(
-            cls
-        ).filter(
-            cls.start_date > limit
-        ).order_by(
-            sa.desc(cls.start_date)
+        query = (
+            session.query(cls)
+            .filter(cls.start_date > limit)
+            .order_by(sa.desc(cls.start_date))
         )
 
         return query.all()
 
 
 class ElectionAdminGroup(BASE):
-    __tablename__ = 'electionadmins'
+    __tablename__ = "electionadmins"
 
     id = sa.Column(sa.Integer, primary_key=True)
     election_id = sa.Column(
         sa.Integer,
-        sa.ForeignKey('elections.id', ondelete='CASCADE', onupdate='CASCADE'),
-        nullable=False)
+        sa.ForeignKey("elections.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
     group_name = sa.Column(sa.Unicode(150), nullable=False)
 
-    election = relationship(
-        'Election', backref=backref('admin_groups', lazy='dynamic'))
+    election = relationship("Election", backref=backref("admin_groups", lazy="dynamic"))
 
     @classmethod
     def by_election_id(cls, session, election_id):
-        """ Return all the ElectionAdminGroup having a specific election_id.
-        """
-        return session.query(
-            cls
-        ).filter(
-            cls.election_id == election_id
-        ).all()
+        """Return all the ElectionAdminGroup having a specific election_id."""
+        return session.query(cls).filter(cls.election_id == election_id).all()
 
     @classmethod
     def by_election_id_and_name(cls, session, election_id, group_name):
-        """ Return the ElectionAdminGroup having a specific election_id
+        """Return the ElectionAdminGroup having a specific election_id
         and group_name.
         """
-        return session.query(
-            cls
-        ).filter(
-            cls.election_id == election_id
-        ).filter(
-            cls.group_name == group_name
-        ).first()
+        return (
+            session.query(cls)
+            .filter(cls.election_id == election_id)
+            .filter(cls.group_name == group_name)
+            .first()
+        )
 
 
 class Candidate(BASE):
-    __tablename__ = 'candidates'
+    __tablename__ = "candidates"
 
     id = sa.Column(sa.Integer, primary_key=True)
     election_id = sa.Column(
         sa.Integer,
-        sa.ForeignKey(
-            'elections.id',
-            ondelete='RESTRICT',
-            onupdate='CASCADE'),
-        nullable=False)
+        sa.ForeignKey("elections.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
     # FAS username if candidates_are_fasusers
     name = sa.Column(sa.Unicode(150), nullable=False)
     fas_name = sa.Column(sa.Unicode(150), nullable=True)
     url = sa.Column(sa.Unicode(250))
 
-    election = relationship(
-        'Election', backref=backref('candidates', lazy='dynamic'))
+    election = relationship("Election", backref=backref("candidates", lazy="dynamic"))
 
     def to_json(self):
-        ''' Return a json representation of this object. '''
+        """ Return a json representation of this object. """
         return dict(
             name=self.name,
             fas_name=self.fas_name,
@@ -285,74 +267,68 @@ class Candidate(BASE):
 
 
 class LegalVoter(BASE):
-    __tablename__ = 'legalvoters'
+    __tablename__ = "legalvoters"
 
     id = sa.Column(sa.Integer, primary_key=True)
     election_id = sa.Column(
         sa.Integer,
-        sa.ForeignKey('elections.id', ondelete='RESTRICT', onupdate='CASCADE'),
-        nullable=False)
+        sa.ForeignKey("elections.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
     group_name = sa.Column(sa.Unicode(150), nullable=False)
 
-    election = relationship(
-        'Election', backref=backref('legal_voters', lazy='dynamic'))
+    election = relationship("Election", backref=backref("legal_voters", lazy="dynamic"))
     # special names:
     #     "cla + one" = cla_done + 1 non-cla group
 
     @classmethod
     def by_election_id_and_name(cls, session, election_id, group_name):
-        """ Return the ElectionAdminGroup having a specific election_id
+        """Return the ElectionAdminGroup having a specific election_id
         and group_name.
         """
-        return session.query(
-            cls
-        ).filter(
-            cls.election_id == election_id
-        ).filter(
-            cls.group_name == group_name
-        ).first()
+        return (
+            session.query(cls)
+            .filter(cls.election_id == election_id)
+            .filter(cls.group_name == group_name)
+            .first()
+        )
 
 
 class Vote(BASE):
-    __tablename__ = 'votes'
+    __tablename__ = "votes"
 
-    __table_args__ = (sa.UniqueConstraint('election_id', 'voter',
-                                          'candidate_id',
-                                          name='eid_voter_cid'), {})
+    __table_args__ = (
+        sa.UniqueConstraint(
+            "election_id", "voter", "candidate_id", name="eid_voter_cid"
+        ),
+        {},
+    )
 
     id = sa.Column(sa.Integer, primary_key=True)
-    election_id = sa.Column(sa.Integer, sa.ForeignKey('elections.id'),
-                            nullable=False)
+    election_id = sa.Column(sa.Integer, sa.ForeignKey("elections.id"), nullable=False)
     voter = sa.Column(sa.Unicode(150), nullable=False)
     timestamp = sa.Column(sa.DateTime, nullable=False, default=safunc.now())
     candidate_id = sa.Column(
         sa.Integer,
-        sa.ForeignKey(
-            'candidates.id',
-            ondelete='RESTRICT',
-            onupdate='CASCADE'),
-        nullable=False)
+        sa.ForeignKey("candidates.id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
     value = sa.Column(sa.Integer, nullable=False)
 
-    election = relationship(
-        'Election', backref=backref('votes', lazy='dynamic'))
-    candidate = relationship(
-        'Candidate', backref=backref('votes', lazy='dynamic'))
+    election = relationship("Election", backref=backref("votes", lazy="dynamic"))
+    candidate = relationship("Candidate", backref=backref("votes", lazy="dynamic"))
 
     @classmethod
     def of_user_on_election(cls, session, user, election_id, count=False):
-        """ Return the votes of a user on a specific election.
+        """Return the votes of a user on a specific election.
         If count if True, then return the number of votes instead of the
         actual votes.
         """
-        query = session.query(
-            cls
-        ).filter(
-            cls.election_id == election_id
-        ).filter(
-            cls.voter == user
-        ).order_by(
-            cls.candidate_id
+        query = (
+            session.query(cls)
+            .filter(cls.election_id == election_id)
+            .filter(cls.voter == user)
+            .order_by(cls.candidate_id)
         )
 
         if count:
@@ -362,7 +338,7 @@ class Vote(BASE):
 
     @classmethod
     def get_election_stats(cls, session, election_id):
-        """ Return a dictionnary containing some statistics about the
+        """Return a dictionnary containing some statistics about the
         specified elections.
         (Number of voters, number of votes per candidates, total number
         of votes)
@@ -370,83 +346,76 @@ class Vote(BASE):
 
         stats = {}
 
-        n_voters = session.query(
-            sa.func.distinct(cls.voter)
-        ).filter(
-            cls.election_id == election_id
-        ).count()
-        stats['n_voters'] = n_voters
+        n_voters = (
+            session.query(sa.func.distinct(cls.voter))
+            .filter(cls.election_id == election_id)
+            .count()
+        )
+        stats["n_voters"] = n_voters
 
-        n_votes = session.query(
-            cls
-        ).filter(
-            cls.election_id == election_id
-        ).filter(
-            cls.value > 0
-        ).count()
-        stats['n_votes'] = n_votes
+        n_votes = (
+            session.query(cls)
+            .filter(cls.election_id == election_id)
+            .filter(cls.value > 0)
+            .count()
+        )
+        stats["n_votes"] = n_votes
 
-        election = session.query(
-            Election
-        ).filter(
-            Election.id == election_id
-        ).first()
+        election = session.query(Election).filter(Election.id == election_id).first()
 
         candidate_voters = {}
         cnt = 0
         for cand in election.candidates:
             cnt += 1
-            n_voters = session.query(
-                sa.func.distinct(cls.voter)
-            ).filter(
-                cls.election_id == election_id
-            ).filter(
-                cls.candidate_id == cand.id
-            ).filter(
-                cls.value > 0
-            ).count()
+            n_voters = (
+                session.query(sa.func.distinct(cls.voter))
+                .filter(cls.election_id == election_id)
+                .filter(cls.candidate_id == cand.id)
+                .filter(cls.value > 0)
+                .count()
+            )
             candidate_voters[cand.name] = n_voters
 
-        stats['candidate_voters'] = candidate_voters
-        stats['n_candidates'] = cnt
+        stats["candidate_voters"] = candidate_voters
+        stats["n_candidates"] = cnt
 
-        stats['max_vote'] = 1
-        if election.voting_type == 'select' \
-                or election.voting_type.startswith('range'):
-            stats['max_vote'] = cnt
+        stats["max_vote"] = 1
+        if election.voting_type == "select" or election.voting_type.startswith("range"):
+            stats["max_vote"] = cnt
             if election.max_votes:
-                stats['max_vote'] = election.max_votes
+                stats["max_vote"] = election.max_votes
 
-        dates = election = session.query(
-            Vote.timestamp
-        ).filter(
-            Vote.election_id == election_id
-        ).group_by(
-            Vote.voter,
-            Vote.timestamp
-        ).all()
+        dates = election = (
+            session.query(Vote.timestamp)
+            .filter(Vote.election_id == election_id)
+            .group_by(Vote.voter, Vote.timestamp)
+            .all()
+        )
 
-        stats['vote_timestamps'] = [
-            date[0].strftime('%d-%m-%Y')
-            for date in dates
-        ]
+        stats["vote_timestamps"] = [date[0].strftime("%d-%m-%Y") for date in dates]
 
         return stats
 
 
 def get_groups(session):
-    """ Return the list of groups of interest.
+    """Return the list of groups of interest.
 
     These groups are the groups used to find out the admins or the legal
     voters of all the elections.
     """
 
-    voters = [item[0] for item in session.query(
-        sa.distinct(LegalVoter.group_name)
-    ).order_by(LegalVoter.group_name).all()]
+    voters = [
+        item[0]
+        for item in session.query(sa.distinct(LegalVoter.group_name))
+        .order_by(LegalVoter.group_name)
+        .all()
+    ]
 
-    admins = [item[0] for item in session.query(
-        sa.distinct(ElectionAdminGroup.group_name)
-    ).order_by(ElectionAdminGroup.group_name).all()]
+    admins = [
+        item[0]
+        for item in session.query(sa.distinct(ElectionAdminGroup.group_name))
+        .order_by(ElectionAdminGroup.group_name)
+        .all()
+    ]
 
     return voters + admins
