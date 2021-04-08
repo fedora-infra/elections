@@ -61,6 +61,35 @@ You can install the fonts with this command.
 sudo dnf install open-sans-fonts
 ```
 
+### A note about the git branches
+
+You will find different git branches in the git repository of elections, here is
+a short description of what they are meant for.
+
+Elections originally followed the [git flow](https://nvie.com/posts/a-successful-git-branching-model/)
+development model before moving to being deployed in OpenShift using s2i (source
+to image) in a more continuous deployment model. You will find traces of these
+different models in the git branches.
+
+* ``develop``: this is the default branch of the project, the one you are
+  checked out on when you clone the repository. This is the place where all the
+  development happens. Your **Pull-Requests should target this branch**.
+* ``master``: this is the branch in which ``develop`` is merged into when a new
+  release is made. So you will find ``master`` the lastest stable release
+  basically.
+* ``staging``: this is the branch from which the staging instance of elections
+  is being deployed. That branch contains a few commits that are not in
+  ``develop`` as they relate to making elections be easily deployable in
+  openshift via s2i. These changes are not code related and thus do not need to
+  be present in ``develop``. This branch is rebased on the top of ``develop`` and
+  force-pushed when staging is being updated.
+  Your Pull-Request should not target this branch.
+* ``production``: similarly to the ``staging`` branch above, this is the branch
+  the production instance of election is being deployed from. Here as well it
+  contains a few extra commits that are related to configuring elections for
+  openshift/s2i, and here as well the branch is rebased, on the top of
+  ``staging`` and force-pushed when production is being updated.
+  Your Pull-Request should not target this branch.
 
 ## How to launch Fedora Elections
 
