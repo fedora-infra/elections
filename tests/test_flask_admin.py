@@ -427,6 +427,84 @@ class FlaskAdmintests(ModelFlasktests):
                     output_text,
                 )
 
+    def test_admin_new_election_requires_plusone(self):
+        """ Test the admin_new_election function. """
+        self.setup_db()
+
+        user = FakeUser(
+            fedora_elections.APP.config["FEDORA_ELECTIONS_ADMIN_GROUP"],
+            username="toshio",
+        )
+
+        with user_set(fedora_elections.APP, user, oidc_id_token="foobar"):
+            with patch(
+                "fedora_elections.OIDC.user_getfield",
+                MagicMock(return_value=["elections"]),
+            ):
+                output = self.app.get("/admin/new")
+                self.assertEqual(output.status_code, 200)
+
+                csrf_token = self.get_csrf(output=output)
+
+                # Test that we get the plusone field
+                # Probably not strictly necessary, but worth including
+                # for now since it's a new field
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    'input id="requires_plusone" '
+                    'name="requires_plusone" type="checkbox" ',
+                    output_text,
+                )
+
+                # All good
+                data = {
+                    "alias": "new_election2",
+                    "shortdesc": "new election2 shortdesc",
+                    "description": "new election2 description",
+                    "voting_type": "simple",
+                    "url": "https://fedoraproject.org",
+                    "start_date": TODAY + timedelta(days=2),
+                    "end_date": TODAY + timedelta(days=4),
+                    "seats_elected": 2,
+                    "candidates_are_fasusers": False,
+                    "embargoed": True,
+                    "admin_grp": "testers, , sysadmin-main,,",
+                    "lgl_voters": "testers, packager,,,",
+                    "csrf_token": csrf_token,
+                    "requires_plusone": True
+                }
+
+                with mock_sends(NewElectionV1):
+                    output = self.app.post(
+                        "/admin/new", data=data, follow_redirects=True
+                    )
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertTrue('Election "new_election2" added' in output_text)
+                self.assertTrue("There are no candidates." in output_text)
+                self.assertIn(
+                    'input class="form-control" id="admin_grp" '
+                    'name="admin_grp" type="text" '
+                    'value="sysadmin-main, testers">',
+                    output_text,
+                )
+                self.assertIn(
+                    'input class="form-control" id="lgl_voters" '
+                    'name="lgl_voters" type="text" '
+                    'value="packager, testers">',
+                    output_text,
+                )
+                self.assertIn(
+                    'input class="form-control" id="max_votes" '
+                    'name="max_votes" type="text" '
+                    'value="">',
+                    output_text,
+                )
+
+        obj = fedora_elections.models.Election.get(self.session, "new_election2")
+        self.assertNotEqual(obj, None)
+        self.assertEqual(obj.requires_plusone, True)
+
     def test_admin_edit_election(self):
         """ Test the admin_edit_election function. """
         user = FakeUser(

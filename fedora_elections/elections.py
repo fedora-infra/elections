@@ -50,13 +50,6 @@ def login_required(f):
         elif not flask.g.fas_user.cla_done:
             flask.flash("You must sign the CLA to vote", "error")
             return safe_redirect_back()
-        else:
-            user_groups = OIDC.user_getfield("groups")
-            if len(user_groups) == 0:
-                flask.flash(
-                    "You need to be in one another group than CLA to vote", "error"
-                )
-                return safe_redirect_back()
 
         return f(*args, **kwargs)
 
@@ -98,8 +91,17 @@ def vote(election_alias):
     if not isinstance(election, models.Election):
         return election
 
+    user_groups = OIDC.user_getfield("groups")
+
+    # Check if this election requires FPCA +1
+    if election.requires_plusone and len(user_groups) == 0:
+        flask.flash(
+            "You need to be in one another group than CLA to vote", "error"
+        )
+        return safe_redirect_back()
+
+    # Or if the election is restricted to specific groups
     if election.legal_voters_list:
-        user_groups = OIDC.user_getfield("groups")
         if len(set(user_groups).intersection(set(election.legal_voters_list))) == 0:
             flask.flash(
                 "You are not among the groups that are allowed to vote "

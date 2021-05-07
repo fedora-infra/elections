@@ -90,6 +90,7 @@ class Election(BASE):
     max_votes = sa.Column(sa.Integer, nullable=True)
     candidates_are_fasusers = sa.Column(sa.Integer, nullable=False, default=0)
     fas_user = sa.Column(sa.Unicode(50), nullable=False)
+    requires_plusone = sa.Column(sa.Boolean, default=False)
 
     def to_json(self):
         """ Return a json representation of this object. """

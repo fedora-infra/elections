@@ -91,6 +91,8 @@ class ElectionForm(FlaskForm):
         ],
     )
 
+    requires_plusone = wtforms.BooleanField("Election requires FPCA+1")
+
     lgl_voters = wtforms.TextField(
         "Legal voters groups", [wtforms.validators.optional()]
     )

@@ -88,6 +88,7 @@ def admin_new_election():
             url_badge=form.url_badge.data,
             voting_type=form.voting_type.data,
             max_votes=form.max_votes.data,
+            requires_plusone=form.requires_plusone.data,
             candidates_are_fasusers=int(form.candidates_are_fasusers.data),
             fas_user=flask.g.fas_user.username,
         )

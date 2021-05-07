@@ -56,8 +56,30 @@ class FlaskElectionstests(ModelFlasktests):
 
                 output = self.app.get("/vote/test_election", follow_redirects=True)
                 output_text = output.get_data(as_text=True)
-                self.assertTrue(
-                    "The election, test_election, does not exist." in output_text
+                self.assertIn(
+                    "The election, test_election, does not exist.", output_text
+                )
+
+    def test_vote_require_fpca(self):
+        """ Test the vote function. """
+        self.setup_db()
+        obj = fedora_elections.models.Election.get(self.session, "test_election3")
+        self.assertNotEqual(obj, None)
+        obj.requires_plusone = True
+        self.session.add(obj)
+        self.session.commit()
+
+        user = FakeUser([], username="pingou")
+        with user_set(fedora_elections.APP, user, oidc_id_token="foobar"):
+            with patch(
+                "fedora_elections.OIDC.user_getfield", MagicMock(return_value=[])
+            ):
+
+                output = self.app.get("/vote/test_election3", follow_redirects=True)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    "You need to be in one another group than "
+                    "CLA to vote", output_text
                 )
 
     def test_vote(self):
@@ -89,13 +111,6 @@ class FlaskElectionstests(ModelFlasktests):
 
                 output = self.app.get("/vote/test_election")
                 self.assertEqual(output.status_code, 302)
-
-                output = self.app.get("/vote/test_election", follow_redirects=True)
-                output_text = output.get_data(as_text=True)
-                self.assertTrue(
-                    "You need to be in one another group than "
-                    "CLA to vote" in output_text
-                )
 
         user = FakeUser(["packager"], username="pingou")
         with user_set(fedora_elections.APP, user, oidc_id_token="foobar"):
