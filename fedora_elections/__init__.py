@@ -205,7 +205,7 @@ def set_session():  # pragma: no-cover
                     "username": OIDC.user_getfield("nickname"),
                     "email": OIDC.user_getfield("email") or "",
                     "timezone": OIDC.user_getfield("zoneinfo"),
-                    "cla_done": "FPCA" in (OIDC.user_getfield("agreements") or []),
+                    "cla_done": "Fedora Project Contributor Agreement" in (OIDC.user_getfield("agreements") or []),
                 }
             )
         flask.g.fas_user = flask.session.fas_user
