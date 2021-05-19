@@ -205,10 +205,14 @@ def set_session():  # pragma: no-cover
                     "username": OIDC.user_getfield("nickname"),
                     "email": OIDC.user_getfield("email") or "",
                     "timezone": OIDC.user_getfield("zoneinfo"),
-                    "cla_done": "Fedora Project Contributor Agreement" in (OIDC.user_getfield("agreements") or []),
+                    #"cla_done": "Fedora Project Contributor Agreement" in (OIDC.user_getfield("agreements") or []),
+                    "cla_done": "signed_fpca" in (OIDC.user_getfield("groups") or []),
                 }
             )
         flask.g.fas_user = flask.session.fas_user
+        LOG.info('User groups: {!r}'.format(OIDC.user_getfield("groups")))
+        LOG.info('User attributes: {!r}'.format(flask.g.fas_user)) #DEBUG
+
     else:
         flask.session.fas_user = None
         flask.g.fas_user = None
