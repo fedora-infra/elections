@@ -20,9 +20,9 @@ DB_URL = "sqlite:////var/tmp/elections_dev.sqlite"
 # You will want to change this for your install
 SECRET_KEY = "change me"
 
-FASJSON = False
+FASJSON = True
 
-FAS_BASE_URL = "https://admin.stg.fedoraproject.org/accounts/"
+FAS_BASE_URL = "https://fasjson.stg.fedoraproject.org/"
 FAS_USERNAME = ""
 FAS_PASSWORD = ""
 FAS_CHECK_CERT = False
