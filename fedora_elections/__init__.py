@@ -24,7 +24,7 @@
 #                   Pierre-Yves Chibon <pingou@fedoraproject.org>
 #
 
-__version__ = "2.9"
+__version__ = "2.10"
 
 import hashlib
 import logging

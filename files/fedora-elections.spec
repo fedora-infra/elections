@@ -1,13 +1,13 @@
 %define modname fedora_elections
 
 Name:           fedora-elections
-Version:        2.9
+Version:        2.10
 Release:        1%{?dist}
 Summary:        Fedora elections application
 
 Group:          Development/Languages
 License:        GPLv2+
-URL:            https://github.com/fedora-infra/elections
+URL:            https://pagure.io/elections
 Source0:        %{name}/%{name}-%{version}.tar.gz
 #Source0:        https://fedorahosted.org/releases/f/a/%{name}/%{name}-%{version}.tar.gz
 
@@ -112,6 +112,11 @@ install -m 644 files/update_1_to_2.sql \
 
 
 %changelog
+* Wed May 19 2021 Ben Cotton <bcotton@fedoraproject.org> 2.10-1
+- Update to version 2.10
+- Uses new authentication system
+- Makes FPCA+1 requirement optional
+
 * Mon Nov 18 2019 Ben Cotton <bcotton@fedoraproject.org> 2.9-1
 - Update to 2.9 (2.8 existed, in a sense)
 - Open "more info" links in a new window
