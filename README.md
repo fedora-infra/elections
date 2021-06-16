@@ -253,8 +253,8 @@ but only for convenience. Pagure is the preferred platform for accepting
 contributions. To file an issue, RFE, or other ticket, you must use Pagure. See
 other issues already filed [here](https://pagure.io/elections/issues).
 
-If you are interested in working on this project, ask in [`#fedora-admin`](https://webchat.freenode.net/?channels=fedora-admin)
-on irc.freenode.net or say hello on the [Fedora Infrastructure mailing list](https://lists.fedoraproject.org/admin/lists/infrastructure@lists.fedoraproject.org/).
+If you are interested in working on this project, ask in `#fedora-admin`
+on irc.libera.chat or say hello on the [Fedora Infrastructure mailing list](https://lists.fedoraproject.org/admin/lists/infrastructure@lists.fedoraproject.org/).
 
 
 ## License
